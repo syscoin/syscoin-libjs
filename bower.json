@@ -1,0 +1,13 @@
+{
+  "name": "angular-syscoin",
+  "version": "0.1.0",
+  "main": "syscoin.js",
+  "dependencies": {
+    "angular": "~1.3.x"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}
