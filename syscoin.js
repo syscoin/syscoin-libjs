@@ -79,7 +79,7 @@ angular.module('syscoin', [])
                 method: "post",
                 url: rpcUrl,
                 data: {
-                    "method":"offernew"
+                    "method":"offernew",
                     "params":[sysaddress, category, title, quantity, price, description]
                 }
             });
