@@ -8,6 +8,23 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "components"
-  ]
+    "components",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "homepage": "https://github.com/syscoin/angular-syscoin",
+  "authors": [
+    "Dan Wasyluk <dwasyluk@gmail.com>"
+  ],
+  "description": "Angular service for interacting with Syscoin 0.1.6+ in simple and lightweight manner.",
+  "moduleType": [
+    "es6",
+    "globals"
+  ],
+  "keywords": [
+    "syscoin",
+    "blockmarket"
+  ],
+  "license": "MIT"
 }

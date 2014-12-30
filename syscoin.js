@@ -16,6 +16,7 @@ angular.module('syscoin', [])
             return  'Basic ' + authdata;
         }
 
+        //WALLET FUNCTIONS - basic stuff
         function getInfo() {
             console.log("getInfo()");
             var request = $http({
@@ -23,27 +24,6 @@ angular.module('syscoin', [])
                 url: rpcUrl,
                 data: {
                     "method":"getinfo"
-                },
-                params: {}
-            });
-
-            return( request );
-        }
-
-        function offerNew( category, title, quantity, price, description ) {
-            console.log("offerNew(" + category + ", " + title + ", " + quantity + ", " + price + ", " + description + ")");
-            var request = $http({
-                method: "post",
-                url: rpcUrl,
-                data: {
-                    "method":"offernew"
-                },
-                params: {
-                    category: category,
-                    title: title,
-                    quantity: quantity,
-                    price: price,
-                    description: description
                 }
             });
 
@@ -57,8 +37,51 @@ angular.module('syscoin', [])
                 url: rpcUrl,
                 data: {
                     "method" : "listtransactions"
-                },
-                params: {}
+                }
+            });
+
+            return( request );
+        }
+
+        function getRawTransaction(txid) {
+            console.log("getRawTransaction( " + txid + ")");
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"getrawtransaction",
+                    "params": [txid]
+                }
+            });
+
+            return( request );
+        }
+
+        function decodeRawTransaction(rawtx) {
+            console.log("decodeRawTransaction( " + rawtx + ")");
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"decoderawtransaction",
+                    "params":[rawtx]
+                }
+            });
+
+            return( request );
+        }
+
+
+        //OFFERS
+        function offerNew(sysaddress, category, title, quantity, price, description ) {
+            console.log("offerNew(" + category + ", " + title + ", " + quantity + ", " + price + ", " + description + ")");
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"offernew"
+                    "params":[sysaddress, category, title, quantity, price, description]
+                }
             });
 
             return( request );
@@ -78,34 +101,6 @@ angular.module('syscoin', [])
             return( request );
         }
 
-        function certissuerList() {
-            console.log("certissuerList()");
-            var request = $http({
-                method: "post",
-                url: rpcUrl,
-                data: {
-                    "method":"getinfo"
-                },
-                params: {}
-            });
-
-            return( request );
-        }
-
-        function aliasList() {
-            console.log("aliasList()");
-            var request = $http({
-                method: "post",
-                url: rpcUrl,
-                data: {
-                    "method":"aliaslist"
-                },
-                params: {}
-            });
-
-            return( request );
-        }
-
         function offerInfo(guid) {
             console.log("offerInfo( " + guid + ")");
             var request = $http({
@@ -120,39 +115,34 @@ angular.module('syscoin', [])
             return( request );
         }
 
-        function getRawTransaction(txid) {
-            console.log("getRawTransaction( " + txid + ")");
+        //CERTIFICATES
+        function certissuerList() {
+            console.log("certissuerList()");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
-                    "method":"getrawtransaction",
-                    "guid": txid
+                    "method":"certissuerlist"
                 },
-                params: {
-                    "guid": txid
-                }
+                params: {}
             });
 
             return( request );
         }
 
-        function decodeRawTransaction(rawtx) {
-            console.log("decodeRawTransaction( " + rawtx + ")");
+        //ALIASES
+        function aliasList() {
+            console.log("aliasList()");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
-                    "method":"decoderawtransaction"
-                },
-                params: {
-                    guid: txid
+                    "method":"aliaslist"
                 }
             });
 
             return( request );
         }
-
 
         // Return public API.
         return {
@@ -166,6 +156,7 @@ angular.module('syscoin', [])
             getRawTransaction: getRawTransaction,
             decodeRawTransaction: decodeRawTransaction
         };
+
     }]).factory('Base64', function () {
         /* jshint ignore:start */
 
