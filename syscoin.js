@@ -17,7 +17,7 @@ angular.module('syscoin', [])
         }
 
         //WALLET FUNCTIONS - basic stuff
-        function getInfo() {
+        this.getInfo = function() {
             console.log("getInfo()");
             var request = $http({
                 method: "post",
@@ -30,7 +30,7 @@ angular.module('syscoin', [])
             return( request );
         }
 
-        function listTransactions() {
+        this.listTransactions = function() {
             console.log("listTransactions()");
             var request = $http({
                 method: "post",
@@ -43,7 +43,7 @@ angular.module('syscoin', [])
             return( request );
         }
 
-        function getRawTransaction(txid) {
+        this.getRawTransaction = function(txid) {
             console.log("getRawTransaction( " + txid + ")");
             var request = $http({
                 method: "post",
@@ -57,7 +57,7 @@ angular.module('syscoin', [])
             return( request );
         }
 
-        function decodeRawTransaction(rawtx) {
+        this.decodeRawTransaction = function(rawtx) {
             console.log("decodeRawTransaction( " + rawtx + ")");
             var request = $http({
                 method: "post",
@@ -73,7 +73,7 @@ angular.module('syscoin', [])
 
 
         //OFFERS
-        function offerNew(sysaddress, category, title, quantity, price, description ) {
+        this.offerNew = function(sysaddress, category, title, quantity, price, description ) {
             console.log("offerNew(" + category + ", " + title + ", " + quantity + ", " + price + ", " + description + ")");
             var request = $http({
                 method: "post",
@@ -87,7 +87,7 @@ angular.module('syscoin', [])
             return( request );
         }
 
-        function offerList() {
+        this.offerList = function() {
             console.log("offerList()");
 
             var request = $http({
@@ -101,7 +101,7 @@ angular.module('syscoin', [])
             return( request );
         }
 
-        function offerInfo(guid) {
+        this.offerInfo = function(guid) {
             console.log("offerInfo( " + guid + ")");
             var request = $http({
                 method: "post",
@@ -115,8 +115,21 @@ angular.module('syscoin', [])
             return( request );
         }
 
+        this.getOfferInfoRequest = function(guid) {
+            var request = {
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"offerinfo",
+                    "params":[guid]
+                }
+            };
+
+            return( request );
+        }
+
         //CERTIFICATES
-        function certissuerList() {
+        this.certissuerList = function() {
             console.log("certissuerList()");
             var request = $http({
                 method: "post",
@@ -131,7 +144,7 @@ angular.module('syscoin', [])
         }
 
         //ALIASES
-        function aliasList() {
+        this.aliasList = function() {
             console.log("aliasList()");
             var request = $http({
                 method: "post",
@@ -144,26 +157,28 @@ angular.module('syscoin', [])
             return( request );
         }
 
-        // Return public API.
-        return {
-            getInfo: getInfo,
-            offerNew: offerNew,
-            listTransactions: listTransactions,
-            offerList: offerList,
-            offerInfo: offerInfo,
-            certissuerList: certissuerList,
-            aliasList: aliasList,
-            getRawTransaction: getRawTransaction,
-            decodeRawTransaction: decodeRawTransaction
-        };
+//        // Return public API.
+//        return {
+//            getInfo: getInfo,
+//            offerNew: offerNew,
+//            listTransactions: listTransactions,
+//            offerList: offerList,
+//            offerInfo: offerInfo,
+//            certissuerList: certissuerList,
+//            aliasList: aliasList,
+//            getRawTransaction: getRawTransaction,
+//            decodeRawTransaction: decodeRawTransaction
+//        };
 
-    }]).factory('Base64', function () {
+    }])
+
+    .factory('Base64', function() {
         /* jshint ignore:start */
 
         var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
         return {
-            encode: function (input) {
+            encode: function(input) {
                 var output = "";
                 var chr1, chr2, chr3 = "";
                 var enc1, enc2, enc3, enc4 = "";
@@ -197,7 +212,7 @@ angular.module('syscoin', [])
                 return output;
             },
 
-            decode: function (input) {
+            decode: function(input) {
                 var output = "";
                 var chr1, chr2, chr3 = "";
                 var enc1, enc2, enc3, enc4 = "";
