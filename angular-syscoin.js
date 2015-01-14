@@ -29,6 +29,19 @@ angular.module('angular-syscoin', [])
 
             return( request );
         }
+        
+        this.getNewAddress = function() {
+            console.log("getnewaddress()");
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"getnewaddress"
+                }
+            });
+
+            return( request );
+        }
 
         this.listTransactions = function() {
             console.log("listTransactions()");
@@ -81,6 +94,64 @@ angular.module('angular-syscoin', [])
                 data: {
                     "method":"offernew",
                     "params":[sysaddress, category, title, quantity, price, description]
+                }
+            });
+
+            return( request );
+        }
+        
+        this.offerAccept = function(guid, quantity ) {
+            console.log("offerAccept(" + guid + ", " + quantity + ")");
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"offeraccept",
+                    "params":[guid, quantity]
+                }
+            });
+
+            return( request );
+        }
+        
+        this.offerPay = function(guid, quantity, msg ) {
+            console.log("offerAccept(" + guid + ", " + quantity + ", " + msg + ")");
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"offerpay",
+                    "params":[guid, quantity, msg]
+                }
+            });
+
+            return( request );
+        }
+        
+        this.offerUpdate = function(guid, category, title, quantity, price, description ) {
+            console.log("offerUpdate(" + category + ", " + title + ", " + quantity + ", " + price + ", " + description + ")");
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"offerupdate",
+                    "params":[guid, category, title, quantity, price, description]
+                }
+            });
+
+            return( request );
+        }
+        
+        this.offerScan = function() {
+            console.log("offerList()");
+            var start = 0;
+            var end = 1000;
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"offerscan",
+                    "params":[start, end]
                 }
             });
 
@@ -142,8 +213,89 @@ angular.module('angular-syscoin', [])
 
             return( request );
         }
+        
+        this.certissuerNew = function(guid, cdata) {
+            var request = {
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"certissuernew",
+                    "params":[guid, cdata]
+                }
+            };
 
-        //ALIASES
+            return( request );
+        }
+        
+        this.certissuerScan = function() {
+            console.log("certIssuerScan()");
+            var start = 0;
+            var end = 1000;
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"certissuerscan",
+                    "params":[start, end]
+                }
+            });
+
+            return( request );
+        }
+        
+        this.certissuerUpdate = function(guid, title, cdata) {
+            var request = {
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"certissuerupdate",
+                    "params":[guid, title, cdata]
+                }
+            };
+
+            return( request );
+        }
+        
+        this.certissuerInfo = function(guid) {
+            var request = {
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"certissuerinfo",
+                    "params":[guid]
+                }
+            };
+
+            return( request );
+        }
+        
+        this.certNew = function(guid, address, title, cdata) {
+            var request = {
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"certnew",
+                    "params":[guid, address, title, cdata]
+                }
+            };
+
+            return( request );
+        }
+        
+        this.certTransfer = function(guid, address) {
+            var request = {
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"certtransfer",
+                    "params":[guid, address]
+                }
+            };
+
+            return( request );
+        }
+
+        // ALIASES
         this.aliasList = function() {
             console.log("aliasList()");
             var request = $http({
@@ -156,6 +308,91 @@ angular.module('angular-syscoin', [])
 
             return( request );
         }
+        
+        this.aliasNew = function(guid) {
+            var request = {
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"aliasnew",
+                    "params":[guid]
+                }
+            };
+
+            return( request );
+        }
+        
+        this.aliasActivate = function(guid, newtxn, value) {
+            var request = {
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"aliasactivate",
+                    "params":[guid, newtxn, value]
+                }
+            };
+
+            return( request );
+        }
+        
+        // TODO optional to-address
+        this.aliasUpdate = function(guid, value) {
+            var request = {
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"aliasupdate",
+                    "params":[guid, value]
+                }
+            };
+
+            return( request );
+        }
+        
+        this.aliasInfo = function(guid) {
+            var request = {
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"aliasinfo",
+                    "params":[guid]
+                }
+            };
+
+            return( request );
+        }
+        
+        this.aliasScan = function() {
+            console.log("aliasScan()");
+            var start = 0;
+            var end = 1000;
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"aliasscan",
+                    "params":[start, end]
+                }
+            });
+
+            return( request );
+        }
+        
+        // ASSETS
+        
+        this.assetList = "xx";
+        
+        this.assetPeg = "xx";
+        
+        this.assetDiv = "xx";
+        
+        // DATA
+        
+        this.dataNew = "xx";
+        
+        this.dataActivate = "xx";
+        
+        this.dataupdate = "xx";
 
 //        // Return public API.
 //        return {
