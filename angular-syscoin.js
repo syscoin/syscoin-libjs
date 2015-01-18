@@ -5,7 +5,7 @@ angular.module('angular-syscoin', [])
         USERNAME: 'rpcuser',
         PASSWORD: 'asdfkjdfhvkchbkhadkjwhekfbevsdbdcksjdhfksjkfklshfk'
     })
-    .service('syscoinService', ['Base64', '$http', '$q', 'RPC_CONFIG', function(Base64, $http, $q, RPC_CONFIG) {
+    .service('syscoinService', ['Base64', '$http', '$q', '$log', 'RPC_CONFIG', function(Base64, $http, $q, $log, RPC_CONFIG) {
 
         var rpcUrl = "http://" + RPC_CONFIG.HOST + ":" + RPC_CONFIG.PORT + "/";
         var authdata = Base64.encode(RPC_CONFIG.USERNAME + ':' + RPC_CONFIG.PASSWORD);
@@ -18,7 +18,7 @@ angular.module('angular-syscoin', [])
 
         //WALLET FUNCTIONS - basic stuff
         this.getInfo = function() {
-            console.log("getInfo()");
+            $log.log("getInfo()");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
@@ -29,9 +29,9 @@ angular.module('angular-syscoin', [])
 
             return( request );
         }
-        
+
         this.getNewAddress = function() {
-            console.log("getnewaddress()");
+            $log.log("getnewaddress()");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
@@ -43,8 +43,22 @@ angular.module('angular-syscoin', [])
             return( request );
         }
 
+        this.getAccountAddress = function(account) {
+            $log.log("getaccountaddress(" + account + ")");
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"getaccountaddress",
+                    "params":[account]
+                }
+            });
+
+            return( request );
+        }
+
         this.listTransactions = function() {
-            console.log("listTransactions()");
+            $log.log("listTransactions()");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
@@ -57,7 +71,7 @@ angular.module('angular-syscoin', [])
         }
 
         this.getRawTransaction = function(txid) {
-            console.log("getRawTransaction( " + txid + ")");
+            $log.log("getRawTransaction( " + txid + ")");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
@@ -71,7 +85,7 @@ angular.module('angular-syscoin', [])
         }
 
         this.decodeRawTransaction = function(rawtx) {
-            console.log("decodeRawTransaction( " + rawtx + ")");
+            $log.log("decodeRawTransaction( " + rawtx + ")");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
@@ -87,7 +101,7 @@ angular.module('angular-syscoin', [])
 
         //OFFERS
         this.offerNew = function(sysaddress, category, title, quantity, price, description ) {
-            console.log("offerNew(" + category + ", " + title + ", " + quantity + ", " + price + ", " + description + ")");
+            $log.log("offerNew(" + category + ", " + title + ", " + quantity + ", " + price + ", " + description + ")");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
@@ -99,9 +113,9 @@ angular.module('angular-syscoin', [])
 
             return( request );
         }
-        
+
         this.offerAccept = function(guid, quantity ) {
-            console.log("offerAccept(" + guid + ", " + quantity + ")");
+            $log.log("offerAccept(" + guid + ", " + quantity + ")");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
@@ -113,9 +127,9 @@ angular.module('angular-syscoin', [])
 
             return( request );
         }
-        
+
         this.offerPay = function(guid, quantity, msg ) {
-            console.log("offerAccept(" + guid + ", " + quantity + ", " + msg + ")");
+            $log.log("offerAccept(" + guid + ", " + quantity + ", " + msg + ")");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
@@ -127,9 +141,9 @@ angular.module('angular-syscoin', [])
 
             return( request );
         }
-        
+
         this.offerUpdate = function(guid, category, title, quantity, price, description ) {
-            console.log("offerUpdate(" + category + ", " + title + ", " + quantity + ", " + price + ", " + description + ")");
+            $log.log("offerUpdate(" + category + ", " + title + ", " + quantity + ", " + price + ", " + description + ")");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
@@ -141,9 +155,9 @@ angular.module('angular-syscoin', [])
 
             return( request );
         }
-        
+
         this.offerScan = function() {
-            console.log("offerList()");
+            $log.log("offerList()");
             var start = 0;
             var end = 1000;
             var request = $http({
@@ -159,7 +173,7 @@ angular.module('angular-syscoin', [])
         }
 
         this.offerList = function() {
-            console.log("offerList()");
+            $log.log("offerList()");
 
             var request = $http({
                 method: "post",
@@ -173,7 +187,7 @@ angular.module('angular-syscoin', [])
         }
 
         this.offerInfo = function(guid) {
-            console.log("offerInfo( " + guid + ")");
+            $log.log("offerInfo( " + guid + ")");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
@@ -187,21 +201,21 @@ angular.module('angular-syscoin', [])
         }
 
         this.getOfferInfoRequest = function(guid) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"offerinfo",
                     "params":[guid]
                 }
-            };
+            });
 
             return( request );
         }
 
         //CERTIFICATES
         this.certissuerList = function() {
-            console.log("certissuerList()");
+            $log.log("certissuerList()");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
@@ -213,22 +227,22 @@ angular.module('angular-syscoin', [])
 
             return( request );
         }
-        
+
         this.certissuerNew = function(guid, cdata) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"certissuernew",
                     "params":[guid, cdata]
                 }
-            };
+            });
 
             return( request );
         }
-        
+
         this.certissuerScan = function() {
-            console.log("certIssuerScan()");
+            $log.log("certIssuerScan()");
             var start = 0;
             var end = 1000;
             var request = $http({
@@ -242,62 +256,62 @@ angular.module('angular-syscoin', [])
 
             return( request );
         }
-        
+
         this.certissuerUpdate = function(guid, title, cdata) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"certissuerupdate",
                     "params":[guid, title, cdata]
                 }
-            };
+            });
 
             return( request );
         }
-        
+
         this.certissuerInfo = function(guid) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"certissuerinfo",
                     "params":[guid]
                 }
-            };
+            });
 
             return( request );
         }
-        
+
         this.certNew = function(guid, address, title, cdata) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"certnew",
                     "params":[guid, address, title, cdata]
                 }
-            };
+            });
 
             return( request );
         }
-        
+
         this.certTransfer = function(guid, address) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"certtransfer",
                     "params":[guid, address]
                 }
-            };
+            });
 
             return( request );
         }
 
         // ALIASES
         this.aliasList = function() {
-            console.log("aliasList()");
+            $log.log("aliasList()");
             var request = $http({
                 method: "post",
                 url: rpcUrl,
@@ -308,62 +322,62 @@ angular.module('angular-syscoin', [])
 
             return( request );
         }
-        
+
         this.aliasNew = function(guid) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"aliasnew",
                     "params":[guid]
                 }
-            };
-
+            });
+            console.log("this is func called request: ", request);
             return( request );
         }
-        
+
         this.aliasActivate = function(guid, newtxn, value) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"aliasactivate",
                     "params":[guid, newtxn, value]
                 }
-            };
+            });
 
             return( request );
         }
-        
+
         // TODO optional to-address
         this.aliasUpdate = function(guid, value) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"aliasupdate",
                     "params":[guid, value]
                 }
-            };
+            });
 
             return( request );
         }
-        
+
         this.aliasInfo = function(guid) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"aliasinfo",
                     "params":[guid]
                 }
-            };
+            });
 
             return( request );
         }
-        
+
         this.aliasScan = function() {
-            console.log("aliasScan()");
+            $log.log("aliasScan()");
             var start = 0;
             var end = 1000;
             var request = $http({
@@ -377,35 +391,35 @@ angular.module('angular-syscoin', [])
 
             return( request );
         }
-        
+
         // ASSETS
-        
+
         this.assetList = "xx";
-        
+
         this.assetPeg = "xx";
-        
+
         this.assetDiv = "xx";
-        
+
         // DATA
         
-        this.dataNew = "xx";
-        
-        this.dataActivate = "xx";
-        
-        this.dataupdate = "xx";
+        this.dataList = function() {
+            $log.log("dataList()");
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"datalist"
+                }
+            });
 
-//        // Return public API.
-//        return {
-//            getInfo: getInfo,
-//            offerNew: offerNew,
-//            listTransactions: listTransactions,
-//            offerList: offerList,
-//            offerInfo: offerInfo,
-//            certissuerList: certissuerList,
-//            aliasList: aliasList,
-//            getRawTransaction: getRawTransaction,
-//            decodeRawTransaction: decodeRawTransaction
-//        };
+            return( request );
+        }
+
+        this.dataNew = "xx";
+
+        this.dataActivate = "xx";
+
+        this.dataupdate = "xx";
 
     }])
 
