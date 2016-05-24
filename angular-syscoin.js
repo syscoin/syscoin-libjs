@@ -128,20 +128,6 @@ angular.module('angular-syscoin', [])
             return( request );
         }
 
-        this.offerPay = function(guid, quantity, msg ) {
-            $log.log("offerAccept(" + guid + ", " + quantity + ", " + msg + ")");
-            var request = $http({
-                method: "post",
-                url: rpcUrl,
-                data: {
-                    "method":"offerpay",
-                    "params":[guid, quantity, msg]
-                }
-            });
-
-            return( request );
-        }
-
         this.offerUpdate = function(guid, category, title, quantity, price, description ) {
             $log.log("offerUpdate(" + category + ", " + title + ", " + quantity + ", " + price + ", " + description + ")");
             var request = $http({
@@ -200,19 +186,6 @@ angular.module('angular-syscoin', [])
             return( request );
         }
 
-        this.getOfferInfoRequest = function(guid) {
-            var request = {
-                method: "post",
-                url: rpcUrl,
-                data: {
-                    "method":"offerinfo",
-                    "params":[guid]
-                }
-            };
-
-            return( request );
-        }
-
         //CERTIFICATES
         this.certissuerList = function() {
             $log.log("certissuerList()");
@@ -229,14 +202,14 @@ angular.module('angular-syscoin', [])
         }
 
         this.certissuerNew = function(guid, cdata) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"certissuernew",
                     "params":[guid, cdata]
                 }
-            };
+            });
 
             return( request );
         }
@@ -258,53 +231,53 @@ angular.module('angular-syscoin', [])
         }
 
         this.certissuerUpdate = function(guid, title, cdata) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"certissuerupdate",
                     "params":[guid, title, cdata]
                 }
-            };
+            });
 
             return( request );
         }
 
         this.certissuerInfo = function(guid) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"certissuerinfo",
                     "params":[guid]
                 }
-            };
+            });
 
             return( request );
         }
 
         this.certNew = function(guid, address, title, cdata) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"certnew",
                     "params":[guid, address, title, cdata]
                 }
-            };
+            });
 
             return( request );
         }
 
         this.certTransfer = function(guid, address) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"certtransfer",
                     "params":[guid, address]
                 }
-            };
+            });
 
             return( request );
         }
@@ -323,55 +296,40 @@ angular.module('angular-syscoin', [])
             return( request );
         }
 
-        this.aliasNew = function(guid) {
-            var request = {
+        this.aliasNew = function(guid, value) {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"aliasnew",
-                    "params":[guid]
+                    "params":[guid, value]
                 }
-            };
-
-            return( request );
-        }
-
-        this.aliasActivate = function(guid, newtxn, value) {
-            var request = {
-                method: "post",
-                url: rpcUrl,
-                data: {
-                    "method":"aliasactivate",
-                    "params":[guid, newtxn, value]
-                }
-            };
-
-            return( request );
+            });
         }
 
         // TODO optional to-address
         this.aliasUpdate = function(guid, value) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"aliasupdate",
                     "params":[guid, value]
                 }
-            };
+            });
 
             return( request );
         }
 
         this.aliasInfo = function(guid) {
-            var request = {
+            var request = $http({
                 method: "post",
                 url: rpcUrl,
                 data: {
                     "method":"aliasinfo",
                     "params":[guid]
                 }
-            };
+            });
 
             return( request );
         }
@@ -401,12 +359,54 @@ angular.module('angular-syscoin', [])
         this.assetDiv = "xx";
 
         // DATA
+        
+        this.dataList = function() {
+            $log.log("dataList()");
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"datalist"
+                }
+            });
 
-        this.dataNew = "xx";
+            return( request );
+        }
+        
+        this.dataInfo = function(guid) {
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"datainfo",
+                    "params":[guid]
+                }
+            });
+        }
 
-        this.dataActivate = "xx";
+        this.dataNew = function(guid, title, content) {
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"datanew",
+                    "params":[guid, title, content]
+                }
+            });
+        }
 
-        this.dataupdate = "xx";
+        this.dataupdate = function(guid, title, content) {
+            var request = $http({
+                method: "post",
+                url: rpcUrl,
+                data: {
+                    "method":"dataupdate",
+                    "params":[guid, title, content]
+                }
+            });
+
+            return( request );
+        }
 
     }])
 
