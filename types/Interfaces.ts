@@ -112,7 +112,7 @@ interface ITransaction {
   blockindex: number;
   blocktime: number;
   txid: string;
-  walletconflictes: Array<any>;
+  walletconflicts: Array<any>;
   time: number;
   timerecieved: number;
 }
