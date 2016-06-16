@@ -1,1 +1,0 @@
-{"version":3,"file":"ImportWalletRequest.js","sourceRoot":"","sources":["../API/Client/ImportWalletRequest.ts"],"names":["API","API.Client"],"mappings":"AAAA,iCAAiC;AAEjC,IAAU,GAAG,CAWZ;AAXD,WAAU,GAAG;IAACA,IAAAA,MAAMA,CAWnBA;IAXaA,WAAAA,MAAMA,EAACA,CAACA;QAClBC,YAAYA,CAACA;IAUjBA,CAACA,EAXaD,MAAMA,GAANA,UAAMA,KAANA,UAAMA,QAWnBA;AAADA,CAACA,EAXS,GAAG,KAAH,GAAG,QAWZ"}

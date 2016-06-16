@@ -1,1 +1,0 @@
-{"version":3,"file":"MessageHistoryEntry.js","sourceRoot":"","sources":["../API/Client/MessageHistoryEntry.ts"],"names":["API","API.Client"],"mappings":"AAAA,iCAAiC;AAEjC,IAAU,GAAG,CAoBZ;AApBD,WAAU,GAAG;IAACA,IAAAA,MAAMA,CAoBnBA;IApBaA,WAAAA,MAAMA,EAACA,CAACA;QAClBC,YAAYA,CAACA;IAmBjBA,CAACA,EApBaD,MAAMA,GAANA,UAAMA,KAANA,UAAMA,QAoBnBA;AAADA,CAACA,EApBS,GAAG,KAAH,GAAG,QAoBZ"}

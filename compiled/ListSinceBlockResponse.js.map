@@ -1,1 +1,0 @@
-{"version":3,"file":"ListSinceBlockResponse.js","sourceRoot":"","sources":["../API/Client/ListSinceBlockResponse.ts"],"names":["API","API.Client"],"mappings":"AAAA,iCAAiC;AAEjC,IAAU,GAAG,CAaZ;AAbD,WAAU,GAAG;IAACA,IAAAA,MAAMA,CAanBA;IAbaA,WAAAA,MAAMA,EAACA,CAACA;QAClBC,YAAYA,CAACA;IAYjBA,CAACA,EAbaD,MAAMA,GAANA,UAAMA,KAANA,UAAMA,QAanBA;AAADA,CAACA,EAbS,GAAG,KAAH,GAAG,QAaZ"}

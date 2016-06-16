@@ -1,1 +1,0 @@
-{"version":3,"file":"SendManyRequest.js","sourceRoot":"","sources":["../API/Client/SendManyRequest.ts"],"names":["API","API.Client"],"mappings":"AAAA,iCAAiC;AAEjC,IAAU,GAAG,CA+BZ;AA/BD,WAAU,GAAG;IAACA,IAAAA,MAAMA,CA+BnBA;IA/BaA,WAAAA,MAAMA,EAACA,CAACA;QAClBC,YAAYA,CAACA;IA8BjBA,CAACA,EA/BaD,MAAMA,GAANA,UAAMA,KAANA,UAAMA,QA+BnBA;AAADA,CAACA,EA/BS,GAAG,KAAH,GAAG,QA+BZ"}

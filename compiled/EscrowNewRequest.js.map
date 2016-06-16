@@ -1,1 +1,0 @@
-{"version":3,"file":"EscrowNewRequest.js","sourceRoot":"","sources":["../API/Client/EscrowNewRequest.ts"],"names":["API","API.Client"],"mappings":"AAAA,iCAAiC;AAEjC,IAAU,GAAG,CAgBZ;AAhBD,WAAU,GAAG;IAACA,IAAAA,MAAMA,CAgBnBA;IAhBaA,WAAAA,MAAMA,EAACA,CAACA;QAClBC,YAAYA,CAACA;IAejBA,CAACA,EAhBaD,MAAMA,GAANA,UAAMA,KAANA,UAAMA,QAgBnBA;AAADA,CAACA,EAhBS,GAAG,KAAH,GAAG,QAgBZ"}
