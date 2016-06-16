@@ -1,4 +1,3 @@
-/// <reference path="../API/Client/api.d.ts" />
 declare namespace API.Client {
     interface AddMultisigAddressRequest {
         /**
