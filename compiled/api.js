@@ -2161,7 +2161,7 @@ var API;
                     queryParameters['syscoinaddress'] = syscoinaddress;
                 }
                 var httpRequestParams = {
-                    method: 'POST',
+                    method: 'GET',
                     url: localVarPath,
                     json: true,
                     params: queryParameters,
@@ -2205,7 +2205,7 @@ var API;
                     queryParameters['message'] = message;
                 }
                 var httpRequestParams = {
-                    method: 'POST',
+                    method: 'GET',
                     url: localVarPath,
                     json: true,
                     params: queryParameters,
