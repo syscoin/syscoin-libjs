@@ -1395,6 +1395,23 @@ declare namespace API.Client {
     }
 }
 declare namespace API.Client {
+    class BlockmarketApi {
+        protected $http: ng.IHttpService;
+        protected $httpParamSerializer: (d: any) => any;
+        protected basePath: string;
+        defaultHeaders: any;
+        static $inject: string[];
+        constructor($http: ng.IHttpService, $httpParamSerializer?: (d: any) => any, basePath?: string);
+        private extendObj<T1, T2>(objA, objB);
+        /**
+         *
+         * Returns a session token for use with subsquent protected calls.
+         * @param auth MD5 hash of the user&#39;s authentication information- username:password.
+         */
+        login(auth: string, extraHttpRequestParams?: any): ng.IHttpPromise<string>;
+    }
+}
+declare namespace API.Client {
     class CertificatesApi {
         protected $http: ng.IHttpService;
         protected $httpParamSerializer: (d: any) => any;

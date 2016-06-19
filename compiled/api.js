@@ -744,6 +744,65 @@ var API;
     var Client;
     (function (Client) {
         'use strict';
+        var BlockmarketApi = (function () {
+            function BlockmarketApi($http, $httpParamSerializer, basePath) {
+                this.$http = $http;
+                this.$httpParamSerializer = $httpParamSerializer;
+                this.basePath = 'http://localhost:8000/';
+                this.defaultHeaders = {};
+                if (basePath !== undefined) {
+                    this.basePath = basePath;
+                }
+            }
+            BlockmarketApi.prototype.extendObj = function (objA, objB) {
+                for (var key in objB) {
+                    if (objB.hasOwnProperty(key)) {
+                        objA[key] = objB[key];
+                    }
+                }
+                return objA;
+            };
+            /**
+             *
+             * Returns a session token for use with subsquent protected calls.
+             * @param auth MD5 hash of the user&#39;s authentication information- username:password.
+             */
+            BlockmarketApi.prototype.login = function (auth, extraHttpRequestParams) {
+                var localVarPath = this.basePath + '/login';
+                var queryParameters = {};
+                var headerParams = this.extendObj({}, this.defaultHeaders);
+                // verify required parameter 'auth' is set
+                if (!auth) {
+                    throw new Error('Missing required parameter auth when calling login');
+                }
+                if (auth !== undefined) {
+                    queryParameters['auth'] = auth;
+                }
+                var httpRequestParams = {
+                    method: 'GET',
+                    url: localVarPath,
+                    json: true,
+                    params: queryParameters,
+                    headers: headerParams
+                };
+                if (extraHttpRequestParams) {
+                    httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+                }
+                return this.$http(httpRequestParams);
+            };
+            BlockmarketApi.$inject = ['$http', '$httpParamSerializer', 'basePath'];
+            return BlockmarketApi;
+        })();
+        Client.BlockmarketApi = BlockmarketApi;
+    })(Client = API.Client || (API.Client = {}));
+})(API || (API = {}));
+/// <reference path="api.d.ts" />
+/* tslint:disable:no-unused-variable member-ordering */
+var API;
+(function (API) {
+    var Client;
+    (function (Client) {
+        'use strict';
         var CertificatesApi = (function () {
             function CertificatesApi($http, $httpParamSerializer, basePath) {
                 this.$http = $http;
@@ -2161,7 +2220,7 @@ var API;
                     queryParameters['syscoinaddress'] = syscoinaddress;
                 }
                 var httpRequestParams = {
-                    method: 'GET',
+                    method: 'POST',
                     url: localVarPath,
                     json: true,
                     params: queryParameters,
@@ -2205,7 +2264,7 @@ var API;
                     queryParameters['message'] = message;
                 }
                 var httpRequestParams = {
-                    method: 'GET',
+                    method: 'POST',
                     url: localVarPath,
                     json: true,
                     params: queryParameters,

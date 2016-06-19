@@ -1025,7 +1025,7 @@ namespace API.Client {
             }
 
             let httpRequestParams: any = {
-                method: 'GET',
+                method: 'POST',
                 url: localVarPath,
                 json: true,
                                                 params: queryParameters,
@@ -1075,7 +1075,7 @@ namespace API.Client {
             }
 
             let httpRequestParams: any = {
-                method: 'GET',
+                method: 'POST',
                 url: localVarPath,
                 json: true,
                                                 params: queryParameters,

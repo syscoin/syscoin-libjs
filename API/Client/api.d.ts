@@ -62,6 +62,7 @@
 /// <reference path="WalletPassphraseRequest.ts" />
 
 /// <reference path="AliasesApi.ts" />
+/// <reference path="BlockmarketApi.ts" />
 /// <reference path="CertificatesApi.ts" />
 /// <reference path="EscrowApi.ts" />
 /// <reference path="GeneralApi.ts" />
