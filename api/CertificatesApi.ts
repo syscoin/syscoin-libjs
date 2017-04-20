@@ -20,7 +20,7 @@ export class CertificatesApi {
     }
 
     /**
-     * 
+     *
      * scan and filter certs certfilter \&quot;\&quot; 5 &#x3D; list certs updated in last 5 blocks certfilter \&quot;^cert\&quot; &#x3D; list all certs starting with \&quot;cert\&quot; certfilter 36000 0 0 stat &#x3D; display stats (number of certs) on active certs
      * @param regexp apply [regexp] on certes, empty means all certes
      * @param from show results from number [from]
@@ -64,9 +64,9 @@ export class CertificatesApi {
     }
 
     /**
-     * 
+     *
      * List all stored values of an cert.
-     * @param certname 
+     * @param certname
      */
     public certhistory (certname: string, extraHttpRequestParams?: any ) : Observable<Array<models.CertHistoryEntry>> {
         const path = this.basePath + '/certhistory';
@@ -92,9 +92,9 @@ export class CertificatesApi {
     }
 
     /**
-     * 
+     *
      * Show stored values of a single certificate.
-     * @param guid 
+     * @param guid
      */
     public certinfo (guid: string, extraHttpRequestParams?: any ) : Observable<models.Cert> {
         const path = this.basePath + '/certinfo';
@@ -120,11 +120,11 @@ export class CertificatesApi {
     }
 
     /**
-     * 
+     *
      * List certificates that an array of aliases own. Set of aliases to look up based on alias, and private key to decrypt any data found in certificates.
-     * @param aliases 
-     * @param cert 
-     * @param privatekey 
+     * @param aliases
+     * @param cert
+     * @param privatekey
      */
     public certlist (aliases?: Array<string>, cert?: string, privatekey?: string, extraHttpRequestParams?: any ) : Observable<Array<models.CertListEntry>> {
         const path = this.basePath + '/certlist';
@@ -132,7 +132,7 @@ export class CertificatesApi {
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
         if (aliases !== undefined) {
-            queryParameters.set('aliases', aliases);
+            queryParameters.set('aliases', JSON.stringify(aliases));
         }
 
         if (cert !== undefined) {
@@ -154,9 +154,9 @@ export class CertificatesApi {
     }
 
     /**
-     * 
+     *
      * Create a new Syscoin Certificate. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public certnew (request: models.CertNewRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/certnew';
@@ -179,9 +179,9 @@ export class CertificatesApi {
     }
 
     /**
-     * 
+     *
      * Transfer certificate from one user to another. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public certtransfer (request: models.CertTransferRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/certtransfer';
@@ -204,9 +204,9 @@ export class CertificatesApi {
     }
 
     /**
-     * 
+     *
      * Perform an update on an certificate you control. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public certupdate (request: models.CertUpdateRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/certupdate';

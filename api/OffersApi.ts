@@ -20,9 +20,9 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * Accept&amp;Pay for a confirmed offer.
-     * @param request 
+     * @param request
      */
     public offeraccept (request: models.OfferAcceptRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/offeraccept';
@@ -45,10 +45,10 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * Acknowledge offer payment as seller of offer. Deducts qty of offer and increases number of sold inventory.
-     * @param offerguid 
-     * @param offeracceptguid 
+     * @param offerguid
+     * @param offeracceptguid
      */
     public offeracceptacknowledge (offerguid: string, offeracceptguid: string, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/offeracceptacknowledge';
@@ -82,12 +82,12 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * Send feedback and rating for offer accept specified. Ratings are numbers from 1 to 5
-     * @param offerguid 
-     * @param offeracceptguid 
-     * @param feedback 
-     * @param rating 
+     * @param offerguid
+     * @param offeracceptguid
+     * @param feedback
+     * @param rating
      */
     public offeracceptfeedback (offerguid: string, offeracceptguid: string, feedback?: string, rating?: number, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/offeracceptfeedback';
@@ -115,7 +115,7 @@ export class OffersApi {
         }
 
         if (rating !== undefined) {
-            queryParameters.set('rating', rating);
+            queryParameters.set('rating', JSON.stringify(rating));
         }
 
         let requestOptions: RequestOptionsArgs = {
@@ -129,11 +129,11 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * list my offer accepts
-     * @param aliases 
-     * @param acceptguid 
-     * @param privatekey 
+     * @param aliases
+     * @param acceptguid
+     * @param privatekey
      */
     public offeracceptlist (aliases?: Array<string>, acceptguid?: string, privatekey?: string, extraHttpRequestParams?: any ) : Observable<Array<models.OfferAccept>> {
         const path = this.basePath + '/offeracceptlist';
@@ -141,7 +141,7 @@ export class OffersApi {
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
         if (aliases !== undefined) {
-            queryParameters.set('aliases', aliases);
+            queryParameters.set('aliases', JSON.stringify(aliases));
         }
 
         if (acceptguid !== undefined) {
@@ -163,9 +163,9 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * Add to the affiliate list of your offer(controls who can resell). Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public offeraddwhitelist (request: models.OfferAddWhitelistRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/offeraddwhitelist';
@@ -188,9 +188,9 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * Clear the affiliate list of your offer(controls who can resell). Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public offerclearwhitelist (request: models.OfferClearWhitelistRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/offerclearwhitelist';
@@ -213,7 +213,7 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * scan and filter offers
      * @param regexp apply [regexp] on offeres, empty means all offeres
      * @param from show results from number [from]
@@ -234,7 +234,7 @@ export class OffersApi {
         }
 
         if (from !== undefined) {
-            queryParameters.set('from', from);
+            queryParameters.set('from', JSON.stringify(from));
         }
 
         if (safesearch !== undefined) {
@@ -256,7 +256,7 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * List all stored values of an offer.
      * @param offer Offer GUID.
      */
@@ -284,9 +284,9 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * Show values of an offer.
-     * @param guid 
+     * @param guid
      */
     public offerinfo (guid: string, extraHttpRequestParams?: any ) : Observable<models.Offer> {
         const path = this.basePath + '/offerinfo';
@@ -312,9 +312,9 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public offerlink (request: models.OfferLinkRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/offerlink';
@@ -337,11 +337,11 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * List offers that an array of aliases own. Set of aliases to look up based on alias, and private key to decrypt any data found in offer.
-     * @param aliases 
-     * @param offer 
-     * @param privatekey 
+     * @param aliases
+     * @param offer
+     * @param privatekey
      */
     public offerlist (aliases?: Array<string>, offer?: string, privatekey?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Offer>> {
         const path = this.basePath + '/offerlist';
@@ -349,7 +349,7 @@ export class OffersApi {
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
         if (aliases !== undefined) {
-            queryParameters.set('aliases', aliases);
+            queryParameters.set('aliases', JSON.stringify(aliases));
         }
 
         if (offer !== undefined) {
@@ -371,9 +371,9 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * Create a new offer on the Syscoin decentralized marketplace. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public offernew (request: models.OfferNewRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/offernew';
@@ -396,9 +396,9 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * Remove from the affiliate list of your offer(controls who can resell). Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public offerremovewhitelist (request: models.OfferRemoveWhitelistRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/offerremovewhitelist';
@@ -421,9 +421,9 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * Perform an update on an offer you control. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public offerupdate (request: models.OfferUpdateRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/offerupdate';
@@ -446,9 +446,9 @@ export class OffersApi {
     }
 
     /**
-     * 
+     *
      * List all affiliates for this offer.
-     * @param offerguid 
+     * @param offerguid
      */
     public offerwhitelist (offerguid: string, extraHttpRequestParams?: any ) : Observable<Array<models.OfferWhitelistEntry>> {
         const path = this.basePath + '/offerwhitelist';

@@ -20,9 +20,9 @@ export class MessagingApi {
     }
 
     /**
-     * 
+     *
      * Show stored values of a single message.
-     * @param guid 
+     * @param guid
      */
     public messageinfo (guid: string, extraHttpRequestParams?: any ) : Observable<models.Message> {
         const path = this.basePath + '/messageinfo';
@@ -48,9 +48,9 @@ export class MessagingApi {
     }
 
     /**
-     * 
+     *
      * Create a new Syscoin encrypted message.
-     * @param request 
+     * @param request
      */
     public messagenew (request: models.MessageNewRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/messagenew';
@@ -73,11 +73,11 @@ export class MessagingApi {
     }
 
     /**
-     * 
+     *
      * List received messages that an array of aliases own. Set of aliases to look up based on alias, and private key to decrypt any data found in message.
-     * @param aliases 
-     * @param message 
-     * @param privatekey 
+     * @param aliases
+     * @param message
+     * @param privatekey
      */
     public messagereceivelist (aliases?: Array<string>, message?: string, privatekey?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Message>> {
         const path = this.basePath + '/messagereceivelist';
@@ -85,7 +85,7 @@ export class MessagingApi {
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
         if (aliases !== undefined) {
-            queryParameters.set('aliases', aliases);
+            queryParameters.set('aliases', JSON.stringify(aliases));
         }
 
         if (message !== undefined) {
@@ -107,11 +107,11 @@ export class MessagingApi {
     }
 
     /**
-     * 
+     *
      * List sent messages that an array of aliases own. Set of aliases to look up based on alias, and private key to decrypt any data found in message.
-     * @param aliases 
-     * @param message 
-     * @param privatekey 
+     * @param aliases
+     * @param message
+     * @param privatekey
      */
     public messagesentlist (aliases?: Array<string>, message?: string, privatekey?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Message>> {
         const path = this.basePath + '/messagesentlist';
@@ -119,7 +119,7 @@ export class MessagingApi {
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
         if (aliases !== undefined) {
-            queryParameters.set('aliases', aliases);
+            queryParameters.set('aliases', JSON.stringify(aliases));
         }
 
         if (message !== undefined) {

@@ -13,16 +13,20 @@ export class GeneralApi {
     protected basePath = 'http://localhost:8001';
     public defaultHeaders : Headers = new Headers();
 
-    constructor(protected http: Http, @Optional() basePath: string) {
+    constructor(protected http: Http, @Optional() basePath: string, token: string) {
         if (basePath) {
             this.basePath = basePath;
+        }
+
+        if(token) {
+          this.defaultHeaders.append("token", token);
         }
     }
 
     /**
-     * 
+     *
      * Add a nrequired-to-sign multisignature address to the wallet. Each key is a Syscoin address or hex-encoded public key. If &#39;account&#39; is specified (DEPRECATED), assign address to that account.
-     * @param request 
+     * @param request
      */
     public addmultisigaddress (request: models.AddMultisigAddressRequest, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/addmultisigaddress';
@@ -45,7 +49,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Reveals the private key corresponding to &#39;syscoinaddress&#39;. Then the importprivkey can be used with this output.
      * @param address The syscoin address for the private key
      */
@@ -73,7 +77,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Dumps all wallet keys in a human-readable format.
      * @param filename The filename
      */
@@ -101,7 +105,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * DEPRECATED. Returns the account associated with the given address.
      * @param syscoinaddress The syscoin address for account lookup.
      */
@@ -129,7 +133,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * DEPRECATED. Returns the current Syscoin address for receiving payments to this account.
      * @param account The account name for the address. It can also be set to the empty string \&quot;\&quot; to represent the default account. The account does not need to exist, it will be created and a new address created  if there is no account by the given name.
      */
@@ -157,9 +161,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * DEPRECATED. Returns the list of addresses for the given account.
-     * @param account 
+     * @param account
      */
     public getaddressesbyaccount (account: string, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/getaddressesbyaccount';
@@ -185,7 +189,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * If account is not specified, returns the server&#39;s total available balance. If account is specified (DEPRECATED), returns the balance in the account. Note that the account \&quot;\&quot; is not the same as leaving the parameter out. The server total may be different to the balance in the default \&quot;\&quot; account.
      * @param account DEPRECATED. The selected account, or \&quot;*\&quot; for entire wallet. It may be the default account using \&quot;\&quot;.
      * @param minconf Only include transactions confirmed at least this many times.
@@ -201,11 +205,11 @@ export class GeneralApi {
         }
 
         if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+            queryParameters.set('minconf', JSON.stringify(minconf));
         }
 
         if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+            queryParameters.set('includeWatchonly', JSON.stringify(includeWatchonly));
         }
 
         let requestOptions: RequestOptionsArgs = {
@@ -219,7 +223,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Returns an object containing various state info.
      */
     public getinfo (extraHttpRequestParams?: any ) : Observable<models.Info> {
@@ -238,7 +242,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Returns a json object containing mining-related information.
      */
     public getmininginfo (extraHttpRequestParams?: any ) : Observable<models.MiningInfo> {
@@ -257,9 +261,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Returns a new Syscoin address for receiving payments. If &#39;account&#39; is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to &#39;account&#39;.
-     * @param request 
+     * @param request
      */
     public getnewaddress (request?: models.GetNewAddressRequest, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/getnewaddress';
@@ -278,7 +282,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Returns data about each connected network node as a json array of objects.
      */
     public getpeerinfo (extraHttpRequestParams?: any ) : Observable<models.PeerInfoResponse> {
@@ -297,7 +301,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * DEPRECATED. Returns the total amount received by addresses with &lt;account&gt; in transactions with at least [minconf] confirmations.
      * @param account The selected account, may be the default account using \&quot;\&quot;.
      * @param minconf Only include transactions confirmed at least this many times.
@@ -316,7 +320,7 @@ export class GeneralApi {
         }
 
         if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+            queryParameters.set('minconf', JSON.stringify(minconf));
         }
 
         let requestOptions: RequestOptionsArgs = {
@@ -330,7 +334,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Returns the total amount received by the given syscoinaddress in transactions with at least minconf confirmations.
      * @param syscoinaddress The syscoin address for transactions.
      * @param minconf Only include transactions confirmed at least this many times.
@@ -349,7 +353,7 @@ export class GeneralApi {
         }
 
         if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+            queryParameters.set('minconf', JSON.stringify(minconf));
         }
 
         let requestOptions: RequestOptionsArgs = {
@@ -363,7 +367,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Get detailed information about in-wallet transaction &lt;txid&gt;
      * @param txid The transaction id
      * @param includeWatchonly Whether to include watchonly addresses in balance calculation and details[]
@@ -382,7 +386,7 @@ export class GeneralApi {
         }
 
         if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+            queryParameters.set('includeWatchonly', JSON.stringify(includeWatchonly));
         }
 
         let requestOptions: RequestOptionsArgs = {
@@ -396,7 +400,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Returns the server&#39;s total unconfirmed balance
      */
     public getunconfirmedbalance (extraHttpRequestParams?: any ) : Observable<number> {
@@ -415,7 +419,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Returns a new Syscoin (starts with 1) address for receiving payments. If &#39;account&#39; is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to &#39;account&#39;.
      * @param account DEPRECATED. The account name for the address to be linked to. If not provided, the default account \&quot;\&quot; is used. It can also be set to the empty string \&quot;\&quot; to represent the default account. The account does not need to exist, it will be created if there is no account by the given name.
      */
@@ -439,7 +443,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Returns an object containing various wallet state info.
      */
     public getwalletinfo (extraHttpRequestParams?: any ) : Observable<models.WalletInfo> {
@@ -458,9 +462,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Returns a new ZCash address for receiving payments in ZCash transaparent tokens. so payments received with the address will be credited to &#39;account&#39;.
-     * @param address 
+     * @param address
      */
     public getzaddress (address: string, extraHttpRequestParams?: any ) : Observable<models.WalletInfo> {
         const path = this.basePath + '/getzaddress';
@@ -486,9 +490,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Adds a script (in hex) or address that can be watched as if it were in your wallet but cannot be used to spend.
-     * @param request 
+     * @param request
      */
     public importaddress (request: models.ImportAddressRequest, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/importaddress';
@@ -511,9 +515,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Adds a private key (as returned by dumpprivkey) to your wallet.
-     * @param request 
+     * @param request
      */
     public importprivkey (request: models.ImportPrivKeyRequest, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/importprivkey';
@@ -536,10 +540,10 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Imports funds without rescan. Corresponding address or script must previously be included in wallet. Aimed towards pruned wallets. The end-user is responsible to import additional transactions that subsequently spend the imported outputs or rescan after the point in the blockchain the transaction is included.
-     * @param rawtransaction 
-     * @param txoutproof 
+     * @param rawtransaction
+     * @param txoutproof
      */
     public importprunedfunds (rawtransaction: string, txoutproof: string, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/importprunedfunds';
@@ -573,9 +577,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Adds a public key (in hex) that can be watched as if it were in your wallet but cannot be used to spend.
-     * @param request 
+     * @param request
      */
     public importpubkey (request: models.ImportPubKeyRequest, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/importpubkey';
@@ -598,9 +602,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Imports keys from a wallet dump file (see dumpwallet).
-     * @param request 
+     * @param request
      */
     public importwallet (request: models.ImportWalletRequest, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/importwallet';
@@ -623,7 +627,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * DEPRECATED. Returns Object that has account names as keys, account balances as values.
      * @param minconf Only include transactions with at least this many confirmations
      * @param includeWatchonly Include balances in watchonly addresses (see &#39;importaddress&#39;)
@@ -634,11 +638,11 @@ export class GeneralApi {
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
         if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+            queryParameters.set('minconf', JSON.stringify(minconf));
         }
 
         if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+            queryParameters.set('includeWatchonly', JSON.stringify(includeWatchonly));
         }
 
         let requestOptions: RequestOptionsArgs = {
@@ -652,7 +656,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Lists groups of addresses which have had their common ownership made public by common use as inputs or as the resulting change in past transactions
      */
     public listaddressgroupings (extraHttpRequestParams?: any ) : Observable<Array<Array<models.AddressGrouping>>> {
@@ -671,7 +675,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * DEPRECATED. List balances by account.
      * @param minconf Only include transactions confirmed at least this many times.
      * @param includeempty Whether to include accounts that haven&#39;t received any payments.
@@ -683,15 +687,15 @@ export class GeneralApi {
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
         if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+            queryParameters.set('minconf', JSON.stringify(minconf));
         }
 
         if (includeempty !== undefined) {
-            queryParameters.set('includeempty', includeempty);
+            queryParameters.set('includeempty', JSON.stringify(includeempty));
         }
 
         if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+            queryParameters.set('includeWatchonly', JSON.stringify(includeWatchonly));
         }
 
         let requestOptions: RequestOptionsArgs = {
@@ -705,7 +709,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * List balances by receiving address.
      * @param minconf Only include transactions confirmed at least this many times.
      * @param includeempty Whether to include accounts that haven&#39;t received any payments.
@@ -717,15 +721,15 @@ export class GeneralApi {
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
         if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+            queryParameters.set('minconf', JSON.stringify(minconf));
         }
 
         if (includeempty !== undefined) {
-            queryParameters.set('includeempty', includeempty);
+            queryParameters.set('includeempty', JSON.stringify(includeempty));
         }
 
         if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+            queryParameters.set('includeWatchonly', JSON.stringify(includeWatchonly));
         }
 
         let requestOptions: RequestOptionsArgs = {
@@ -739,11 +743,11 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Get all transactions in blocks since block [blockhash], or all transactions if omitted
      * @param blockhash The block hash to list transactions since
      * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     * @param targetConfirmations 
+     * @param targetConfirmations
      */
     public listsinceblock (blockhash?: string, includeWatchonly?: boolean, targetConfirmations?: number, extraHttpRequestParams?: any ) : Observable<Array<models.ListSinceBlockResponse>> {
         const path = this.basePath + '/listsinceblock';
@@ -755,11 +759,11 @@ export class GeneralApi {
         }
 
         if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+            queryParameters.set('includeWatchonly', JSON.stringify(includeWatchonly));
         }
 
         if (targetConfirmations !== undefined) {
-            queryParameters.set('target-confirmations', targetConfirmations);
+            queryParameters.set('target-confirmations', JSON.stringify(targetConfirmations));
         }
 
         let requestOptions: RequestOptionsArgs = {
@@ -773,7 +777,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Returns up to &#39;count&#39; most recent transactions skipping the first &#39;from&#39; transactions for account &#39;account&#39;.
      * @param account DEPRECATED. The account name. Should be \&quot;*\&quot;.
      * @param count The number of transactions to return
@@ -790,15 +794,15 @@ export class GeneralApi {
         }
 
         if (count !== undefined) {
-            queryParameters.set('count', count);
+            queryParameters.set('count', JSON.stringify(count));
         }
 
         if (from !== undefined) {
-            queryParameters.set('from', from);
+            queryParameters.set('from', JSON.stringify(from));
         }
 
         if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+            queryParameters.set('includeWatchonly', JSON.stringify(includeWatchonly));
         }
 
         let requestOptions: RequestOptionsArgs = {
@@ -812,9 +816,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * DEPRECATED. Move a specified amount from one account in your wallet to another.
-     * @param request 
+     * @param request
      */
     public move (request: models.MoveRequest, extraHttpRequestParams?: any ) : Observable<boolean> {
         const path = this.basePath + '/move';
@@ -837,9 +841,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Deletes the specified transaction from the wallet. Meant for use with pruned wallets and as a companion to importprunedfunds. This will effect wallet balances.
-     * @param txid 
+     * @param txid
      */
     public removeprunedfunds (txid: string, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/removeprunedfunds';
@@ -865,9 +869,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * DEPRECATED (use sendtoaddress). Sent an amount from an account to a syscoin address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public sendfrom (request: models.SendFromRequest, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/sendfrom';
@@ -890,9 +894,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public sendmany (request: models.SendManyRequest, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/sendmany';
@@ -915,9 +919,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Send an amount to a given address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public sendtoaddress (request: models.SendToAddressRequest, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/sendtoaddress';
@@ -940,9 +944,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Sign a message with the private key of an address. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public signmessage (request: models.SignMessageRequest, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/signmessage';
@@ -965,10 +969,10 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Decode raw syscoin transaction (serialized, hex-encoded) and display information pertaining to the service that is included in the transactiion data output(OP_RETURN)
-     * @param alias 
-     * @param hexstring 
+     * @param alias
+     * @param hexstring
      */
     public syscoindecoderawtransaction (alias: string, hexstring: string, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/syscoindecoderawtransaction';
@@ -1002,9 +1006,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Sign inputs for raw transaction (serialized, hex-encoded) and sends them out to the network if signing is complete
-     * @param hexstring 
+     * @param hexstring
      */
     public syscoinsignrawtransaction (hexstring: string, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/syscoinsignrawtransaction';
@@ -1030,9 +1034,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Return information about the given syscoin address.
-     * @param syscoinaddress 
+     * @param syscoinaddress
      */
     public validateaddress (syscoinaddress: string, extraHttpRequestParams?: any ) : Observable<models.ValidateAddressResponse> {
         const path = this.basePath + '/validateaddress';
@@ -1058,7 +1062,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Verify a signed message
      * @param syscoinaddress The syscoin address to use for the signature.
      * @param signature The signature provided by the signer in base 64 encoding (see signmessage).
@@ -1104,7 +1108,7 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Removes the wallet encryption key from memory, locking the wallet. After calling this method, you will need to call walletpassphrase again before being able to call any methods which require the wallet to be unlocked.
      */
     public walletlock (extraHttpRequestParams?: any ) : Observable<string> {
@@ -1123,9 +1127,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Stores the wallet decryption key in memory for &#39;timeout&#39; seconds. This is needed prior to performing transactions related to private keys such as sending syscoins
-     * @param request 
+     * @param request
      */
     public walletpassphrase (request: models.WalletPassphraseRequest, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/walletpassphrase';
@@ -1148,9 +1152,9 @@ export class GeneralApi {
     }
 
     /**
-     * 
+     *
      * Changes the wallet passphrase from &#39;oldpassphrase&#39; to &#39;newpassphrase&#39;.
-     * @param request 
+     * @param request
      */
     public walletpassphrasechange (request: models.WalletPassphraseChangeRequest, extraHttpRequestParams?: any ) : Observable<string> {
         const path = this.basePath + '/walletpassphrasechange';

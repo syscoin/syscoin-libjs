@@ -2,7 +2,7 @@
 import * as models from './models';
 
 export interface Offer {
-    
+
 
     offer?: string;
 
@@ -54,7 +54,7 @@ export interface Offer {
 
     description?: string;
 
-    alias&quot;?: string;
+    alias?: string;
 
     address?: string;
 

@@ -20,9 +20,9 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * Send multiple times from an alias. Amounts are double-precision floating point numbers.
-     * @param request 
+     * @param request
      */
     public aliaspay (request: models.AliasPayRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/aliaspay';
@@ -45,9 +45,9 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * Acknowledge escrow payment as seller of offer. Deducts qty of offer and increases number of sold inventory.
-     * @param escrowguid 
+     * @param escrowguid
      */
     public escrowacknowledge (escrowguid: string, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/escrowacknowledge';
@@ -73,9 +73,9 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * Claim escrow funds released from seller or arbiter using escrowrefund. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public escrowclaimrefund (request: models.EscrowClaimRefundRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/escrowclaimrefund';
@@ -98,9 +98,9 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * Claim escrow funds released from buyer or arbiter using escrowrelease. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public escrowclaimrelease (request: models.EscrowClaimReleaseRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/escrowclaimrelease';
@@ -123,9 +123,9 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * Completes an escrow refund by creating the escrow complete refund transaction on syscoin blockchain.
-     * @param request 
+     * @param request
      */
     public escrowcompleterefund (request: models.EscrowCompleteRefundRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/escrowcompleterefund';
@@ -148,9 +148,9 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * Completes an escrow release by creating the escrow complete release transaction on syscoin blockchain.
-     * @param request 
+     * @param request
      */
     public escrowcompleterelease (request: models.EscrowCompleteReleaseRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/escrowcompleterelease';
@@ -173,9 +173,9 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * Send feedback for primary and secondary users in escrow, depending on who you are. Ratings are numbers from 1 to 5. User Role is either &#39;buyer&#39;, &#39;seller&#39;, &#39;reseller&#39;, or &#39;arbiter&#39;. If you are the buyer, feedbackprimary is for seller and feedbacksecondary is for arbiter. If you are the seller, feedbackprimary is for buyer and feedbacksecondary is for arbiter. If you are the arbiter, feedbackprimary is for buyer and feedbacksecondary is for seller. If arbiter didn&#39;t do any work for this escrow you can leave his feedback empty and rating as a 0.
-     * @param request 
+     * @param request
      */
     public escrowfeedback (request: models.EscrowFeedbackRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/escrowfeedback';
@@ -198,7 +198,7 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * scan and filter escrows
      * @param regexp Apply [regexp] on escrows, empty means all escrows
      * @param from Show results from this GUID [from], 0 means first.
@@ -217,7 +217,7 @@ export class EscrowApi {
         }
 
         if (from !== undefined) {
-            queryParameters.set('from', from);
+            queryParameters.set('from', JSON.stringify(from));
         }
 
         let requestOptions: RequestOptionsArgs = {
@@ -231,7 +231,7 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * List all stored values of an escrow.
      * @param escrow GUID of escrow
      */
@@ -259,7 +259,7 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * Show stored values of a single escrow
      * @param escrow GUID of escrow
      */
@@ -287,7 +287,7 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * List escrows that an array of aliases are involved in. Set of aliases to look up based on alias, and private key to decrypt any data found in escrow.
      * @param aliases List of aliases to display escrows from
      * @param escrow GUID of escrow
@@ -303,7 +303,7 @@ export class EscrowApi {
             throw new Error('Missing required parameter aliases when calling escrowlist');
         }
         if (aliases !== undefined) {
-            queryParameters.set('aliases', aliases);
+            queryParameters.set('aliases', JSON.stringify(aliases));
         }
 
         if (escrow !== undefined) {
@@ -325,9 +325,9 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * Create new arbitrated Syscoin escrow.
-     * @param request 
+     * @param request
      */
     public escrownew (request: models.EscrowNewRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/escrownew';
@@ -350,9 +350,9 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * Refunds escrow funds back to buyer, buyer needs to sign the output transaction and send to the network. User role represents either &#39;seller&#39; or &#39;arbiter&#39;. Enter in rawTx if this is an external payment refund.
-     * @param request 
+     * @param request
      */
     public escrowrefund (request: models.EscrowRefundRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/escrowrefund';
@@ -375,9 +375,9 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * Releases escrow funds to seller, seller needs to sign the output transaction and send to the network. User role represents either &#39;buyer&#39; or &#39;arbiter&#39;. Enter in rawTx if this is an external payment release.
-     * @param request 
+     * @param request
      */
     public escrowrelease (request: models.EscrowReleaseRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/escrowrelease';
@@ -400,9 +400,9 @@ export class EscrowApi {
     }
 
     /**
-     * 
+     *
      * Generates a multisignature escrow transaction
-     * @param request 
+     * @param request
      */
     public generateescrowmultisig (request: models.GenerateEscrowMultisigRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/generateescrowmultisig';
