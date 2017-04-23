@@ -21,6 +21,8 @@ export class GeneralApi {
         if(token) {
           this.defaultHeaders.append("token", token);
         }
+
+        this.defaultHeaders.append("Content-Type", "application/json");
     }
 
     /**
