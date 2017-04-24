@@ -13,9 +13,15 @@ export class CertificatesApi {
     protected basePath = 'http://localhost:8001';
     public defaultHeaders : Headers = new Headers();
 
-    constructor(protected http: Http, @Optional() basePath: string) {
+    constructor(protected http: Http, @Optional() basePath: string, token: string) {
         if (basePath) {
             this.basePath = basePath;
+        }
+
+        this.defaultHeaders.append("Content-Type", "application/json");
+
+        if(token) {
+          this.defaultHeaders.append("token", token);
         }
     }
 

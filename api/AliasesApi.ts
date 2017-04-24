@@ -13,14 +13,20 @@ export class AliasesApi {
     protected basePath = 'http://localhost:8001';
     public defaultHeaders : Headers = new Headers();
 
-    constructor(protected http: Http, @Optional() basePath: string) {
+    constructor(protected http: Http, @Optional() basePath: string, token: string) {
         if (basePath) {
             this.basePath = basePath;
+        }
+
+        this.defaultHeaders.append("Content-Type", "application/json");
+
+        if(token) {
+          this.defaultHeaders.append("token", token);
         }
     }
 
     /**
-     * 
+     *
      * list affiliations with merchant offers.
      */
     public aliasaffiliates (extraHttpRequestParams?: any ) : Observable<Array<any>> {
@@ -39,10 +45,10 @@ export class AliasesApi {
     }
 
     /**
-     * 
+     *
      * Authenticates an alias with a provided password and returns the private key if successful. Warning: Calling this function over a public network can lead to someone reading your password/private key in plain text.
-     * @param alias 
-     * @param password 
+     * @param alias
+     * @param password
      */
     public aliasauthenticate (alias: string, password: string, extraHttpRequestParams?: any ) : Observable<Array<any>> {
         const path = this.basePath + '/aliasauthenticate';
@@ -76,7 +82,7 @@ export class AliasesApi {
     }
 
     /**
-     * 
+     *
      * Filter aliases [regexp] : apply [regexp] on aliases, empty means all aliases [from] : show results from this GUID [from], empty means first. [aliasfilter] : shows all aliases that are safe to display (not on the ban list) aliasfilter \&quot;\&quot; 5 &#x3D; list aliases updated in last 5 blocks aliasfilter \&quot;^alias\&quot; &#x3D; list all aliases starting with \&quot;alias\&quot; aliasfilter 36000 0 0 stat &#x3D; display stats (number of aliases) on active aliases
      * @param regexp apply [regexp] on aliases, empty means all aliases
      * @param from show results from this GUID [from], empty means first
@@ -114,9 +120,9 @@ export class AliasesApi {
     }
 
     /**
-     * 
+     *
      * List all stored values of an alias.
-     * @param aliasname 
+     * @param aliasname
      */
     public aliashistory (aliasname: string, extraHttpRequestParams?: any ) : Observable<Array<models.AliasHistoryEntry>> {
         const path = this.basePath + '/aliashistory';
@@ -142,9 +148,9 @@ export class AliasesApi {
     }
 
     /**
-     * 
+     *
      * Show values of an alias.
-     * @param aliasname 
+     * @param aliasname
      */
     public aliasinfo (aliasname: string, extraHttpRequestParams?: any ) : Observable<models.Alias> {
         const path = this.basePath + '/aliasinfo';
@@ -170,7 +176,7 @@ export class AliasesApi {
     }
 
     /**
-     * 
+     *
      * List my own aliases.
      * @param aliasname Alias name to use as filter.
      */
@@ -194,9 +200,9 @@ export class AliasesApi {
     }
 
     /**
-     * 
+     *
      * Creates a new Syscoin Alias. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public aliasnew (request: models.AliasNewRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/aliasnew';
@@ -219,9 +225,9 @@ export class AliasesApi {
     }
 
     /**
-     * 
+     *
      * Update and possibly transfer an alias. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
+     * @param request
      */
     public aliasupdate (request: models.AliasUpdateRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
         const path = this.basePath + '/aliasupdate';

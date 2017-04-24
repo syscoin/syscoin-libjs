@@ -18,11 +18,11 @@ export class GeneralApi {
             this.basePath = basePath;
         }
 
+        this.defaultHeaders.append("Content-Type", "application/json");
+
         if(token) {
           this.defaultHeaders.append("token", token);
         }
-
-        this.defaultHeaders.append("Content-Type", "application/json");
     }
 
     /**
