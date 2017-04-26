@@ -2,7 +2,7 @@
 import * as models from './models';
 
 export interface Message {
-    
+
 
     gUID?: string;
 
