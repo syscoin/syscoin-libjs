@@ -23,4 +23,6 @@ export interface CertHistoryEntry {
     expiresOn?: number;
 
     expired?: boolean;
+
+    time?: string;
 }

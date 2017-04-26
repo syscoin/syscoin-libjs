@@ -2,7 +2,7 @@
 import * as models from './models';
 
 export interface Offer {
-
+    
 
     offer?: string;
 
@@ -54,7 +54,7 @@ export interface Offer {
 
     description?: string;
 
-    alias?: string;
+    alias&quot;?: string;
 
     address?: string;
 
@@ -67,4 +67,6 @@ export interface Offer {
     geolocation?: string;
 
     offersSold?: number;
+
+    time?: string;
 }

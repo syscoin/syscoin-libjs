@@ -27,4 +27,6 @@ export interface EscrowHistoryEntry {
     expired?: boolean;
 
     height?: number;
+
+    time?: string;
 }

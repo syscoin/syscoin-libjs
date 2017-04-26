@@ -56,5 +56,7 @@ export interface Alias {
 
     pending?: boolean;
 
+    time?: string;
+
     multisiginfo?: models.MultiSignatureInfo;
 }

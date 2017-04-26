@@ -21,4 +21,6 @@ export interface CertListEntry {
     address?: string;
 
     alias?: string;
+
+    time?: string;
 }

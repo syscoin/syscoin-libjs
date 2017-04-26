@@ -39,4 +39,6 @@ export interface OfferAccept {
     status?: string;
 
     payMessage?: string;
+
+    time?: string;
 }

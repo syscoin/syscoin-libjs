@@ -27,4 +27,6 @@ export interface Cert {
     expiresOn?: number;
 
     expired?: boolean;
+
+    time?: string;
 }
