@@ -1,15 +1,7 @@
 export * from './AliasesApi';
-import { AliasesApi }  from './AliasesApi';
 export * from './BlockmarketApi';
-import { BlockmarketApi }  from './BlockmarketApi';
 export * from './CertificatesApi';
-import { CertificatesApi }  from './CertificatesApi';
 export * from './EscrowApi';
-import { EscrowApi }  from './EscrowApi';
 export * from './GeneralApi';
-import { GeneralApi }  from './GeneralApi';
 export * from './MessagingApi';
-import { MessagingApi }  from './MessagingApi';
 export * from './OffersApi';
-import { OffersApi }  from './OffersApi';
-export const APIS = [ AliasesApi, BlockmarketApi, CertificatesApi, EscrowApi, GeneralApi, MessagingApi, OffersApi, ];
