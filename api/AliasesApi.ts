@@ -88,7 +88,7 @@ export class AliasesApi {
      * @param from show results from this GUID [from], empty means first
      * @param safesearch shows all aliases that are safe to display (not on the ban list)
      */
-    public aliasfilter (regexp: string, from?: string, safesearch?: string, extraHttpRequestParams?: any ) : Observable<Array<models.AliasListEntry>> {
+    public aliasfilter (regexp: string, from?: string, safesearch?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Alias>> {
         const path = this.basePath + '/aliasfilter';
 
         let queryParameters = new URLSearchParams();
@@ -180,7 +180,7 @@ export class AliasesApi {
      * List my own aliases.
      * @param aliasname Alias name to use as filter.
      */
-    public aliaslist (aliasname?: string, extraHttpRequestParams?: any ) : Observable<Array<models.AliasListEntry>> {
+    public aliaslist (aliasname?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Alias>> {
         const path = this.basePath + '/aliaslist';
 
         let queryParameters = new URLSearchParams();

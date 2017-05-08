@@ -34,7 +34,7 @@ export class CertificatesApi {
      * @param safesearch shows all certs that are safe to display (not on the ban list)
      * @param category category you want to search in, empty for all
      */
-    public certfilter (regexp?: string, from?: string, certfilter?: string, safesearch?: string, category?: string, extraHttpRequestParams?: any ) : Observable<Array<models.CertListEntry>> {
+    public certfilter (regexp?: string, from?: string, certfilter?: string, safesearch?: string, category?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Cert>> {
         const path = this.basePath + '/certfilter';
 
         let queryParameters = new URLSearchParams();
@@ -132,7 +132,7 @@ export class CertificatesApi {
      * @param cert
      * @param privatekey
      */
-    public certlist (aliases?: Array<string>, cert?: string, privatekey?: string, extraHttpRequestParams?: any ) : Observable<Array<models.CertListEntry>> {
+    public certlist (aliases?: Array<string>, cert?: string, privatekey?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Cert>> {
         const path = this.basePath + '/certlist';
 
         let queryParameters = new URLSearchParams();
