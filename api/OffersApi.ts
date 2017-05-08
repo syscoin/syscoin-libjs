@@ -232,7 +232,7 @@ export class OffersApi {
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
         // verify required parameter 'regexp' is set
-        if (!regexp) {
+        if ((regexp === null || regexp === undefined)) {
             throw new Error('Missing required parameter regexp when calling offerfilter');
         }
         if (regexp !== undefined) {
