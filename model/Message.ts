@@ -15,6 +15,8 @@ import * as models from './models';
 export interface Message {
     GUID?: string;
 
+    txid?: string;
+
     time?: number;
 
     from?: string;

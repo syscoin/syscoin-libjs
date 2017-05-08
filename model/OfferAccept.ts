@@ -15,40 +15,52 @@ import * as models from './models';
 export interface OfferAccept {
     offer?: string;
 
-    title?: string;
-
     id?: string;
 
-    btctxid?: string;
+    txid?: string;
 
-    alias?: string;
+    title?: string;
 
-    buyer?: string;
+    exttxid?: string;
+
+    paymentoption?: number;
+
+    paymentoption_display?: string;
 
     height?: number;
+
+    time?: string;
 
     quantity?: number;
 
     currency?: string;
 
-    linkofferaccept?: string;
-
     offer_discount_percentage?: number;
 
-    escrowlink?: string;
-
     systotal?: number;
+
+    sysprice?: number;
 
     price?: number;
 
     total?: number;
 
+    buyer?: string;
+
+    seller?: string;
+
     ismine?: boolean;
 
     status?: string;
 
-    pay_message?: string;
+    buyer_fedback?: Array<string>;
 
-    time?: string;
+    seller_fedback?: Array<string>;
+
+    avg_rating?: number;
+
+    avg_rating_display?: string;
+
+    pay_message?: string;
 
 }
