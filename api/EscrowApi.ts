@@ -27,31 +27,6 @@ export class EscrowApi {
 
     /**
      *
-     * Send multiple times from an alias. Amounts are double-precision floating point numbers.
-     * @param request
-     */
-    public aliaspay (request: models.AliasPayRequest, extraHttpRequestParams?: any ) : Observable<Array<string>> {
-        const path = this.basePath + '/aliaspay';
-
-        let queryParameters = new URLSearchParams();
-        let headerParams = this.defaultHeaders;
-        // verify required parameter 'request' is set
-        if (!request) {
-            throw new Error('Missing required parameter request when calling aliaspay');
-        }
-        let requestOptions: RequestOptionsArgs = {
-            method: 'POST',
-            headers: headerParams,
-            search: queryParameters
-        };
-        requestOptions.body = JSON.stringify(request);
-
-        return this.http.request(path, requestOptions)
-            .map((response: Response) => response.json());
-    }
-
-    /**
-     *
      * Acknowledge escrow payment as seller of offer. Deducts qty of offer and increases number of sold inventory.
      * @param escrowguid
      */
