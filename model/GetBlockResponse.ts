@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import * as models from '../../../../../Downloads/typescript-angular2-client 6/model/models';
+import * as models from './models';
 
 export interface GetBlockResponse {
     /**
