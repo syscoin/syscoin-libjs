@@ -7,6 +7,8 @@ import 'rxjs/Rx';
 /* tslint:disable:no-unused-variable member-ordering */
 
 'use strict';
+import { GetBlockResponse } from "../model/GetBlockResponse";
+import { GetBlockchainInfoResponse } from "../model/GetBlockchainInfoResponse";
 
 @Injectable()
 export class GeneralApi {
@@ -226,6 +228,73 @@ export class GeneralApi {
 
     /**
      *
+     * ﻿If verbose is false, returns a string that is serialized, hex-encoded data for block &#39;hash&#39;. If verbose is true, returns an Object with information about block &lt;hash&gt;.
+     * @param hash
+     * @param verbose
+     */
+    public getblock(hash: string, verbose?: boolean, extraHttpRequestParams?: any): Observable<GetBlockResponse> {
+      const path = this.basePath + '/getblock';
+
+      let queryParameters = new URLSearchParams();
+      let headerParams = this.defaultHeaders;
+      if (hash !== undefined) {
+        queryParameters.set('hash', hash);
+      }
+
+      if (verbose !== undefined) {
+        queryParameters.set('verbose', JSON.stringify(verbose));
+      }
+
+      let requestOptions: RequestOptionsArgs = {
+        method: 'GET',
+        headers: headerParams,
+        search: queryParameters
+      };
+
+      return this.http.request(path, requestOptions)
+        .map((response: Response) => response.json());
+    }
+
+    /**
+     *
+     * Returns an object containing various state info regarding block chain processing.
+     */
+    public getblockchaininfo(extraHttpRequestParams?: any): Observable<GetBlockchainInfoResponse> {
+      const path = this.basePath + '/getblockchaininfo';
+
+      let queryParameters = new URLSearchParams();
+      let headerParams = this.defaultHeaders;
+      let requestOptions: RequestOptionsArgs = {
+        method: 'GET',
+        headers: headerParams,
+        search: queryParameters
+      };
+
+      return this.http.request(path, requestOptions)
+        .map((response: Response) => response.json());
+    }
+
+    /**
+     *
+     * Returns the number of blocks in the longest block chain.
+     */
+    public getblockcount(extraHttpRequestParams?: any): Observable<number> {
+      const path = this.basePath + '/getblockcount';
+
+      let queryParameters = new URLSearchParams();
+      let headerParams = this.defaultHeaders;
+      let requestOptions: RequestOptionsArgs = {
+        method: 'GET',
+        headers: headerParams,
+        search: queryParameters
+      };
+
+      return this.http.request(path, requestOptions)
+        .map((response: Response) => response.json());
+    }
+
+    /**
+     *
      * Returns an object containing various state info.
      */
     public getinfo (extraHttpRequestParams?: any ) : Observable<models.Info> {
@@ -242,6 +311,8 @@ export class GeneralApi {
         return this.http.request(path, requestOptions)
             .map((response: Response) => response.json());
     }
+
+
 
     /**
      *

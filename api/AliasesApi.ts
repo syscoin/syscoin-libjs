@@ -83,6 +83,35 @@ export class AliasesApi {
 
     /**
      *
+     * Returns the total amount received by the given alias in transactions with at least minconf confirmations.
+     * @param alias The syscoin alias for transactions
+     * @param minconf ﻿Only include transactions confirmed at least this many times. default&#x3D;1.
+     */
+    public aliasbalance(alias: string, minconf: number, extraHttpRequestParams?: any): Observable<number> {
+      const path = this.basePath + '/aliasbalance';
+
+      let queryParameters = new URLSearchParams();
+      let headerParams = this.defaultHeaders;
+      if (alias !== undefined) {
+        queryParameters.set('alias', alias);
+      }
+
+      if (minconf !== undefined) {
+        queryParameters.set('minconf', minconf.toString());
+      }
+
+      let requestOptions: RequestOptionsArgs = {
+        method: 'GET',
+        headers: headerParams,
+        search: queryParameters
+      };
+
+      return this.http.request(path, requestOptions)
+        .map((response: Response) => response.json());
+    }
+
+    /**
+     *
      * Filter aliases [regexp] : apply [regexp] on aliases, empty means all aliases [from] : show results from this GUID [from], empty means first. [aliasfilter] : shows all aliases that are safe to display (not on the ban list) aliasfilter \&quot;\&quot; 5 &#x3D; list aliases updated in last 5 blocks aliasfilter \&quot;^alias\&quot; &#x3D; list all aliases starting with \&quot;alias\&quot; aliasfilter 36000 0 0 stat &#x3D; display stats (number of aliases) on active aliases
      * @param regexp apply [regexp] on aliases, empty means all aliases
      * @param from show results from this GUID [from], empty means first
@@ -219,6 +248,31 @@ export class AliasesApi {
 
         return this.http.request(path, requestOptions)
             .map((response: Response) => response.json());
+    }
+
+    /**
+     *
+     * Send multiple times from an alias. Amounts are double-precision floating point numbers.
+     * @param request
+     */
+    public aliaspay(request: models.AliasPayRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+      const path = this.basePath + '/aliaspay';
+
+      let queryParameters = new URLSearchParams();
+      let headerParams = this.defaultHeaders;
+      // verify required parameter 'request' is set
+      if (!request) {
+        throw new Error('Missing required parameter request when calling aliasnew');
+      }
+      let requestOptions: RequestOptionsArgs = {
+        method: 'POST',
+        headers: headerParams,
+        search: queryParameters
+      };
+      requestOptions.body = JSON.stringify(request);
+
+      return this.http.request(path, requestOptions)
+        .map((response: Response) => response.json());
     }
 
     /**
