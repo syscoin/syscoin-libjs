@@ -87,11 +87,15 @@ export class AliasesApi {
      * @param alias The syscoin alias for transactions
      * @param minconf ﻿Only include transactions confirmed at least this many times. default&#x3D;1.
      */
-    public aliasbalance(alias: string, minconf: number, extraHttpRequestParams?: any): Observable<number> {
+    public aliasbalance(alias: string, minconf?: number, extraHttpRequestParams?: any): Observable<number> {
       const path = this.basePath + '/aliasbalance';
 
       let queryParameters = new URLSearchParams();
       let headerParams = this.defaultHeaders;
+      // verify required parameter 'alias' is set
+      if (!alias) {
+        throw new Error('Missing required parameter alias when calling aliasbalance');
+      }
       if (alias !== undefined) {
         queryParameters.set('alias', alias);
       }
