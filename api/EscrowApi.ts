@@ -209,15 +209,12 @@ export class EscrowApi {
      * @param regexp Apply [regexp] on escrows, empty means all escrows
      * @param from Show results from this GUID [from], 0 means first.
      */
-    public escrowfilter (regexp: string, from?: number, extraHttpRequestParams?: any ) : Observable<Array<models.EscrowListEntry>> {
+    public escrowfilter (regexp?: string, from?: string, extraHttpRequestParams?: any ) : Observable<Array<models.EscrowListEntry>> {
         const path = this.basePath + '/escrowfilter';
 
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
-        // verify required parameter 'regexp' is set
-        if (!regexp) {
-            throw new Error('Missing required parameter regexp when calling escrowfilter');
-        }
+
         if (regexp !== undefined) {
             queryParameters.set('regexp', regexp);
         }

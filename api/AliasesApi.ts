@@ -88,15 +88,12 @@ export class AliasesApi {
      * @param from show results from this GUID [from], empty means first
      * @param safesearch shows all aliases that are safe to display (not on the ban list)
      */
-    public aliasfilter (regexp: string, from?: string, safesearch?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Alias>> {
+    public aliasfilter (regexp?: string, from?: string, safesearch?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Alias>> {
         const path = this.basePath + '/aliasfilter';
 
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
-        // verify required parameter 'regexp' is set
-        if (!regexp) {
-            throw new Error('Missing required parameter regexp when calling aliasfilter');
-        }
+
         if (regexp !== undefined) {
             queryParameters.set('regexp', regexp);
         }

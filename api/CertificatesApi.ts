@@ -28,7 +28,7 @@ export class CertificatesApi {
     /**
      *
      * scan and filter certs certfilter \&quot;\&quot; 5 &#x3D; list certs updated in last 5 blocks certfilter \&quot;^cert\&quot; &#x3D; list all certs starting with \&quot;cert\&quot; certfilter 36000 0 0 stat &#x3D; display stats (number of certs) on active certs
-     * @param regexp apply [regexp] on certes, empty means all certes
+     * @param regexp apply [regexp] on certes, empty means all certs
      * @param from show results from number [from]
      * @param certfilter shows all certs that are safe to display (not on the ban list)
      * @param safesearch shows all certs that are safe to display (not on the ban list)
@@ -39,6 +39,7 @@ export class CertificatesApi {
 
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
+
         if (regexp !== undefined) {
             queryParameters.set('regexp', regexp);
         }

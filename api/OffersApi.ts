@@ -221,20 +221,17 @@ export class OffersApi {
     /**
      *
      * scan and filter offers
-     * @param regexp apply [regexp] on offeres, empty means all offeres
+     * @param regexp apply [regexp] on offeres, empty means all offers
      * @param from show results from number [from]
      * @param safesearch shows all offers that are safe to display (not on the ban list)
      * @param category Category you want to search in, empty for all
      */
-    public offerfilter (regexp: string, from?: number, safesearch?: string, category?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Offer>> {
+    public offerfilter (regexp?: string, from?: string, safesearch?: string, category?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Offer>> {
         const path = this.basePath + '/offerfilter';
 
         let queryParameters = new URLSearchParams();
         let headerParams = this.defaultHeaders;
-        // verify required parameter 'regexp' is set
-        if ((regexp === null || regexp === undefined)) {
-            throw new Error('Missing required parameter regexp when calling offerfilter');
-        }
+
         if (regexp !== undefined) {
             queryParameters.set('regexp', regexp);
         }
