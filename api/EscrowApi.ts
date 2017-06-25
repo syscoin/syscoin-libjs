@@ -184,7 +184,7 @@ export class EscrowApi {
      * @param regexp Apply [regexp] on escrows, empty means all escrows
      * @param from Show results from this GUID [from], 0 means first.
      */
-    public escrowfilter (regexp?: string, from?: string, extraHttpRequestParams?: any ) : Observable<Array<models.EscrowListEntry>> {
+    public escrowfilter (regexp?: string, from?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Escrow>> {
         const path = this.basePath + '/escrowfilter';
 
         let queryParameters = new URLSearchParams();
@@ -213,7 +213,7 @@ export class EscrowApi {
      * List all stored values of an escrow.
      * @param escrow GUID of escrow
      */
-    public escrowhistory (escrow: string, extraHttpRequestParams?: any ) : Observable<Array<models.EscrowHistoryEntry>> {
+    public escrowhistory (escrow: string, extraHttpRequestParams?: any ) : Observable<Array<models.Escrow>> {
         const path = this.basePath + '/escrowhistory';
 
         let queryParameters = new URLSearchParams();
@@ -271,7 +271,7 @@ export class EscrowApi {
      * @param escrow GUID of escrow
      * @param privatekey private key for decoding data
      */
-    public escrowlist (aliases: Array<string>, escrow?: string, privatekey?: string, extraHttpRequestParams?: any ) : Observable<Array<models.EscrowListEntry>> {
+    public escrowlist (aliases: Array<string>, escrow?: string, privatekey?: string, extraHttpRequestParams?: any ) : Observable<Array<models.Escrow>> {
         const path = this.basePath + '/escrowlist';
 
         let queryParameters = new URLSearchParams();
