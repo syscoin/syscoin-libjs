@@ -19,8 +19,6 @@ export * from './EscrowClaimReleaseRequest';
 export * from './EscrowCompleteRefundRequest';
 export * from './EscrowCompleteReleaseRequest';
 export * from './EscrowFeedbackRequest';
-export * from './EscrowHistoryEntry';
-export * from './EscrowListEntry';
 export * from './EscrowNewRequest';
 export * from './EscrowRefundRequest';
 export * from './EscrowReleaseRequest';
