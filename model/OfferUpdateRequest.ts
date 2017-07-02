@@ -76,7 +76,7 @@ export interface OfferUpdateRequest {
     /**
      * For resold offers.
      */
-    comission?: number;
+    commission?: number;
 
     /**
      * 'SYS' to accept SYS only, 'BTC' for BTC only, 'ZEC' for zcash only, or a |-delimited string to accept multiple currencies (e.g. 'BTC|SYS' to accept BTC or SYS). Leave empty for default. Defaults to 'SYS'.

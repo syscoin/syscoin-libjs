@@ -26,7 +26,7 @@ export interface OfferLinkRequest {
     /**
      * percentage of profit desired over original offer price, > 0, ie 5 for 5%
      */
-    comission: string;
+    commission: string;
 
     /**
      * description, 1 KB max. Defaults to original description. Leave as '' to use default.
