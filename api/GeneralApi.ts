@@ -110,6 +110,39 @@ export class GeneralApi {
 
     /**
      *
+     * Encrypts the wallet with 'passphrase'. This is for first time encryption.
+     * After this, any calls that interact with private keys such as sending or signing
+     * will require the passphrase to be set prior the making these calls.
+     * Use the walletpassphrase call for this, and then walletlock call.
+     * If the wallet is already encrypted, use the walletpassphrasechange call.
+     * Note that this will shutdown the server.
+     * @param passphrase The pass phrase to encrypt the wallet with. It must be at least 1 character, but should be long.
+     */
+    public encryptwallet (passphrase: string, extraHttpRequestParams?: any ) : Observable<string> {
+        const path = this.basePath + '/encryptwallet';
+
+        let queryParameters = new URLSearchParams();
+        let headerParams = this.defaultHeaders;
+        // verify required parameter 'filename' is set
+        if (!passphrase) {
+            throw new Error('Missing required parameter passphrase when calling encryptwallet');
+        }
+        if (passphrase !== undefined) {
+            queryParameters.set('passphrase', passphrase);
+        }
+
+        let requestOptions: RequestOptionsArgs = {
+            method: 'GET',
+            headers: headerParams,
+            search: queryParameters
+        };
+
+        return this.http.request(path, requestOptions)
+          .map((response: Response) => response.json());
+    }
+
+    /**
+     *
      * DEPRECATED. Returns the account associated with the given address.
      * @param syscoinaddress The syscoin address for account lookup.
      */
