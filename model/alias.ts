@@ -70,4 +70,6 @@ export interface Alias {
 
     multisiginfo?: MultiSignatureInfo;
 
+    pubkey?: string;
+
 }
