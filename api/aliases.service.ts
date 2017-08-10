@@ -129,10 +129,9 @@ export class AliasesService {
     /**
      * 
      * Count aliases that an array of aliases own.
-     * @param aliases 
      */
-    public aliascount(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<number> {
-        return this.aliascountWithHttpInfo(aliases, extraHttpRequestParams)
+    public aliascount(extraHttpRequestParams?: any): Observable<number> {
+        return this.aliascountWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -403,17 +402,12 @@ export class AliasesService {
     /**
      * 
      * Count aliases that an array of aliases own.
-     * @param aliases 
      */
-    public aliascountWithHttpInfo(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<Response> {
+    public aliascountWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
         const path = this.basePath + '/aliascount';
 
         let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        if (aliases) {
-            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
-        }
 
 
         // to determine the Accept header
