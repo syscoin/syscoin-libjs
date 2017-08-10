@@ -22,6 +22,7 @@ import '../rxjs-operators';
 
 import { ErrorResponse } from '../model/errorResponse';
 import { Offer } from '../model/offer';
+import { OfferAccept } from '../model/offerAccept';
 import { OfferAcceptRequest } from '../model/offerAcceptRequest';
 import { OfferAddWhitelistRequest } from '../model/offerAddWhitelistRequest';
 import { OfferClearWhitelistRequest } from '../model/offerClearWhitelistRequest';
@@ -125,6 +126,25 @@ export class OffersService {
      */
     public offeracceptfeedback(offerguid: string, offeracceptguid: string, feedback?: string, rating?: number, extraHttpRequestParams?: any): Observable<Array<string>> {
         return this.offeracceptfeedbackWithHttpInfo(offerguid, offeracceptguid, feedback, rating, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * 
+     * list my offer accepts
+     * @param aliases 
+     * @param acceptguid 
+     * @param count The number of results to return
+     * @param from The number of results to skip
+     */
+    public offeracceptlist(aliases?: Array<string>, acceptguid?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<OfferAccept>> {
+        return this.offeracceptlistWithHttpInfo(aliases, acceptguid, count, from, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -488,6 +508,62 @@ export class OffersService {
             
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Post,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+        }
+
+        return this.http.request(path, requestOptions);
+    }
+
+    /**
+     * 
+     * list my offer accepts
+     * @param aliases 
+     * @param acceptguid 
+     * @param count The number of results to return
+     * @param from The number of results to skip
+     */
+    public offeracceptlistWithHttpInfo(aliases?: Array<string>, acceptguid?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offeracceptlist';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        if (aliases) {
+            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
+        }
+
+        if (acceptguid !== undefined) {
+            queryParameters.set('acceptguid', <any>acceptguid);
+        }
+
+        if (count !== undefined) {
+            queryParameters.set('count', <any>count);
+        }
+
+        if (from !== undefined) {
+            queryParameters.set('from', <any>from);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
             headers: headers,
             search: queryParameters,
             withCredentials:this.configuration.withCredentials
