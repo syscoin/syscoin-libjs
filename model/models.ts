@@ -37,7 +37,6 @@ export * from './miningInfo';
 export * from './moveRequest';
 export * from './multiSignatureInfo';
 export * from './offer';
-export * from './offerAccept';
 export * from './offerAcceptRequest';
 export * from './offerAddWhitelistRequest';
 export * from './offerClearWhitelistRequest';

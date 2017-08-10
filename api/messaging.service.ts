@@ -108,6 +108,22 @@ export class MessagingService {
 
     /**
      * 
+     * Count received messages that an array of aliases own.
+     * @param aliases 
+     */
+    public messagereceivecount(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<number> {
+        return this.messagereceivecountWithHttpInfo(aliases, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * 
      * List received messages that an array of aliases own. Set of aliases to look up based on alias, and private key to decrypt any data found in message.
      * @param aliases 
      * @param message 
@@ -116,6 +132,22 @@ export class MessagingService {
      */
     public messagereceivelist(aliases?: Array<string>, message?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<Message>> {
         return this.messagereceivelistWithHttpInfo(aliases, message, count, from, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * 
+     * Count sent messages that an array of aliases own.
+     * @param aliases 
+     */
+    public messagesentcount(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<number> {
+        return this.messagesentcountWithHttpInfo(aliases, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -236,6 +268,47 @@ export class MessagingService {
 
     /**
      * 
+     * Count received messages that an array of aliases own.
+     * @param aliases 
+     */
+    public messagereceivecountWithHttpInfo(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/messagereceivecount';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        if (aliases) {
+            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+        }
+
+        return this.http.request(path, requestOptions);
+    }
+
+    /**
+     * 
      * List received messages that an array of aliases own. Set of aliases to look up based on alias, and private key to decrypt any data found in message.
      * @param aliases 
      * @param message 
@@ -262,6 +335,47 @@ export class MessagingService {
 
         if (from !== undefined) {
             queryParameters.set('from', <any>from);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+        }
+
+        return this.http.request(path, requestOptions);
+    }
+
+    /**
+     * 
+     * Count sent messages that an array of aliases own.
+     * @param aliases 
+     */
+    public messagesentcountWithHttpInfo(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/messagesentcount';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        if (aliases) {
+            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
         }
 
 

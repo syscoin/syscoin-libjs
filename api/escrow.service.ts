@@ -164,6 +164,22 @@ export class EscrowService {
 
     /**
      * 
+     * Count escrows that an array of aliases own.
+     * @param aliases 
+     */
+    public escrowcount(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<number> {
+        return this.escrowcountWithHttpInfo(aliases, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * 
      * Send feedback for primary and secondary users in escrow, depending on who you are. Ratings are numbers from 1 to 5. User Role is either &#39;buyer&#39;, &#39;seller&#39;, &#39;reseller&#39;, or &#39;arbiter&#39;. If you are the buyer, feedbackprimary is for seller and feedbacksecondary is for arbiter. If you are the seller, feedbackprimary is for buyer and feedbacksecondary is for arbiter. If you are the arbiter, feedbackprimary is for buyer and feedbacksecondary is for seller. If arbiter didn&#39;t do any work for this escrow you can leave his feedback empty and rating as a 0.
      * @param request 
      */
@@ -522,6 +538,47 @@ export class EscrowService {
             method: RequestMethod.Post,
             headers: headers,
             body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+        }
+
+        return this.http.request(path, requestOptions);
+    }
+
+    /**
+     * 
+     * Count escrows that an array of aliases own.
+     * @param aliases 
+     */
+    public escrowcountWithHttpInfo(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowcount';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        if (aliases) {
+            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
             search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
