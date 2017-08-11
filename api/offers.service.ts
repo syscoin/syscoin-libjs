@@ -123,7 +123,7 @@ export class OffersService {
      * @param filterpurchases 
      * @param filtersales 
      */
-    public offeracceptcount(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: number, extraHttpRequestParams?: any): Observable<Array<OfferAccept>> {
+    public offeracceptcount(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: boolean, extraHttpRequestParams?: any): Observable<Array<OfferAccept>> {
         return this.offeracceptcountWithHttpInfo(aliases, filterpurchases, filtersales, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -163,7 +163,7 @@ export class OffersService {
      * @param count The number of results to return
      * @param from The number of results to skip
      */
-    public offeracceptlist(aliases?: Array<string>, guid?: string, filterpurchases?: boolean, filtersales?: number, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<OfferAccept>> {
+    public offeracceptlist(aliases?: Array<string>, guid?: string, filterpurchases?: boolean, filtersales?: boolean, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<OfferAccept>> {
         return this.offeracceptlistWithHttpInfo(aliases, guid, filterpurchases, filtersales, count, from, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -479,7 +479,7 @@ export class OffersService {
      * @param filterpurchases 
      * @param filtersales 
      */
-    public offeracceptcountWithHttpInfo(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: number, extraHttpRequestParams?: any): Observable<Response> {
+    public offeracceptcountWithHttpInfo(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: boolean, extraHttpRequestParams?: any): Observable<Response> {
         const path = this.basePath + '/offeracceptcount';
 
         let queryParameters = new URLSearchParams();
@@ -597,7 +597,7 @@ export class OffersService {
      * @param count The number of results to return
      * @param from The number of results to skip
      */
-    public offeracceptlistWithHttpInfo(aliases?: Array<string>, guid?: string, filterpurchases?: boolean, filtersales?: number, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
+    public offeracceptlistWithHttpInfo(aliases?: Array<string>, guid?: string, filterpurchases?: boolean, filtersales?: boolean, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
         const path = this.basePath + '/offeracceptlist';
 
         let queryParameters = new URLSearchParams();
