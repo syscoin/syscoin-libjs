@@ -164,11 +164,13 @@ export class EscrowService {
 
     /**
      * 
-     * Count escrows that an array of aliases own.
-     * @param aliases 
+     * Count escrows that an set of aliases are involved in.
+     * @param buyerAliases 
+     * @param sellerAliases 
+     * @param arbiterAliases 
      */
-    public escrowcount(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<number> {
-        return this.escrowcountWithHttpInfo(aliases, extraHttpRequestParams)
+    public escrowcount(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, extraHttpRequestParams?: any): Observable<number> {
+        return this.escrowcountWithHttpInfo(buyerAliases, sellerAliases, arbiterAliases, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -246,14 +248,16 @@ export class EscrowService {
 
     /**
      * 
-     * List escrows that an array of aliases are involved in. Set of aliases to look up based on alias, and private key to decrypt any data found in escrow.
-     * @param aliases List of aliases to display escrows from
+     * List escrows that an array of aliases are involved in.
+     * @param buyerAliases List of buyer aliases to display escrows from
+     * @param sellerAliases List of seller aliases to display escrows from
+     * @param arbiterAliases List of arbiter aliases to display escrows from
      * @param escrow GUID of escrow
      * @param count The number of results to return
      * @param from The number of results to skip
      */
-    public escrowlist(aliases: Array<string>, escrow?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<Escrow>> {
-        return this.escrowlistWithHttpInfo(aliases, escrow, count, from, extraHttpRequestParams)
+    public escrowlist(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, escrow?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<Escrow>> {
+        return this.escrowlistWithHttpInfo(buyerAliases, sellerAliases, arbiterAliases, escrow, count, from, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -551,17 +555,27 @@ export class EscrowService {
 
     /**
      * 
-     * Count escrows that an array of aliases own.
-     * @param aliases 
+     * Count escrows that an set of aliases are involved in.
+     * @param buyerAliases 
+     * @param sellerAliases 
+     * @param arbiterAliases 
      */
-    public escrowcountWithHttpInfo(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<Response> {
+    public escrowcountWithHttpInfo(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, extraHttpRequestParams?: any): Observable<Response> {
         const path = this.basePath + '/escrowcount';
 
         let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
-        if (aliases) {
-            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
+        if (buyerAliases) {
+            queryParameters.set('buyerAliases', buyerAliases.join(COLLECTION_FORMATS['csv']));
+        }
+
+        if (sellerAliases) {
+            queryParameters.set('sellerAliases', sellerAliases.join(COLLECTION_FORMATS['csv']));
+        }
+
+        if (arbiterAliases) {
+            queryParameters.set('arbiterAliases', arbiterAliases.join(COLLECTION_FORMATS['csv']));
         }
 
 
@@ -777,24 +791,30 @@ export class EscrowService {
 
     /**
      * 
-     * List escrows that an array of aliases are involved in. Set of aliases to look up based on alias, and private key to decrypt any data found in escrow.
-     * @param aliases List of aliases to display escrows from
+     * List escrows that an array of aliases are involved in.
+     * @param buyerAliases List of buyer aliases to display escrows from
+     * @param sellerAliases List of seller aliases to display escrows from
+     * @param arbiterAliases List of arbiter aliases to display escrows from
      * @param escrow GUID of escrow
      * @param count The number of results to return
      * @param from The number of results to skip
      */
-    public escrowlistWithHttpInfo(aliases: Array<string>, escrow?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
+    public escrowlistWithHttpInfo(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, escrow?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
         const path = this.basePath + '/escrowlist';
 
         let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
-        // verify required parameter 'aliases' is not null or undefined
-        if (aliases === null || aliases === undefined) {
-            throw new Error('Required parameter aliases was null or undefined when calling escrowlist.');
+        if (buyerAliases) {
+            queryParameters.set('buyerAliases', buyerAliases.join(COLLECTION_FORMATS['csv']));
         }
-        if (aliases) {
-            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
+
+        if (sellerAliases) {
+            queryParameters.set('sellerAliases', sellerAliases.join(COLLECTION_FORMATS['csv']));
+        }
+
+        if (arbiterAliases) {
+            queryParameters.set('arbiterAliases', arbiterAliases.join(COLLECTION_FORMATS['csv']));
         }
 
         if (escrow !== undefined) {

@@ -118,6 +118,24 @@ export class OffersService {
 
     /**
      * 
+     * list count of offer accept for a set of aliases. filterpurchases filters results for count of accepts that have been bought with aliases passed in(as buyer), filtersales filters results for count of accepts purchased by aliases passed in(as merchant or affiliate).
+     * @param aliases 
+     * @param filterpurchases 
+     * @param filtersales 
+     */
+    public offeracceptcount(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: number, extraHttpRequestParams?: any): Observable<Array<OfferAccept>> {
+        return this.offeracceptcountWithHttpInfo(aliases, filterpurchases, filtersales, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * 
      * Send feedback and rating for offer accept specified. Ratings are numbers from 1 to 5
      * @param offerguid 
      * @param offeracceptguid 
@@ -139,12 +157,14 @@ export class OffersService {
      * 
      * list my offer accepts
      * @param aliases 
-     * @param acceptguid 
+     * @param guid 
+     * @param filterpurchases 
+     * @param filtersales 
      * @param count The number of results to return
      * @param from The number of results to skip
      */
-    public offeracceptlist(aliases?: Array<string>, acceptguid?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<OfferAccept>> {
-        return this.offeracceptlistWithHttpInfo(aliases, acceptguid, count, from, extraHttpRequestParams)
+    public offeracceptlist(aliases?: Array<string>, guid?: string, filterpurchases?: boolean, filtersales?: number, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<OfferAccept>> {
+        return this.offeracceptlistWithHttpInfo(aliases, guid, filterpurchases, filtersales, count, from, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -188,13 +208,11 @@ export class OffersService {
 
     /**
      * 
-     * Count offers that an array of aliases own. Set of aliases to look up based on alias. Myaccepts represents offers that have been bought from aliases passed in(as merchant or affiliate), false for offers aliases passed in have bought.
+     * Count offers that an array of aliases own.
      * @param aliases 
-     * @param accepts 
-     * @param myaccepts 
      */
-    public offercount(aliases?: Array<string>, accepts?: boolean, myaccepts?: boolean, extraHttpRequestParams?: any): Observable<number> {
-        return this.offercountWithHttpInfo(aliases, accepts, myaccepts, extraHttpRequestParams)
+    public offercount(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<number> {
+        return this.offercountWithHttpInfo(aliases, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -274,16 +292,14 @@ export class OffersService {
 
     /**
      * 
-     * list offers that an array of aliases own. Set of aliases to look up based on alias. Myaccepts represents offers that have been bought from aliases passed in(as merchant or affiliate), false for offers aliases passed in have bought.
+     * list offers that an array of aliases own.
      * @param aliases 
      * @param guid 
-     * @param accepts 
-     * @param myaccepts 
      * @param count The number of results to return
      * @param from The number of results to skip
      */
-    public offerlist(aliases?: Array<string>, guid?: string, accepts?: boolean, myaccepts?: boolean, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<Offer>> {
-        return this.offerlistWithHttpInfo(aliases, guid, accepts, myaccepts, count, from, extraHttpRequestParams)
+    public offerlist(aliases?: Array<string>, guid?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<Offer>> {
+        return this.offerlistWithHttpInfo(aliases, guid, count, from, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -458,6 +474,57 @@ export class OffersService {
 
     /**
      * 
+     * list count of offer accept for a set of aliases. filterpurchases filters results for count of accepts that have been bought with aliases passed in(as buyer), filtersales filters results for count of accepts purchased by aliases passed in(as merchant or affiliate).
+     * @param aliases 
+     * @param filterpurchases 
+     * @param filtersales 
+     */
+    public offeracceptcountWithHttpInfo(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: number, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offeracceptcount';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        if (aliases) {
+            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
+        }
+
+        if (filterpurchases !== undefined) {
+            queryParameters.set('filterpurchases', <any>filterpurchases);
+        }
+
+        if (filtersales !== undefined) {
+            queryParameters.set('filtersales', <any>filtersales);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+        }
+
+        return this.http.request(path, requestOptions);
+    }
+
+    /**
+     * 
      * Send feedback and rating for offer accept specified. Ratings are numbers from 1 to 5
      * @param offerguid 
      * @param offeracceptguid 
@@ -524,11 +591,13 @@ export class OffersService {
      * 
      * list my offer accepts
      * @param aliases 
-     * @param acceptguid 
+     * @param guid 
+     * @param filterpurchases 
+     * @param filtersales 
      * @param count The number of results to return
      * @param from The number of results to skip
      */
-    public offeracceptlistWithHttpInfo(aliases?: Array<string>, acceptguid?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
+    public offeracceptlistWithHttpInfo(aliases?: Array<string>, guid?: string, filterpurchases?: boolean, filtersales?: number, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
         const path = this.basePath + '/offeracceptlist';
 
         let queryParameters = new URLSearchParams();
@@ -538,8 +607,16 @@ export class OffersService {
             queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
         }
 
-        if (acceptguid !== undefined) {
-            queryParameters.set('acceptguid', <any>acceptguid);
+        if (guid !== undefined) {
+            queryParameters.set('guid', <any>guid);
+        }
+
+        if (filterpurchases !== undefined) {
+            queryParameters.set('filterpurchases', <any>filterpurchases);
+        }
+
+        if (filtersales !== undefined) {
+            queryParameters.set('filtersales', <any>filtersales);
         }
 
         if (count !== undefined) {
@@ -666,12 +743,10 @@ export class OffersService {
 
     /**
      * 
-     * Count offers that an array of aliases own. Set of aliases to look up based on alias. Myaccepts represents offers that have been bought from aliases passed in(as merchant or affiliate), false for offers aliases passed in have bought.
+     * Count offers that an array of aliases own.
      * @param aliases 
-     * @param accepts 
-     * @param myaccepts 
      */
-    public offercountWithHttpInfo(aliases?: Array<string>, accepts?: boolean, myaccepts?: boolean, extraHttpRequestParams?: any): Observable<Response> {
+    public offercountWithHttpInfo(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<Response> {
         const path = this.basePath + '/offercount';
 
         let queryParameters = new URLSearchParams();
@@ -679,14 +754,6 @@ export class OffersService {
 
         if (aliases) {
             queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
-        }
-
-        if (accepts !== undefined) {
-            queryParameters.set('accepts', <any>accepts);
-        }
-
-        if (myaccepts !== undefined) {
-            queryParameters.set('myaccepts', <any>myaccepts);
         }
 
 
@@ -912,15 +979,13 @@ export class OffersService {
 
     /**
      * 
-     * list offers that an array of aliases own. Set of aliases to look up based on alias. Myaccepts represents offers that have been bought from aliases passed in(as merchant or affiliate), false for offers aliases passed in have bought.
+     * list offers that an array of aliases own.
      * @param aliases 
      * @param guid 
-     * @param accepts 
-     * @param myaccepts 
      * @param count The number of results to return
      * @param from The number of results to skip
      */
-    public offerlistWithHttpInfo(aliases?: Array<string>, guid?: string, accepts?: boolean, myaccepts?: boolean, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
+    public offerlistWithHttpInfo(aliases?: Array<string>, guid?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
         const path = this.basePath + '/offerlist';
 
         let queryParameters = new URLSearchParams();
@@ -932,14 +997,6 @@ export class OffersService {
 
         if (guid !== undefined) {
             queryParameters.set('guid', <any>guid);
-        }
-
-        if (accepts !== undefined) {
-            queryParameters.set('accepts', <any>accepts);
-        }
-
-        if (myaccepts !== undefined) {
-            queryParameters.set('myaccepts', <any>myaccepts);
         }
 
         if (count !== undefined) {
