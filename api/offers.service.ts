@@ -118,12 +118,12 @@ export class OffersService {
 
     /**
      * 
-     * list count of offer accept for a set of aliases. filterpurchases filters results for count of accepts that have been bought with aliases passed in(as buyer), filtersales filters results for count of accepts purchased by aliases passed in(as merchant or affiliate).
+     * List count of offer accept for a set of aliases. filterpurchases filters results for count of accepts that have been bought with aliases passed in(as buyer), filtersales filters results for count of accepts purchased by aliases passed in(as merchant or affiliate).
      * @param aliases 
      * @param filterpurchases 
      * @param filtersales 
      */
-    public offeracceptcount(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: boolean, extraHttpRequestParams?: any): Observable<Array<OfferAccept>> {
+    public offeracceptcount(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: boolean, extraHttpRequestParams?: any): Observable<number> {
         return this.offeracceptcountWithHttpInfo(aliases, filterpurchases, filtersales, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -155,7 +155,7 @@ export class OffersService {
 
     /**
      * 
-     * list my offer accepts
+     * List offer accepts for a set of aliases. filterpurchases filters results for accepts that have been bought with aliases passed in(as buyer), filtersales filters results for accepts purchased by aliases passed in(as merchant or affiliate).
      * @param aliases 
      * @param guid 
      * @param filterpurchases 
@@ -474,7 +474,7 @@ export class OffersService {
 
     /**
      * 
-     * list count of offer accept for a set of aliases. filterpurchases filters results for count of accepts that have been bought with aliases passed in(as buyer), filtersales filters results for count of accepts purchased by aliases passed in(as merchant or affiliate).
+     * List count of offer accept for a set of aliases. filterpurchases filters results for count of accepts that have been bought with aliases passed in(as buyer), filtersales filters results for count of accepts purchased by aliases passed in(as merchant or affiliate).
      * @param aliases 
      * @param filterpurchases 
      * @param filtersales 
@@ -589,7 +589,7 @@ export class OffersService {
 
     /**
      * 
-     * list my offer accepts
+     * List offer accepts for a set of aliases. filterpurchases filters results for accepts that have been bought with aliases passed in(as buyer), filtersales filters results for accepts purchased by aliases passed in(as merchant or affiliate).
      * @param aliases 
      * @param guid 
      * @param filterpurchases 
