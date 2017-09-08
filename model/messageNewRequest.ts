@@ -19,11 +19,6 @@ export interface MessageNewRequest {
     subject: string;
 
     /**
-     * Message to send to alias.
-     */
-    message: string;
-
-    /**
      * Alias to send message from.
      */
     fromalias: string;
@@ -34,8 +29,13 @@ export interface MessageNewRequest {
     toalias: string;
 
     /**
-     * Is data an hex based message(only To-Message will be displayed). No by default.
+     * Message encrypted to from alias.
      */
-    hex?: string;
+    frommessage: string;
+
+    /**
+     * Message encrypted to sending alias.
+     */
+    tomessage: string;
 
 }
