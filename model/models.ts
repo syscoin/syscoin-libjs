@@ -10,6 +10,7 @@ export * from './cert';
 export * from './certNewRequest';
 export * from './certTransferRequest';
 export * from './certUpdateRequest';
+export * from './encryptWalletRequest';
 export * from './errorResponse';
 export * from './escrow';
 export * from './escrowClaimRefundRequest';
