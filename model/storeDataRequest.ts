@@ -12,19 +12,15 @@
 
 
 
-export interface Message {
-    GUID?: string;
+export interface StoreDataRequest {
+    /**
+     * The data to be stored on the decentralized storage facility. Max size 500kb.
+     */
+    data: string;
 
-    txid?: string;
-
-    time?: number;
-
-    from?: string;
-
-    to?: string;
-
-    subject?: string;
-
-    message?: string;
+    /**
+     * Array of data warehousing facilities to use to store the data, valid values: BFAZURE
+     */
+    storeLocations?: Array<string>;
 
 }

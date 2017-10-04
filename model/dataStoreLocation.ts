@@ -12,19 +12,10 @@
 
 
 
-export interface Message {
-    GUID?: string;
-
-    txid?: string;
-
-    time?: number;
-
-    from?: string;
-
-    to?: string;
-
-    subject?: string;
-
-    message?: string;
+export interface DataStoreLocation {
+    /**
+     * URL from which the data can be fetched
+     */
+    dataUrl: string;
 
 }

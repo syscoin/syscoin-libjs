@@ -10,21 +10,13 @@
  * Do not edit the class manually.
  */
 
+import { DataStoreLocation } from './dataStoreLocation';
 
 
-export interface Message {
-    GUID?: string;
-
-    txid?: string;
-
-    time?: number;
-
-    from?: string;
-
-    to?: string;
-
-    subject?: string;
-
-    message?: string;
+export interface StoreDataResponse {
+    /**
+     * Array of objects which describe where data is stored offchain
+     */
+    storeLocations: Array<DataStoreLocation>;
 
 }

@@ -12,19 +12,10 @@
 
 
 
-export interface Message {
-    GUID?: string;
-
-    txid?: string;
-
-    time?: number;
-
-    from?: string;
-
-    to?: string;
-
-    subject?: string;
-
-    message?: string;
+export interface EncryptWalletRequest {
+    /**
+     * The pass phrase to encrypt the wallet with. It must be at least 1 character, but should be long.
+     */
+    passphrase: string;
 
 }
