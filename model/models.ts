@@ -38,6 +38,8 @@ export * from './messageNewRequest';
 export * from './miningInfo';
 export * from './moveRequest';
 export * from './multiSignatureInfo';
+export * from './networkInfo';
+export * from './networkInfoDetails';
 export * from './offer';
 export * from './offerAccept';
 export * from './offerAcceptRequest';

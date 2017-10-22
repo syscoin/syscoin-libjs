@@ -78,7 +78,6 @@ export class CertificatesService {
     }
 
     /**
-     * 
      * Count certificates that an array of aliases own.
      * @param aliases 
      */
@@ -94,8 +93,7 @@ export class CertificatesService {
     }
 
     /**
-     * 
-     * scan and filter certs certfilter \&quot;\&quot; 5 &#x3D; list certs updated in last 5 blocks certfilter \&quot;^cert\&quot; &#x3D; list all certs starting with \&quot;cert\&quot; certfilter 36000 0 0 stat &#x3D; display stats (number of certs) on active certs
+     * scan and filter certs certfilter \"\" 5 = list certs updated in last 5 blocks certfilter \"^cert\" = list all certs starting with \"cert\" certfilter 36000 0 0 stat = display stats (number of certs) on active certs
      * @param regexp apply [regexp] on certes, empty means all certs
      * @param from show results from number [from]
      * @param count the number of results to return
@@ -114,7 +112,6 @@ export class CertificatesService {
     }
 
     /**
-     * 
      * List all stored values of an cert.
      * @param certname 
      */
@@ -130,7 +127,6 @@ export class CertificatesService {
     }
 
     /**
-     * 
      * Show stored values of a single certificate.
      * @param guid 
      */
@@ -146,7 +142,6 @@ export class CertificatesService {
     }
 
     /**
-     * 
      * List certificates that an array of aliases own. Set of aliases to look up based on alias, and private key to decrypt any data found in certificates.
      * @param aliases 
      * @param cert 
@@ -165,7 +160,6 @@ export class CertificatesService {
     }
 
     /**
-     * 
      * Create a new Syscoin Certificate. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */
@@ -181,7 +175,6 @@ export class CertificatesService {
     }
 
     /**
-     * 
      * Transfer certificate from one user to another. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */
@@ -197,7 +190,6 @@ export class CertificatesService {
     }
 
     /**
-     * 
      * Perform an update on an certificate you control. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */

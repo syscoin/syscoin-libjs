@@ -78,7 +78,6 @@ export class AliasesService {
     }
 
     /**
-     * 
      * list affiliations with merchant offers.
      */
     public aliasaffiliates(extraHttpRequestParams?: any): Observable<Array<any>> {
@@ -93,7 +92,6 @@ export class AliasesService {
     }
 
     /**
-     * 
      * Authenticates an alias with a provided password and returns the private key if successful. Warning: Calling this function over a public network can lead to someone reading your password/private key in plain text.
      * @param alias 
      * @param password 
@@ -110,7 +108,6 @@ export class AliasesService {
     }
 
     /**
-     * 
      * Returns the total amount received by the given alias in transactions with at least minconf confirmations.
      * @param alias The syscoin alias for transactions
      * @param minconf ﻿Only include transactions confirmed at least this many times. default&#x3D;1.
@@ -127,7 +124,6 @@ export class AliasesService {
     }
 
     /**
-     * 
      * Count aliases that an array of aliases own.
      */
     public aliascount(extraHttpRequestParams?: any): Observable<number> {
@@ -142,8 +138,7 @@ export class AliasesService {
     }
 
     /**
-     * 
-     * Scan and filter aliases aliasfilter \&quot;\&quot; 5 # list aliases updated in last 5 blocks aliasfilter \&quot;^alias\&quot; # list all aliases starting with \&quot;alias\&quot; aliasfilter 36000 0 0 stat # display stats (number of aliases) on active aliases
+     * Scan and filter aliases aliasfilter \"\" 5 # list aliases updated in last 5 blocks aliasfilter \"^alias\" # list all aliases starting with \"alias\" aliasfilter 36000 0 0 stat # display stats (number of aliases) on active aliases
      * @param regexp apply [regexp] on aliases, empty means all aliases
      * @param from show results from this GUID [from], empty means first
      * @param count number of results to return.
@@ -161,7 +156,6 @@ export class AliasesService {
     }
 
     /**
-     * 
      * List all stored values of an alias.
      * @param aliasname 
      */
@@ -177,7 +171,6 @@ export class AliasesService {
     }
 
     /**
-     * 
      * Show values of an alias.
      * @param aliasname 
      */
@@ -193,7 +186,6 @@ export class AliasesService {
     }
 
     /**
-     * 
      * List my own aliases.
      * @param aliasname Alias name to use as filter.
      * @param count The number of results to return
@@ -211,7 +203,6 @@ export class AliasesService {
     }
 
     /**
-     * 
      * Creates a new Syscoin Alias. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */
@@ -227,7 +218,6 @@ export class AliasesService {
     }
 
     /**
-     * 
      * Send multiple times from an alias. Amounts are double-precision floating point numbers.
      * @param request 
      */
@@ -243,7 +233,6 @@ export class AliasesService {
     }
 
     /**
-     * 
      * Update and possibly transfer an alias. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */

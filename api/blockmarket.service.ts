@@ -76,7 +76,6 @@ export class BlockmarketService {
     }
 
     /**
-     * 
      * Returns a session token for use with subsquent protected calls.
      * @param auth SHA1 hash of the user&#39;s authentication information- usernamepassword.
      */
@@ -92,7 +91,6 @@ export class BlockmarketService {
     }
 
     /**
-     * 
      * Store an arbitrary piece of data on a decentralized network of data storage warehouses and return the client an array of URLs through which the data can be accessed.
      * @param request 
      */

@@ -75,7 +75,6 @@ export class MessagingService {
     }
 
     /**
-     * 
      * Show stored values of a single message.
      * @param guid 
      */
@@ -91,7 +90,6 @@ export class MessagingService {
     }
 
     /**
-     * 
      * Create a new Syscoin encrypted message.
      * @param request 
      */
@@ -107,7 +105,6 @@ export class MessagingService {
     }
 
     /**
-     * 
      * Count received messages that an array of aliases own.
      * @param aliases 
      */
@@ -123,7 +120,6 @@ export class MessagingService {
     }
 
     /**
-     * 
      * List received messages that an array of aliases own. Set of aliases to look up based on alias, and private key to decrypt any data found in message.
      * @param aliases 
      * @param message 
@@ -142,7 +138,6 @@ export class MessagingService {
     }
 
     /**
-     * 
      * Count sent messages that an array of aliases own.
      * @param aliases 
      */
@@ -158,7 +153,6 @@ export class MessagingService {
     }
 
     /**
-     * 
      * List sent messages that an array of aliases own. Set of aliases to look up based on alias, and private key to decrypt any data found in message.
      * @param aliases 
      * @param message 

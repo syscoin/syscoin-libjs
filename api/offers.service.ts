@@ -84,8 +84,7 @@ export class OffersService {
     }
 
     /**
-     * 
-     * Accept&amp;Pay for a confirmed offer.
+     * Accept&Pay for a confirmed offer.
      * @param request 
      */
     public offeraccept(request: OfferAcceptRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
@@ -100,7 +99,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * Acknowledge offer payment as seller of offer. Deducts qty of offer and increases number of sold inventory.
      * @param offerguid 
      * @param offeracceptguid 
@@ -117,7 +115,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * List count of offer accept for a set of aliases. filterpurchases filters results for count of accepts that have been bought with aliases passed in(as buyer), filtersales filters results for count of accepts purchased by aliases passed in(as merchant or affiliate).
      * @param aliases 
      * @param filterpurchases 
@@ -135,7 +132,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * Send feedback and rating for offer accept specified. Ratings are numbers from 1 to 5
      * @param offerguid 
      * @param offeracceptguid 
@@ -154,7 +150,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * List offer accepts for a set of aliases. filterpurchases filters results for accepts that have been bought with aliases passed in(as buyer), filtersales filters results for accepts purchased by aliases passed in(as merchant or affiliate).
      * @param aliases 
      * @param guid 
@@ -175,7 +170,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * Add to the affiliate list of your offer(controls who can resell). Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */
@@ -191,7 +185,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * Clear the affiliate list of your offer(controls who can resell). Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */
@@ -207,7 +200,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * Count offers that an array of aliases own.
      * @param aliases 
      */
@@ -223,7 +215,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * scan and filter offers
      * @param regexp apply [regexp] on offeres, empty means all offers
      * @param from show results from number [from]
@@ -243,7 +234,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * List all stored values of an offer.
      * @param offer Offer GUID.
      */
@@ -259,7 +249,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * Show values of an offer.
      * @param guid 
      */
@@ -275,7 +264,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */
@@ -291,7 +279,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * list offers that an array of aliases own.
      * @param aliases 
      * @param guid 
@@ -310,7 +297,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * Create a new offer on the Syscoin decentralized marketplace. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */
@@ -326,7 +312,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * Remove from the affiliate list of your offer(controls who can resell). Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */
@@ -342,7 +327,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * Perform an update on an offer you control. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */
@@ -358,7 +342,6 @@ export class OffersService {
     }
 
     /**
-     * 
      * List all affiliates for this offer.
      * @param offerguid 
      */

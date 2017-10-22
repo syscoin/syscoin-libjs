@@ -35,6 +35,7 @@ import { Info } from '../model/info';
 import { ListSinceBlockResponse } from '../model/listSinceBlockResponse';
 import { MiningInfo } from '../model/miningInfo';
 import { MoveRequest } from '../model/moveRequest';
+import { NetworkInfo } from '../model/networkInfo';
 import { PeerInfoResponse } from '../model/peerInfoResponse';
 import { SendFromRequest } from '../model/sendFromRequest';
 import { SendManyRequest } from '../model/sendManyRequest';
@@ -99,8 +100,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * Add a nrequired-to-sign multisignature address to the wallet. Each key is a Syscoin address or hex-encoded public key. If &#39;account&#39; is specified (DEPRECATED), assign address to that account.
+     * Add a nrequired-to-sign multisignature address to the wallet. Each key is a Syscoin address or hex-encoded public key. If 'account' is specified (DEPRECATED), assign address to that account.
      * @param request
      */
     public addmultisigaddress(request: AddMultisigAddressRequest, extraHttpRequestParams?: any): Observable<string> {
@@ -115,8 +115,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * Reveals the private key corresponding to &#39;syscoinaddress&#39;. Then the importprivkey can be used with this output.
+     * Reveals the private key corresponding to 'syscoinaddress'. Then the importprivkey can be used with this output.
      * @param address The syscoin address for the private key
      */
     public dumpprivkey(address: string, extraHttpRequestParams?: any): Observable<string> {
@@ -131,7 +130,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Dumps all wallet keys in a human-readable format.
      * @param filename The filename
      */
@@ -147,8 +145,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * Encrypts the wallet with &#39;passphrase&#39;. This is for first time encryption. After this, any calls that interact with private keys such as sending or signing will require the passphrase to be set prior the making these calls. Use the walletpassphrase call for this, and then walletlock call. If the wallet is already encrypted, use the walletpassphrasechange call. Note that this will shutdown the server.
+     * Encrypts the wallet with 'passphrase'. This is for first time encryption. After this, any calls that interact with private keys such as sending or signing will require the passphrase to be set prior the making these calls. Use the walletpassphrase call for this, and then walletlock call. If the wallet is already encrypted, use the walletpassphrasechange call. Note that this will shutdown the server.
      * @param request
      */
     public encryptwallet(request: EncryptWalletRequest, extraHttpRequestParams?: any): Observable<string> {
@@ -163,7 +160,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * DEPRECATED. Returns the account associated with the given address.
      * @param syscoinaddress The syscoin address for account lookup.
      */
@@ -179,7 +175,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * DEPRECATED. Returns the current Syscoin address for receiving payments to this account.
      * @param account The account name for the address. It can also be set to the empty string \&quot;\&quot; to represent the default account. The account does not need to exist, it will be created and a new address created  if there is no account by the given name.
      */
@@ -195,7 +190,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * DEPRECATED. Returns the list of addresses for the given account.
      * @param account
      */
@@ -211,8 +205,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * If account is not specified, returns the server&#39;s total available balance. If account is specified (DEPRECATED), returns the balance in the account. Note that the account \&quot;\&quot; is not the same as leaving the parameter out. The server total may be different to the balance in the default \&quot;\&quot; account.
+     * If account is not specified, returns the server's total available balance. If account is specified (DEPRECATED), returns the balance in the account. Note that the account \"\" is not the same as leaving the parameter out. The server total may be different to the balance in the default \"\" account.
      * @param account DEPRECATED. The selected account, or \&quot;*\&quot; for entire wallet. It may be the default account using \&quot;\&quot;.
      * @param minconf Only include transactions confirmed at least this many times.
      * @param includeWatchonly Also include balance in watchonly addresses (see &#39;importaddress&#39;)
@@ -229,8 +222,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * ﻿If verbose is false, returns a string that is serialized, hex-encoded data for block &#39;hash&#39;. If verbose is true, returns an Object with information about block &lt;hash&gt;.
+     * ﻿If verbose is false, returns a string that is serialized, hex-encoded data for block 'hash'. If verbose is true, returns an Object with information about block <hash>.
      * @param hash
      * @param verbose
      */
@@ -246,7 +238,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Returns an object containing various state info regarding block chain processing.
      */
     public getblockchaininfo(extraHttpRequestParams?: any): Observable<GetBlockchainInfoResponse> {
@@ -261,7 +252,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Returns the number of blocks in the longest block chain.
      */
     public getblockcount(extraHttpRequestParams?: any): Observable<number> {
@@ -276,7 +266,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Returns an object containing various state info.
      */
     public getinfo(extraHttpRequestParams?: any): Observable<Info> {
@@ -291,7 +280,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Returns a json object containing mining-related information.
      */
     public getmininginfo(extraHttpRequestParams?: any): Observable<MiningInfo> {
@@ -306,8 +294,21 @@ export class GeneralService {
     }
 
     /**
-     *
-     * Returns a new Syscoin address for receiving payments. If &#39;account&#39; is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to &#39;account&#39;.
+     * Returns a json object containing network-related information.
+     */
+    public getnetworkinfo(extraHttpRequestParams?: any): Observable<NetworkInfo> {
+        return this.getnetworkinfoWithHttpInfo(extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Returns a new Syscoin address for receiving payments. If 'account' is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to 'account'.
      * @param request
      */
     public getnewaddress(request?: GetNewAddressRequest, extraHttpRequestParams?: any): Observable<string> {
@@ -322,7 +323,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Returns data about each connected network node as a json array of objects.
      */
     public getpeerinfo(extraHttpRequestParams?: any): Observable<PeerInfoResponse> {
@@ -337,8 +337,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * DEPRECATED. Returns the total amount received by addresses with &lt;account&gt; in transactions with at least [minconf] confirmations.
+     * DEPRECATED. Returns the total amount received by addresses with <account> in transactions with at least [minconf] confirmations.
      * @param account The selected account, may be the default account using \&quot;\&quot;.
      * @param minconf Only include transactions confirmed at least this many times.
      */
@@ -354,7 +353,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Returns the total amount received by the given syscoinaddress in transactions with at least minconf confirmations.
      * @param syscoinaddress The syscoin address for transactions.
      * @param minconf Only include transactions confirmed at least this many times.
@@ -371,8 +369,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * Get detailed information about in-wallet transaction &lt;txid&gt;
+     * Get detailed information about in-wallet transaction <txid>
      * @param txid The transaction id
      * @param includeWatchonly Whether to include watchonly addresses in balance calculation and details[]
      */
@@ -388,8 +385,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * Returns the server&#39;s total unconfirmed balance
+     * Returns the server's total unconfirmed balance
      */
     public getunconfirmedbalance(extraHttpRequestParams?: any): Observable<number> {
         return this.getunconfirmedbalanceWithHttpInfo(extraHttpRequestParams)
@@ -403,8 +399,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * Returns a new Syscoin (starts with 1) address for receiving payments. If &#39;account&#39; is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to &#39;account&#39;.
+     * Returns a new Syscoin (starts with 1) address for receiving payments. If 'account' is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to 'account'.
      * @param account DEPRECATED. The account name for the address to be linked to. If not provided, the default account \&quot;\&quot; is used. It can also be set to the empty string \&quot;\&quot; to represent the default account. The account does not need to exist, it will be created if there is no account by the given name.
      */
     public getv2address(account?: string, extraHttpRequestParams?: any): Observable<string> {
@@ -419,7 +414,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Returns wallet balance for all accounts. Does not include watch only accounts.
      */
     public getwalletbalance(extraHttpRequestParams?: any): Observable<number> {
@@ -434,7 +428,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Returns an object containing various wallet state info.
      */
     public getwalletinfo(extraHttpRequestParams?: any): Observable<WalletInfo> {
@@ -449,8 +442,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * Returns a new ZCash address for receiving payments in ZCash transaparent tokens. so payments received with the address will be credited to &#39;account&#39;.
+     * Returns a new ZCash address for receiving payments in ZCash transaparent tokens. so payments received with the address will be credited to 'account'.
      * @param address
      */
     public getzaddress(address: string, extraHttpRequestParams?: any): Observable<WalletInfo> {
@@ -465,7 +457,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Adds a script (in hex) or address that can be watched as if it were in your wallet but cannot be used to spend.
      * @param request
      */
@@ -481,7 +472,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Adds a private key (as returned by dumpprivkey) to your wallet.
      * @param request
      */
@@ -497,7 +487,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Imports funds without rescan. Corresponding address or script must previously be included in wallet. Aimed towards pruned wallets. The end-user is responsible to import additional transactions that subsequently spend the imported outputs or rescan after the point in the blockchain the transaction is included.
      * @param rawtransaction
      * @param txoutproof
@@ -514,7 +503,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Adds a public key (in hex) that can be watched as if it were in your wallet but cannot be used to spend.
      * @param request
      */
@@ -530,7 +518,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Imports keys from a wallet dump file (see dumpwallet).
      * @param request
      */
@@ -546,7 +533,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * DEPRECATED. Returns Object that has account names as keys, account balances as values.
      * @param minconf Only include transactions with at least this many confirmations
      * @param includeWatchonly Include balances in watchonly addresses (see &#39;importaddress&#39;)
@@ -563,7 +549,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Lists groups of addresses which have had their common ownership made public by common use as inputs or as the resulting change in past transactions
      */
     public listaddressgroupings(extraHttpRequestParams?: any): Observable<Array<Array<AddressGrouping>>> {
@@ -578,7 +563,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * DEPRECATED. List balances by account.
      * @param minconf Only include transactions confirmed at least this many times.
      * @param includeempty Whether to include accounts that haven&#39;t received any payments.
@@ -596,7 +580,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * List balances by receiving address.
      * @param minconf Only include transactions confirmed at least this many times.
      * @param includeempty Whether to include accounts that haven&#39;t received any payments.
@@ -614,7 +597,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Get all transactions in blocks since block [blockhash], or all transactions if omitted
      * @param blockhash The block hash to list transactions since
      * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
@@ -632,8 +614,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * Returns up to &#39;count&#39; most recent transactions skipping the first &#39;from&#39; transactions for account &#39;account&#39;.
+     * Returns up to 'count' most recent transactions skipping the first 'from' transactions for account 'account'.
      * @param account DEPRECATED. The account name. Should be \&quot;*\&quot;.
      * @param count The number of transactions to return
      * @param from The number of transactions to skip
@@ -651,7 +632,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * DEPRECATED. Move a specified amount from one account in your wallet to another.
      * @param request
      */
@@ -667,7 +647,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Deletes the specified transaction from the wallet. Meant for use with pruned wallets and as a companion to importprunedfunds. This will effect wallet balances.
      * @param txid
      */
@@ -683,7 +662,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * DEPRECATED (use sendtoaddress). Sent an amount from an account to a syscoin address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request
      */
@@ -699,7 +677,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request
      */
@@ -715,7 +692,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Send an amount to a given address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request
      */
@@ -731,7 +707,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Sign a message with the private key of an address. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request
      */
@@ -747,7 +722,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Decode raw syscoin transaction (serialized, hex-encoded) and display information pertaining to the service that is included in the transactiion data output(OP_RETURN)
      * @param alias
      * @param hexstring
@@ -764,7 +738,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Sign inputs for raw transaction (serialized, hex-encoded) and sends them out to the network if signing is complete
      * @param hexstring
      */
@@ -780,7 +753,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Return information about the given syscoin address.
      * @param syscoinaddress
      */
@@ -796,7 +768,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Verify a signed message
      * @param syscoinaddress The syscoin address to use for the signature.
      * @param signature The signature provided by the signer in base 64 encoding (see signmessage).
@@ -814,7 +785,6 @@ export class GeneralService {
     }
 
     /**
-     *
      * Removes the wallet encryption key from memory, locking the wallet. After calling this method, you will need to call walletpassphrase again before being able to call any methods which require the wallet to be unlocked.
      */
     public walletlock(extraHttpRequestParams?: any): Observable<string> {
@@ -829,8 +799,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * Stores the wallet decryption key in memory for &#39;timeout&#39; seconds. This is needed prior to performing transactions related to private keys such as sending syscoins
+     * Stores the wallet decryption key in memory for 'timeout' seconds. This is needed prior to performing transactions related to private keys such as sending syscoins
      * @param request
      */
     public walletpassphrase(request: WalletPassphraseRequest, extraHttpRequestParams?: any): Observable<string> {
@@ -845,8 +814,7 @@ export class GeneralService {
     }
 
     /**
-     *
-     * Changes the wallet passphrase from &#39;oldpassphrase&#39; to &#39;newpassphrase&#39;.
+     * Changes the wallet passphrase from 'oldpassphrase' to 'newpassphrase'.
      * @param request
      */
     public walletpassphrasechange(request: WalletPassphraseChangeRequest, extraHttpRequestParams?: any): Observable<string> {
@@ -1389,6 +1357,42 @@ export class GeneralService {
      */
     public getmininginfoWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
         const path = this.basePath + '/getmininginfo';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+        }
+
+        return this.http.request(path, requestOptions);
+    }
+
+    /**
+     *
+     * Returns a json object containing network-related information.
+     */
+    public getnetworkinfoWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/getnetworkinfo';
 
         let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845

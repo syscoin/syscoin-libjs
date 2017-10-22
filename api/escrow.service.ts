@@ -83,7 +83,6 @@ export class EscrowService {
     }
 
     /**
-     * 
      * Acknowledge escrow payment as seller of offer. Deducts qty of offer and increases number of sold inventory.
      * @param escrowguid 
      */
@@ -99,7 +98,6 @@ export class EscrowService {
     }
 
     /**
-     * 
      * Claim escrow funds released from seller or arbiter using escrowrefund. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */
@@ -115,7 +113,6 @@ export class EscrowService {
     }
 
     /**
-     * 
      * Claim escrow funds released from buyer or arbiter using escrowrelease. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      */
@@ -131,7 +128,6 @@ export class EscrowService {
     }
 
     /**
-     * 
      * Completes an escrow refund by creating the escrow complete refund transaction on syscoin blockchain.
      * @param request 
      */
@@ -147,7 +143,6 @@ export class EscrowService {
     }
 
     /**
-     * 
      * Completes an escrow release by creating the escrow complete release transaction on syscoin blockchain.
      * @param request 
      */
@@ -163,7 +158,6 @@ export class EscrowService {
     }
 
     /**
-     * 
      * Count escrows that an set of aliases are involved in.
      * @param buyerAliases 
      * @param sellerAliases 
@@ -181,8 +175,7 @@ export class EscrowService {
     }
 
     /**
-     * 
-     * Send feedback for primary and secondary users in escrow, depending on who you are. Ratings are numbers from 1 to 5. User Role is either &#39;buyer&#39;, &#39;seller&#39;, &#39;reseller&#39;, or &#39;arbiter&#39;. If you are the buyer, feedbackprimary is for seller and feedbacksecondary is for arbiter. If you are the seller, feedbackprimary is for buyer and feedbacksecondary is for arbiter. If you are the arbiter, feedbackprimary is for buyer and feedbacksecondary is for seller. If arbiter didn&#39;t do any work for this escrow you can leave his feedback empty and rating as a 0.
+     * Send feedback for primary and secondary users in escrow, depending on who you are. Ratings are numbers from 1 to 5. User Role is either 'buyer', 'seller', 'reseller', or 'arbiter'. If you are the buyer, feedbackprimary is for seller and feedbacksecondary is for arbiter. If you are the seller, feedbackprimary is for buyer and feedbacksecondary is for arbiter. If you are the arbiter, feedbackprimary is for buyer and feedbacksecondary is for seller. If arbiter didn't do any work for this escrow you can leave his feedback empty and rating as a 0.
      * @param request 
      */
     public escrowfeedback(request: EscrowFeedbackRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
@@ -197,7 +190,6 @@ export class EscrowService {
     }
 
     /**
-     * 
      * scan and filter escrows
      * @param regexp Apply [regexp] on escrows, empty means all escrows
      * @param from Show results from this GUID [from], 0 means first.
@@ -215,7 +207,6 @@ export class EscrowService {
     }
 
     /**
-     * 
      * List all stored values of an escrow.
      * @param escrow GUID of escrow
      */
@@ -231,7 +222,6 @@ export class EscrowService {
     }
 
     /**
-     * 
      * Show stored values of a single escrow
      * @param escrow GUID of escrow
      */
@@ -247,7 +237,6 @@ export class EscrowService {
     }
 
     /**
-     * 
      * List escrows that an array of aliases are involved in.
      * @param buyerAliases List of buyer aliases to display escrows from
      * @param sellerAliases List of seller aliases to display escrows from
@@ -268,7 +257,6 @@ export class EscrowService {
     }
 
     /**
-     * 
      * Create new arbitrated Syscoin escrow.
      * @param request 
      */
@@ -284,8 +272,7 @@ export class EscrowService {
     }
 
     /**
-     * 
-     * Refunds escrow funds back to buyer, buyer needs to sign the output transaction and send to the network. User role represents either &#39;seller&#39; or &#39;arbiter&#39;. Enter in rawTx if this is an external payment refund.
+     * Refunds escrow funds back to buyer, buyer needs to sign the output transaction and send to the network. User role represents either 'seller' or 'arbiter'. Enter in rawTx if this is an external payment refund.
      * @param request 
      */
     public escrowrefund(request: EscrowRefundRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
@@ -300,8 +287,7 @@ export class EscrowService {
     }
 
     /**
-     * 
-     * Releases escrow funds to seller, seller needs to sign the output transaction and send to the network. User role represents either &#39;buyer&#39; or &#39;arbiter&#39;. Enter in rawTx if this is an external payment release.
+     * Releases escrow funds to seller, seller needs to sign the output transaction and send to the network. User role represents either 'buyer' or 'arbiter'. Enter in rawTx if this is an external payment release.
      * @param request 
      */
     public escrowrelease(request: EscrowReleaseRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
@@ -316,7 +302,6 @@ export class EscrowService {
     }
 
     /**
-     * 
      * Generates a multisignature escrow transaction
      * @param request 
      */
