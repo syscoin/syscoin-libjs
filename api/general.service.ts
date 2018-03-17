@@ -772,8 +772,8 @@ export class GeneralService {
     /**
      * Returns all addresses and balances associated with address
      */
-    public syscoinlistreceivebyaddress(extraHttpRequestParams?: any): Observable<Array<SyscoinAddressEntry>> {
-        return this.syscoinlistreceivebyaddressWithHttpInfo(extraHttpRequestParams)
+    public syscoinlistreceivedbyaddress(extraHttpRequestParams?: any): Observable<Array<SyscoinAddressEntry>> {
+        return this.syscoinlistreceivedbyaddressWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -2819,8 +2819,8 @@ export class GeneralService {
      *
      * Returns all addresses and balances associated with address
      */
-    public syscoinlistreceivebyaddressWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/syscoinlistreceivebyaddress';
+    public syscoinlistreceivedbyaddressWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/syscoinlistreceivedbyaddress';
 
         let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
