@@ -9,9 +9,10 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+
 import { Alias } from './alias';
 import { MultiSignatureInfo } from './multiSignatureInfo';
 
 
-export interface AliasHistoryEntry extends Alias { 
+export interface AliasHistoryEntry extends Alias {
 }

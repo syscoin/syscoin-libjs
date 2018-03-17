@@ -11,38 +11,72 @@
  */
 
 
-export interface Offer { 
+
+export interface Offer {
     offer: string;
+
     cert?: string;
+
     txid?: string;
+
     expires_in?: number;
+
     expired_block?: number;
+
     expired?: boolean;
+
     height?: number;
+
     category?: string;
+
     title?: string;
+
     quantity?: string;
+
     currency?: string;
+
     sysprice?: number;
+
     price?: number;
+
     ismine?: boolean;
+
     commission?: number;
+
     offerlink?: boolean;
+
     offerlink_guid?: string;
+
     offerlink_seller?: string;
-    _private?: boolean;
+
+    private?: boolean;
+
     safesearch?: string;
+
     safetylevel?: number;
+
     paymentoptions?: number;
+
     paymentoptions_display?: string;
+
     alias_peg?: string;
+
     description?: string;
+
     alias?: string;
+
     address?: string;
+
     alias_rating?: number;
+
     alias_rating_count?: number;
+
     alias_rating_display?: string;
+
     geolocation?: string;
+
     offers_sold?: number;
+
     time?: string;
+
 }

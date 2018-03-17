@@ -9,8 +9,9 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+
 import { Offer } from './offer';
 
 
-export interface OfferHistoryEntry extends Offer { 
+export interface OfferHistoryEntry extends Offer {
 }

@@ -10,17 +10,15 @@
  * Do not edit the class manually.
  */
 
+import { SinceBlockTransactionEntry } from './sinceBlockTransactionEntry';
 
 
-export interface WalletPassphraseChangeRequest {
-    /**
-     * The current passphrase
-     */
-    oldpassphrase: string;
+export interface ListSinceBlockResponse {
+    transactions?: Array<SinceBlockTransactionEntry>;
 
     /**
-     * The new passphrase
+     * The hash of the last block
      */
-    newpassphrase: string;
+    lastblock?: string;
 
 }

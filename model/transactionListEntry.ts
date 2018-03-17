@@ -102,4 +102,5 @@ export interface TransactionListEntry {
      * Whether this transaction could be replaced due to BIP125 (replace-by-fee); may be unknown for unconfirmed transactions not in the mempool. Example&#58; \"yes|no|unknown\"
      */
     "bip125-replaceable"?: string;
+
 }

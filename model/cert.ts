@@ -11,21 +11,38 @@
  */
 
 
-export interface Cert { 
+
+export interface Cert {
     cert?: string;
+
     txid?: string;
+
     height?: number;
+
     title?: string;
+
     time?: string;
+
     data?: string;
+
     pubdata?: string;
+
     category?: string;
+
     safesearch?: string;
+
     safetylevel?: number;
+
     ismine?: string;
+
     alias?: string;
+
     transferviewonly?: string;
+
     expires_in?: number;
+
     expires_on?: number;
+
     expired?: boolean;
+
 }

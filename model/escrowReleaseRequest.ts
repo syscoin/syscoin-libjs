@@ -11,8 +11,12 @@
  */
 
 
-export interface EscrowReleaseRequest { 
+
+export interface EscrowReleaseRequest {
     escrowguid: string;
+
     userrole: string;
+
     rawtx?: string;
+
 }

@@ -9,24 +9,41 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+
 import { Cert } from './cert';
 
 
-export interface CertHistoryEntry { 
+export interface CertHistoryEntry {
     cert?: string;
+
     txid?: string;
+
     height?: number;
+
     title?: string;
+
     time?: string;
+
     data?: string;
+
     pubdata?: string;
+
     category?: string;
+
     safesearch?: string;
+
     safetylevel?: number;
+
     ismine?: string;
+
     alias?: string;
+
     transferviewonly?: string;
+
     expires_in?: number;
+
     expires_on?: number;
+
     expired?: boolean;
+
 }

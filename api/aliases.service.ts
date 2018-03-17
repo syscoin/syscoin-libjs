@@ -9,14 +9,16 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+
 /* tslint:disable:no-unused-variable member-ordering */
 
 import { Inject, Injectable, Optional }                      from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams,
-         HttpResponse, HttpEvent }                           from '@angular/common/http';
-import { CustomHttpUrlEncodingCodec }                        from '../encoder';
+import { Http, Headers, URLSearchParams }                    from '@angular/http';
+import { RequestMethod, RequestOptions, RequestOptionsArgs } from '@angular/http';
+import { Response, ResponseContentType }                     from '@angular/http';
 
 import { Observable }                                        from 'rxjs/Observable';
+import '../rxjs-operators';
 
 import { Alias } from '../model/alias';
 import { AliasHistoryEntry } from '../model/aliasHistoryEntry';
@@ -33,17 +35,32 @@ import { Configuration }                                     from '../configurat
 export class AliasesService {
 
     protected basePath = 'http://localhost:8001';
-    public defaultHeaders = new HttpHeaders();
-    public configuration = new Configuration();
+    public defaultHeaders: Headers = new Headers();
+    public configuration: Configuration = new Configuration();
 
-    constructor(protected httpClient: HttpClient, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
+    constructor(protected http: Http, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
         if (basePath) {
             this.basePath = basePath;
         }
         if (configuration) {
             this.configuration = configuration;
-            this.basePath = basePath || configuration.basePath || this.basePath;
+			this.basePath = basePath || configuration.basePath || this.basePath;
         }
+    }
+
+    /**
+     * 
+     * Extends object by coping non-existing properties.
+     * @param objA object to be extended
+     * @param objB source object
+     */
+    private extendObj<T1,T2>(objA: T1, objB: T2) {
+        for(let key in objB){
+            if(objB.hasOwnProperty(key)){
+                (objA as any)[key] = (objB as any)[key];
+            }
+        }
+        return <T1&T2>objA;
     }
 
     /**
@@ -60,47 +77,211 @@ export class AliasesService {
         return false;
     }
 
+    /**
+     * list affiliations with merchant offers.
+     */
+    public aliasaffiliates(extraHttpRequestParams?: any): Observable<Array<any>> {
+        return this.aliasaffiliatesWithHttpInfo(extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Authenticates an alias with a provided password and returns the private key if successful. Warning: Calling this function over a public network can lead to someone reading your password/private key in plain text.
+     * @param alias 
+     * @param password 
+     */
+    public aliasauthenticate(alias: string, password: string, extraHttpRequestParams?: any): Observable<Array<any>> {
+        return this.aliasauthenticateWithHttpInfo(alias, password, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Returns the total amount received by the given alias in transactions with at least minconf confirmations.
+     * @param alias The syscoin alias for transactions
+     * @param minconf ﻿Only include transactions confirmed at least this many times. default&#x3D;1.
+     */
+    public aliasbalance(alias: string, minconf?: number, extraHttpRequestParams?: any): Observable<number> {
+        return this.aliasbalanceWithHttpInfo(alias, minconf, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Count aliases that an array of aliases own.
+     */
+    public aliascount(extraHttpRequestParams?: any): Observable<number> {
+        return this.aliascountWithHttpInfo(extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Scan and filter aliases aliasfilter \"\" 5 # list aliases updated in last 5 blocks aliasfilter \"^alias\" # list all aliases starting with \"alias\" aliasfilter 36000 0 0 stat # display stats (number of aliases) on active aliases
+     * @param regexp apply [regexp] on aliases, empty means all aliases
+     * @param from show results from this GUID [from], empty means first
+     * @param count number of results to return.
+     * @param safesearch shows all aliases that are safe to display (not on the ban list)
+     */
+    public aliasfilter(regexp?: string, from?: string, count?: string, safesearch?: string, extraHttpRequestParams?: any): Observable<Array<Alias>> {
+        return this.aliasfilterWithHttpInfo(regexp, from, count, safesearch, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * List all stored values of an alias.
+     * @param aliasname 
+     */
+    public aliashistory(aliasname: string, extraHttpRequestParams?: any): Observable<Array<AliasHistoryEntry>> {
+        return this.aliashistoryWithHttpInfo(aliasname, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Show values of an alias.
+     * @param aliasname 
+     */
+    public aliasinfo(aliasname: string, extraHttpRequestParams?: any): Observable<Alias> {
+        return this.aliasinfoWithHttpInfo(aliasname, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * List my own aliases.
+     * @param aliasname Alias name to use as filter.
+     * @param count The number of results to return
+     * @param from The number of results to skip
+     */
+    public aliaslist(aliasname?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<Alias>> {
+        return this.aliaslistWithHttpInfo(aliasname, count, from, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Creates a new Syscoin Alias. Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public aliasnew(request: AliasNewRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.aliasnewWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Send multiple times from an alias. Amounts are double-precision floating point numbers.
+     * @param request 
+     */
+    public aliaspay(request: AliasPayRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.aliaspayWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Update and possibly transfer an alias. Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public aliasupdate(request: AliasUpdateRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.aliasupdateWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
 
     /**
      * 
      * list affiliations with merchant offers.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public aliasaffiliates(observe?: 'body', reportProgress?: boolean): Observable<Array<any>>;
-    public aliasaffiliates(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<any>>>;
-    public aliasaffiliates(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<any>>>;
-    public aliasaffiliates(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public aliasaffiliatesWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/aliasaffiliates';
 
-        let headers = this.defaultHeaders;
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<any>>(`${this.basePath}/aliasaffiliates`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -108,58 +289,53 @@ export class AliasesService {
      * Authenticates an alias with a provided password and returns the private key if successful. Warning: Calling this function over a public network can lead to someone reading your password/private key in plain text.
      * @param alias 
      * @param password 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public aliasauthenticate(alias: string, password: string, observe?: 'body', reportProgress?: boolean): Observable<Array<any>>;
-    public aliasauthenticate(alias: string, password: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<any>>>;
-    public aliasauthenticate(alias: string, password: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<any>>>;
-    public aliasauthenticate(alias: string, password: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public aliasauthenticateWithHttpInfo(alias: string, password: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/aliasauthenticate';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'alias' is not null or undefined
         if (alias === null || alias === undefined) {
             throw new Error('Required parameter alias was null or undefined when calling aliasauthenticate.');
         }
+        // verify required parameter 'password' is not null or undefined
         if (password === null || password === undefined) {
             throw new Error('Required parameter password was null or undefined when calling aliasauthenticate.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (alias !== undefined) {
-            queryParameters = queryParameters.set('alias', <any>alias);
-        }
-        if (password !== undefined) {
-            queryParameters = queryParameters.set('password', <any>password);
+            queryParameters.set('alias', <any>alias);
         }
 
-        let headers = this.defaultHeaders;
+        if (password !== undefined) {
+            queryParameters.set('password', <any>password);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<any>>(`${this.basePath}/aliasauthenticate`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -167,97 +343,85 @@ export class AliasesService {
      * Returns the total amount received by the given alias in transactions with at least minconf confirmations.
      * @param alias The syscoin alias for transactions
      * @param minconf ﻿Only include transactions confirmed at least this many times. default&#x3D;1.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public aliasbalance(alias: string, minconf?: number, observe?: 'body', reportProgress?: boolean): Observable<number>;
-    public aliasbalance(alias: string, minconf?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
-    public aliasbalance(alias: string, minconf?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
-    public aliasbalance(alias: string, minconf?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public aliasbalanceWithHttpInfo(alias: string, minconf?: number, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/aliasbalance';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'alias' is not null or undefined
         if (alias === null || alias === undefined) {
             throw new Error('Required parameter alias was null or undefined when calling aliasbalance.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (alias !== undefined) {
-            queryParameters = queryParameters.set('alias', <any>alias);
-        }
-        if (minconf !== undefined) {
-            queryParameters = queryParameters.set('minconf', <any>minconf);
+            queryParameters.set('alias', <any>alias);
         }
 
-        let headers = this.defaultHeaders;
+        if (minconf !== undefined) {
+            queryParameters.set('minconf', <any>minconf);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<number>(`${this.basePath}/aliasbalance`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Count aliases that an array of aliases own.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public aliascount(observe?: 'body', reportProgress?: boolean): Observable<number>;
-    public aliascount(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
-    public aliascount(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
-    public aliascount(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public aliascountWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/aliascount';
 
-        let headers = this.defaultHeaders;
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<number>(`${this.basePath}/aliascount`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -267,162 +431,143 @@ export class AliasesService {
      * @param from show results from this GUID [from], empty means first
      * @param count number of results to return.
      * @param safesearch shows all aliases that are safe to display (not on the ban list)
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public aliasfilter(regexp?: string, from?: string, count?: string, safesearch?: string, observe?: 'body', reportProgress?: boolean): Observable<Array<Alias>>;
-    public aliasfilter(regexp?: string, from?: string, count?: string, safesearch?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Alias>>>;
-    public aliasfilter(regexp?: string, from?: string, count?: string, safesearch?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Alias>>>;
-    public aliasfilter(regexp?: string, from?: string, count?: string, safesearch?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public aliasfilterWithHttpInfo(regexp?: string, from?: string, count?: string, safesearch?: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/aliasfilter';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (regexp !== undefined) {
-            queryParameters = queryParameters.set('regexp', <any>regexp);
-        }
-        if (from !== undefined) {
-            queryParameters = queryParameters.set('from', <any>from);
-        }
-        if (count !== undefined) {
-            queryParameters = queryParameters.set('count', <any>count);
-        }
-        if (safesearch !== undefined) {
-            queryParameters = queryParameters.set('safesearch', <any>safesearch);
+            queryParameters.set('regexp', <any>regexp);
         }
 
-        let headers = this.defaultHeaders;
+        if (from !== undefined) {
+            queryParameters.set('from', <any>from);
+        }
+
+        if (count !== undefined) {
+            queryParameters.set('count', <any>count);
+        }
+
+        if (safesearch !== undefined) {
+            queryParameters.set('safesearch', <any>safesearch);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<Alias>>(`${this.basePath}/aliasfilter`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * List all stored values of an alias.
      * @param aliasname 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public aliashistory(aliasname: string, observe?: 'body', reportProgress?: boolean): Observable<Array<AliasHistoryEntry>>;
-    public aliashistory(aliasname: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<AliasHistoryEntry>>>;
-    public aliashistory(aliasname: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<AliasHistoryEntry>>>;
-    public aliashistory(aliasname: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public aliashistoryWithHttpInfo(aliasname: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/aliashistory';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'aliasname' is not null or undefined
         if (aliasname === null || aliasname === undefined) {
             throw new Error('Required parameter aliasname was null or undefined when calling aliashistory.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (aliasname !== undefined) {
-            queryParameters = queryParameters.set('aliasname', <any>aliasname);
+            queryParameters.set('aliasname', <any>aliasname);
         }
 
-        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<AliasHistoryEntry>>(`${this.basePath}/aliashistory`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Show values of an alias.
      * @param aliasname 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public aliasinfo(aliasname: string, observe?: 'body', reportProgress?: boolean): Observable<Alias>;
-    public aliasinfo(aliasname: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Alias>>;
-    public aliasinfo(aliasname: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Alias>>;
-    public aliasinfo(aliasname: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public aliasinfoWithHttpInfo(aliasname: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/aliasinfo';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'aliasname' is not null or undefined
         if (aliasname === null || aliasname === undefined) {
             throw new Error('Required parameter aliasname was null or undefined when calling aliasinfo.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (aliasname !== undefined) {
-            queryParameters = queryParameters.set('aliasname', <any>aliasname);
+            queryParameters.set('aliasname', <any>aliasname);
         }
 
-        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Alias>(`${this.basePath}/aliasinfo`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -431,208 +576,181 @@ export class AliasesService {
      * @param aliasname Alias name to use as filter.
      * @param count The number of results to return
      * @param from The number of results to skip
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public aliaslist(aliasname?: string, count?: number, from?: number, observe?: 'body', reportProgress?: boolean): Observable<Array<Alias>>;
-    public aliaslist(aliasname?: string, count?: number, from?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Alias>>>;
-    public aliaslist(aliasname?: string, count?: number, from?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Alias>>>;
-    public aliaslist(aliasname?: string, count?: number, from?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public aliaslistWithHttpInfo(aliasname?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/aliaslist';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (aliasname !== undefined) {
-            queryParameters = queryParameters.set('aliasname', <any>aliasname);
-        }
-        if (count !== undefined) {
-            queryParameters = queryParameters.set('count', <any>count);
-        }
-        if (from !== undefined) {
-            queryParameters = queryParameters.set('from', <any>from);
+            queryParameters.set('aliasname', <any>aliasname);
         }
 
-        let headers = this.defaultHeaders;
+        if (count !== undefined) {
+            queryParameters.set('count', <any>count);
+        }
+
+        if (from !== undefined) {
+            queryParameters.set('from', <any>from);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<Alias>>(`${this.basePath}/aliaslist`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Creates a new Syscoin Alias. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public aliasnew(request: AliasNewRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public aliasnew(request: AliasNewRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public aliasnew(request: AliasNewRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public aliasnew(request: AliasNewRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public aliasnewWithHttpInfo(request: AliasNewRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/aliasnew';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling aliasnew.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/aliasnew`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Send multiple times from an alias. Amounts are double-precision floating point numbers.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public aliaspay(request: AliasPayRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public aliaspay(request: AliasPayRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public aliaspay(request: AliasPayRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public aliaspay(request: AliasPayRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public aliaspayWithHttpInfo(request: AliasPayRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/aliaspay';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling aliaspay.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/aliaspay`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Update and possibly transfer an alias. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public aliasupdate(request: AliasUpdateRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public aliasupdate(request: AliasUpdateRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public aliasupdate(request: AliasUpdateRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public aliasupdate(request: AliasUpdateRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public aliasupdateWithHttpInfo(request: AliasUpdateRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/aliasupdate';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling aliasupdate.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/aliasupdate`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
 }

@@ -9,19 +9,31 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+
 import { NetworkInfoDetails } from './networkInfoDetails';
 
 
-export interface NetworkInfo { 
+export interface NetworkInfo {
     version?: number;
+
     subversion?: string;
+
     protocolversion?: number;
+
     localservices?: string;
+
     localrelay?: boolean;
+
     timeoffset?: number;
+
     connections?: number;
+
     networks?: Array<NetworkInfoDetails>;
+
     relayfee?: number;
+
     localaddresses?: Array<string>;
+
     warnings?: string;
+
 }

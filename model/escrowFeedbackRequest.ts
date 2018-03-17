@@ -11,11 +11,18 @@
  */
 
 
-export interface EscrowFeedbackRequest { 
+
+export interface EscrowFeedbackRequest {
     escrowguid: string;
+
     userrole: string;
+
     feedbackprimary: string;
+
     ratingprimary: number;
+
     feedbacksecondary: string;
+
     ratingsecondary: number;
+
 }

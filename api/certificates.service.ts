@@ -9,14 +9,16 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+
 /* tslint:disable:no-unused-variable member-ordering */
 
 import { Inject, Injectable, Optional }                      from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams,
-         HttpResponse, HttpEvent }                           from '@angular/common/http';
-import { CustomHttpUrlEncodingCodec }                        from '../encoder';
+import { Http, Headers, URLSearchParams }                    from '@angular/http';
+import { RequestMethod, RequestOptions, RequestOptionsArgs } from '@angular/http';
+import { Response, ResponseContentType }                     from '@angular/http';
 
 import { Observable }                                        from 'rxjs/Observable';
+import '../rxjs-operators';
 
 import { Cert } from '../model/cert';
 import { CertHistoryEntry } from '../model/certHistoryEntry';
@@ -33,17 +35,32 @@ import { Configuration }                                     from '../configurat
 export class CertificatesService {
 
     protected basePath = 'http://localhost:8001';
-    public defaultHeaders = new HttpHeaders();
-    public configuration = new Configuration();
+    public defaultHeaders: Headers = new Headers();
+    public configuration: Configuration = new Configuration();
 
-    constructor(protected httpClient: HttpClient, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
+    constructor(protected http: Http, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
         if (basePath) {
             this.basePath = basePath;
         }
         if (configuration) {
             this.configuration = configuration;
-            this.basePath = basePath || configuration.basePath || this.basePath;
+			this.basePath = basePath || configuration.basePath || this.basePath;
         }
+    }
+
+    /**
+     * 
+     * Extends object by coping non-existing properties.
+     * @param objA object to be extended
+     * @param objB source object
+     */
+    private extendObj<T1,T2>(objA: T1, objB: T2) {
+        for(let key in objB){
+            if(objB.hasOwnProperty(key)){
+                (objA as any)[key] = (objB as any)[key];
+            }
+        }
+        return <T1&T2>objA;
     }
 
     /**
@@ -60,54 +77,173 @@ export class CertificatesService {
         return false;
     }
 
+    /**
+     * Count certificates that an array of aliases own.
+     * @param aliases 
+     */
+    public certcount(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<number> {
+        return this.certcountWithHttpInfo(aliases, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * scan and filter certs certfilter \"\" 5 = list certs updated in last 5 blocks certfilter \"^cert\" = list all certs starting with \"cert\" certfilter 36000 0 0 stat = display stats (number of certs) on active certs
+     * @param regexp apply [regexp] on certes, empty means all certs
+     * @param from show results from number [from]
+     * @param count the number of results to return
+     * @param safesearch shows all certs that are safe to display (not on the ban list)
+     * @param category category you want to search in, empty for all
+     */
+    public certfilter(regexp?: string, from?: string, count?: number, safesearch?: string, category?: string, extraHttpRequestParams?: any): Observable<Array<Cert>> {
+        return this.certfilterWithHttpInfo(regexp, from, count, safesearch, category, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * List all stored values of an cert.
+     * @param certname 
+     */
+    public certhistory(certname: string, extraHttpRequestParams?: any): Observable<Array<CertHistoryEntry>> {
+        return this.certhistoryWithHttpInfo(certname, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Show stored values of a single certificate.
+     * @param guid 
+     */
+    public certinfo(guid: string, extraHttpRequestParams?: any): Observable<Cert> {
+        return this.certinfoWithHttpInfo(guid, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * List certificates that an array of aliases own. Set of aliases to look up based on alias, and private key to decrypt any data found in certificates.
+     * @param aliases 
+     * @param cert 
+     * @param count The number of results to return
+     * @param from The number of results to skip
+     */
+    public certlist(aliases?: Array<string>, cert?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<Cert>> {
+        return this.certlistWithHttpInfo(aliases, cert, count, from, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Create a new Syscoin Certificate. Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public certnew(request: CertNewRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.certnewWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Transfer certificate from one user to another. Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public certtransfer(request: CertTransferRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.certtransferWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Perform an update on an certificate you control. Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public certupdate(request: CertUpdateRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.certupdateWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
 
     /**
      * 
      * Count certificates that an array of aliases own.
      * @param aliases 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public certcount(aliases?: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<number>;
-    public certcount(aliases?: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
-    public certcount(aliases?: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
-    public certcount(aliases?: Array<string>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public certcountWithHttpInfo(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/certcount';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (aliases) {
-            queryParameters = queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
+            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
         }
 
-        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<number>(`${this.basePath}/certcount`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -118,165 +254,147 @@ export class CertificatesService {
      * @param count the number of results to return
      * @param safesearch shows all certs that are safe to display (not on the ban list)
      * @param category category you want to search in, empty for all
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public certfilter(regexp?: string, from?: string, count?: number, safesearch?: string, category?: string, observe?: 'body', reportProgress?: boolean): Observable<Array<Cert>>;
-    public certfilter(regexp?: string, from?: string, count?: number, safesearch?: string, category?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Cert>>>;
-    public certfilter(regexp?: string, from?: string, count?: number, safesearch?: string, category?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Cert>>>;
-    public certfilter(regexp?: string, from?: string, count?: number, safesearch?: string, category?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public certfilterWithHttpInfo(regexp?: string, from?: string, count?: number, safesearch?: string, category?: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/certfilter';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (regexp !== undefined) {
-            queryParameters = queryParameters.set('regexp', <any>regexp);
-        }
-        if (from !== undefined) {
-            queryParameters = queryParameters.set('from', <any>from);
-        }
-        if (count !== undefined) {
-            queryParameters = queryParameters.set('count', <any>count);
-        }
-        if (safesearch !== undefined) {
-            queryParameters = queryParameters.set('safesearch', <any>safesearch);
-        }
-        if (category !== undefined) {
-            queryParameters = queryParameters.set('category', <any>category);
+            queryParameters.set('regexp', <any>regexp);
         }
 
-        let headers = this.defaultHeaders;
+        if (from !== undefined) {
+            queryParameters.set('from', <any>from);
+        }
+
+        if (count !== undefined) {
+            queryParameters.set('count', <any>count);
+        }
+
+        if (safesearch !== undefined) {
+            queryParameters.set('safesearch', <any>safesearch);
+        }
+
+        if (category !== undefined) {
+            queryParameters.set('category', <any>category);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<Cert>>(`${this.basePath}/certfilter`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * List all stored values of an cert.
      * @param certname 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public certhistory(certname: string, observe?: 'body', reportProgress?: boolean): Observable<Array<CertHistoryEntry>>;
-    public certhistory(certname: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<CertHistoryEntry>>>;
-    public certhistory(certname: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<CertHistoryEntry>>>;
-    public certhistory(certname: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public certhistoryWithHttpInfo(certname: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/certhistory';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'certname' is not null or undefined
         if (certname === null || certname === undefined) {
             throw new Error('Required parameter certname was null or undefined when calling certhistory.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (certname !== undefined) {
-            queryParameters = queryParameters.set('certname', <any>certname);
+            queryParameters.set('certname', <any>certname);
         }
 
-        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<CertHistoryEntry>>(`${this.basePath}/certhistory`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Show stored values of a single certificate.
      * @param guid 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public certinfo(guid: string, observe?: 'body', reportProgress?: boolean): Observable<Cert>;
-    public certinfo(guid: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Cert>>;
-    public certinfo(guid: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Cert>>;
-    public certinfo(guid: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public certinfoWithHttpInfo(guid: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/certinfo';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'guid' is not null or undefined
         if (guid === null || guid === undefined) {
             throw new Error('Required parameter guid was null or undefined when calling certinfo.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (guid !== undefined) {
-            queryParameters = queryParameters.set('guid', <any>guid);
+            queryParameters.set('guid', <any>guid);
         }
 
-        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Cert>(`${this.basePath}/certinfo`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -286,211 +404,185 @@ export class CertificatesService {
      * @param cert 
      * @param count The number of results to return
      * @param from The number of results to skip
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public certlist(aliases?: Array<string>, cert?: string, count?: number, from?: number, observe?: 'body', reportProgress?: boolean): Observable<Array<Cert>>;
-    public certlist(aliases?: Array<string>, cert?: string, count?: number, from?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Cert>>>;
-    public certlist(aliases?: Array<string>, cert?: string, count?: number, from?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Cert>>>;
-    public certlist(aliases?: Array<string>, cert?: string, count?: number, from?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public certlistWithHttpInfo(aliases?: Array<string>, cert?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/certlist';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (aliases) {
-            queryParameters = queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
-        }
-        if (cert !== undefined) {
-            queryParameters = queryParameters.set('cert', <any>cert);
-        }
-        if (count !== undefined) {
-            queryParameters = queryParameters.set('count', <any>count);
-        }
-        if (from !== undefined) {
-            queryParameters = queryParameters.set('from', <any>from);
+            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
         }
 
-        let headers = this.defaultHeaders;
+        if (cert !== undefined) {
+            queryParameters.set('cert', <any>cert);
+        }
+
+        if (count !== undefined) {
+            queryParameters.set('count', <any>count);
+        }
+
+        if (from !== undefined) {
+            queryParameters.set('from', <any>from);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<Cert>>(`${this.basePath}/certlist`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Create a new Syscoin Certificate. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public certnew(request: CertNewRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public certnew(request: CertNewRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public certnew(request: CertNewRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public certnew(request: CertNewRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public certnewWithHttpInfo(request: CertNewRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/certnew';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling certnew.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/certnew`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Transfer certificate from one user to another. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public certtransfer(request: CertTransferRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public certtransfer(request: CertTransferRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public certtransfer(request: CertTransferRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public certtransfer(request: CertTransferRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public certtransferWithHttpInfo(request: CertTransferRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/certtransfer';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling certtransfer.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/certtransfer`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Perform an update on an certificate you control. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public certupdate(request: CertUpdateRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public certupdate(request: CertUpdateRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public certupdate(request: CertUpdateRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public certupdate(request: CertUpdateRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public certupdateWithHttpInfo(request: CertUpdateRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/certupdate';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling certupdate.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/certupdate`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
 }

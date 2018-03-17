@@ -9,14 +9,16 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+
 /* tslint:disable:no-unused-variable member-ordering */
 
 import { Inject, Injectable, Optional }                      from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams,
-         HttpResponse, HttpEvent }                           from '@angular/common/http';
-import { CustomHttpUrlEncodingCodec }                        from '../encoder';
+import { Http, Headers, URLSearchParams }                    from '@angular/http';
+import { RequestMethod, RequestOptions, RequestOptionsArgs } from '@angular/http';
+import { Response, ResponseContentType }                     from '@angular/http';
 
 import { Observable }                                        from 'rxjs/Observable';
+import '../rxjs-operators';
 
 import { ErrorResponse } from '../model/errorResponse';
 import { LoginResponse } from '../model/loginResponse';
@@ -29,17 +31,32 @@ import { Configuration }                                     from '../configurat
 export class BlockmarketService {
 
     protected basePath = 'http://localhost:8001';
-    public defaultHeaders = new HttpHeaders();
-    public configuration = new Configuration();
+    public defaultHeaders: Headers = new Headers();
+    public configuration: Configuration = new Configuration();
 
-    constructor(protected httpClient: HttpClient, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
+    constructor(protected http: Http, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
         if (basePath) {
             this.basePath = basePath;
         }
         if (configuration) {
             this.configuration = configuration;
-            this.basePath = basePath || configuration.basePath || this.basePath;
+			this.basePath = basePath || configuration.basePath || this.basePath;
         }
+    }
+
+    /**
+     * 
+     * Extends object by coping non-existing properties.
+     * @param objA object to be extended
+     * @param objB source object
+     */
+    private extendObj<T1,T2>(objA: T1, objB: T2) {
+        for(let key in objB){
+            if(objB.hasOwnProperty(key)){
+                (objA as any)[key] = (objB as any)[key];
+            }
+        }
+        return <T1&T2>objA;
     }
 
     /**
@@ -56,52 +73,60 @@ export class BlockmarketService {
         return false;
     }
 
+    /**
+     * Returns a session token for use with subsquent protected calls.
+     * @param auth SHA1 hash of the user&#39;s authentication information- usernamepassword.
+     */
+    public login(auth: string, extraHttpRequestParams?: any): Observable<LoginResponse> {
+        return this.loginWithHttpInfo(auth, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
 
     /**
      * 
      * Returns a session token for use with subsquent protected calls.
      * @param auth SHA1 hash of the user&#39;s authentication information- usernamepassword.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public login(auth: string, observe?: 'body', reportProgress?: boolean): Observable<LoginResponse>;
-    public login(auth: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<LoginResponse>>;
-    public login(auth: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<LoginResponse>>;
-    public login(auth: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public loginWithHttpInfo(auth: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/login';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'auth' is not null or undefined
         if (auth === null || auth === undefined) {
             throw new Error('Required parameter auth was null or undefined when calling login.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (auth !== undefined) {
-            queryParameters = queryParameters.set('auth', <any>auth);
+            queryParameters.set('auth', <any>auth);
         }
 
-        let headers = this.defaultHeaders;
 
         // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
+        let produces: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<LoginResponse>(`${this.basePath}/login`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
 }

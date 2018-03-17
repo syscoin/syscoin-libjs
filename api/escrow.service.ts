@@ -9,14 +9,16 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+
 /* tslint:disable:no-unused-variable member-ordering */
 
 import { Inject, Injectable, Optional }                      from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams,
-         HttpResponse, HttpEvent }                           from '@angular/common/http';
-import { CustomHttpUrlEncodingCodec }                        from '../encoder';
+import { Http, Headers, URLSearchParams }                    from '@angular/http';
+import { RequestMethod, RequestOptions, RequestOptionsArgs } from '@angular/http';
+import { Response, ResponseContentType }                     from '@angular/http';
 
 import { Observable }                                        from 'rxjs/Observable';
+import '../rxjs-operators';
 
 import { ErrorResponse } from '../model/errorResponse';
 import { Escrow } from '../model/escrow';
@@ -38,17 +40,32 @@ import { Configuration }                                     from '../configurat
 export class EscrowService {
 
     protected basePath = 'http://localhost:8001';
-    public defaultHeaders = new HttpHeaders();
-    public configuration = new Configuration();
+    public defaultHeaders: Headers = new Headers();
+    public configuration: Configuration = new Configuration();
 
-    constructor(protected httpClient: HttpClient, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
+    constructor(protected http: Http, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
         if (basePath) {
             this.basePath = basePath;
         }
         if (configuration) {
             this.configuration = configuration;
-            this.basePath = basePath || configuration.basePath || this.basePath;
+			this.basePath = basePath || configuration.basePath || this.basePath;
         }
+    }
+
+    /**
+     * 
+     * Extends object by coping non-existing properties.
+     * @param objA object to be extended
+     * @param objB source object
+     */
+    private extendObj<T1,T2>(objA: T1, objB: T2) {
+        for(let key in objB){
+            if(objB.hasOwnProperty(key)){
+                (objA as any)[key] = (objB as any)[key];
+            }
+        }
+        return <T1&T2>objA;
     }
 
     /**
@@ -65,262 +82,460 @@ export class EscrowService {
         return false;
     }
 
+    /**
+     * Acknowledge escrow payment as seller of offer. Deducts qty of offer and increases number of sold inventory.
+     * @param escrowguid 
+     */
+    public escrowacknowledge(escrowguid: string, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.escrowacknowledgeWithHttpInfo(escrowguid, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Claim escrow funds released from seller or arbiter using escrowrefund. Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public escrowclaimrefund(request: EscrowClaimRefundRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.escrowclaimrefundWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Claim escrow funds released from buyer or arbiter using escrowrelease. Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public escrowclaimrelease(request: EscrowClaimReleaseRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.escrowclaimreleaseWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Completes an escrow refund by creating the escrow complete refund transaction on syscoin blockchain.
+     * @param request 
+     */
+    public escrowcompleterefund(request: EscrowCompleteRefundRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.escrowcompleterefundWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Completes an escrow release by creating the escrow complete release transaction on syscoin blockchain.
+     * @param request 
+     */
+    public escrowcompleterelease(request: EscrowCompleteReleaseRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.escrowcompletereleaseWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Count escrows that an set of aliases are involved in.
+     * @param buyerAliases 
+     * @param sellerAliases 
+     * @param arbiterAliases 
+     */
+    public escrowcount(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, extraHttpRequestParams?: any): Observable<number> {
+        return this.escrowcountWithHttpInfo(buyerAliases, sellerAliases, arbiterAliases, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Send feedback for primary and secondary users in escrow, depending on who you are. Ratings are numbers from 1 to 5. User Role is either 'buyer', 'seller', 'reseller', or 'arbiter'. If you are the buyer, feedbackprimary is for seller and feedbacksecondary is for arbiter. If you are the seller, feedbackprimary is for buyer and feedbacksecondary is for arbiter. If you are the arbiter, feedbackprimary is for buyer and feedbacksecondary is for seller. If arbiter didn't do any work for this escrow you can leave his feedback empty and rating as a 0.
+     * @param request 
+     */
+    public escrowfeedback(request: EscrowFeedbackRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.escrowfeedbackWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * scan and filter escrows
+     * @param regexp Apply [regexp] on escrows, empty means all escrows
+     * @param from Show results from this GUID [from], 0 means first.
+     * @param count the number of results to return
+     */
+    public escrowfilter(regexp?: string, from?: string, count?: number, extraHttpRequestParams?: any): Observable<Array<Escrow>> {
+        return this.escrowfilterWithHttpInfo(regexp, from, count, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * List all stored values of an escrow.
+     * @param escrow GUID of escrow
+     */
+    public escrowhistory(escrow: string, extraHttpRequestParams?: any): Observable<Array<Escrow>> {
+        return this.escrowhistoryWithHttpInfo(escrow, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Show stored values of a single escrow
+     * @param escrow GUID of escrow
+     */
+    public escrowinfo(escrow: string, extraHttpRequestParams?: any): Observable<Escrow> {
+        return this.escrowinfoWithHttpInfo(escrow, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * List escrows that an array of aliases are involved in.
+     * @param buyerAliases List of buyer aliases to display escrows from
+     * @param sellerAliases List of seller aliases to display escrows from
+     * @param arbiterAliases List of arbiter aliases to display escrows from
+     * @param escrow GUID of escrow
+     * @param count The number of results to return
+     * @param from The number of results to skip
+     */
+    public escrowlist(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, escrow?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<Escrow>> {
+        return this.escrowlistWithHttpInfo(buyerAliases, sellerAliases, arbiterAliases, escrow, count, from, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Create new arbitrated Syscoin escrow.
+     * @param request 
+     */
+    public escrownew(request: EscrowNewRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.escrownewWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Refunds escrow funds back to buyer, buyer needs to sign the output transaction and send to the network. User role represents either 'seller' or 'arbiter'. Enter in rawTx if this is an external payment refund.
+     * @param request 
+     */
+    public escrowrefund(request: EscrowRefundRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.escrowrefundWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Releases escrow funds to seller, seller needs to sign the output transaction and send to the network. User role represents either 'buyer' or 'arbiter'. Enter in rawTx if this is an external payment release.
+     * @param request 
+     */
+    public escrowrelease(request: EscrowReleaseRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.escrowreleaseWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Generates a multisignature escrow transaction
+     * @param request 
+     */
+    public generateescrowmultisig(request: GenerateEscrowMultisigRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.generateescrowmultisigWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
 
     /**
      * 
      * Acknowledge escrow payment as seller of offer. Deducts qty of offer and increases number of sold inventory.
      * @param escrowguid 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowacknowledge(escrowguid: string, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public escrowacknowledge(escrowguid: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public escrowacknowledge(escrowguid: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public escrowacknowledge(escrowguid: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowacknowledgeWithHttpInfo(escrowguid: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowacknowledge';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'escrowguid' is not null or undefined
         if (escrowguid === null || escrowguid === undefined) {
             throw new Error('Required parameter escrowguid was null or undefined when calling escrowacknowledge.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (escrowguid !== undefined) {
-            queryParameters = queryParameters.set('escrowguid', <any>escrowguid);
+            queryParameters.set('escrowguid', <any>escrowguid);
         }
 
-        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/escrowacknowledge`,
-            null,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Claim escrow funds released from seller or arbiter using escrowrefund. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowclaimrefund(request: EscrowClaimRefundRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public escrowclaimrefund(request: EscrowClaimRefundRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public escrowclaimrefund(request: EscrowClaimRefundRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public escrowclaimrefund(request: EscrowClaimRefundRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowclaimrefundWithHttpInfo(request: EscrowClaimRefundRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowclaimrefund';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling escrowclaimrefund.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/escrowclaimrefund`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Claim escrow funds released from buyer or arbiter using escrowrelease. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowclaimrelease(request: EscrowClaimReleaseRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public escrowclaimrelease(request: EscrowClaimReleaseRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public escrowclaimrelease(request: EscrowClaimReleaseRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public escrowclaimrelease(request: EscrowClaimReleaseRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowclaimreleaseWithHttpInfo(request: EscrowClaimReleaseRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowclaimrelease';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling escrowclaimrelease.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/escrowclaimrelease`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Completes an escrow refund by creating the escrow complete refund transaction on syscoin blockchain.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowcompleterefund(request: EscrowCompleteRefundRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public escrowcompleterefund(request: EscrowCompleteRefundRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public escrowcompleterefund(request: EscrowCompleteRefundRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public escrowcompleterefund(request: EscrowCompleteRefundRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowcompleterefundWithHttpInfo(request: EscrowCompleteRefundRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowcompleterefund';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling escrowcompleterefund.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/escrowcompleterefund`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Completes an escrow release by creating the escrow complete release transaction on syscoin blockchain.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowcompleterelease(request: EscrowCompleteReleaseRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public escrowcompleterelease(request: EscrowCompleteReleaseRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public escrowcompleterelease(request: EscrowCompleteReleaseRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public escrowcompleterelease(request: EscrowCompleteReleaseRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowcompletereleaseWithHttpInfo(request: EscrowCompleteReleaseRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowcompleterelease';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling escrowcompleterelease.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/escrowcompleterelease`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -329,106 +544,93 @@ export class EscrowService {
      * @param buyerAliases 
      * @param sellerAliases 
      * @param arbiterAliases 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowcount(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<number>;
-    public escrowcount(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
-    public escrowcount(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
-    public escrowcount(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowcountWithHttpInfo(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowcount';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (buyerAliases) {
-            queryParameters = queryParameters.set('buyerAliases', buyerAliases.join(COLLECTION_FORMATS['csv']));
-        }
-        if (sellerAliases) {
-            queryParameters = queryParameters.set('sellerAliases', sellerAliases.join(COLLECTION_FORMATS['csv']));
-        }
-        if (arbiterAliases) {
-            queryParameters = queryParameters.set('arbiterAliases', arbiterAliases.join(COLLECTION_FORMATS['csv']));
+            queryParameters.set('buyerAliases', buyerAliases.join(COLLECTION_FORMATS['csv']));
         }
 
-        let headers = this.defaultHeaders;
+        if (sellerAliases) {
+            queryParameters.set('sellerAliases', sellerAliases.join(COLLECTION_FORMATS['csv']));
+        }
+
+        if (arbiterAliases) {
+            queryParameters.set('arbiterAliases', arbiterAliases.join(COLLECTION_FORMATS['csv']));
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<number>(`${this.basePath}/escrowcount`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Send feedback for primary and secondary users in escrow, depending on who you are. Ratings are numbers from 1 to 5. User Role is either &#39;buyer&#39;, &#39;seller&#39;, &#39;reseller&#39;, or &#39;arbiter&#39;. If you are the buyer, feedbackprimary is for seller and feedbacksecondary is for arbiter. If you are the seller, feedbackprimary is for buyer and feedbacksecondary is for arbiter. If you are the arbiter, feedbackprimary is for buyer and feedbacksecondary is for seller. If arbiter didn&#39;t do any work for this escrow you can leave his feedback empty and rating as a 0.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowfeedback(request: EscrowFeedbackRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public escrowfeedback(request: EscrowFeedbackRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public escrowfeedback(request: EscrowFeedbackRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public escrowfeedback(request: EscrowFeedbackRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowfeedbackWithHttpInfo(request: EscrowFeedbackRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowfeedback';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling escrowfeedback.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/escrowfeedback`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -437,159 +639,139 @@ export class EscrowService {
      * @param regexp Apply [regexp] on escrows, empty means all escrows
      * @param from Show results from this GUID [from], 0 means first.
      * @param count the number of results to return
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowfilter(regexp?: string, from?: string, count?: number, observe?: 'body', reportProgress?: boolean): Observable<Array<Escrow>>;
-    public escrowfilter(regexp?: string, from?: string, count?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Escrow>>>;
-    public escrowfilter(regexp?: string, from?: string, count?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Escrow>>>;
-    public escrowfilter(regexp?: string, from?: string, count?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowfilterWithHttpInfo(regexp?: string, from?: string, count?: number, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowfilter';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (regexp !== undefined) {
-            queryParameters = queryParameters.set('regexp', <any>regexp);
-        }
-        if (from !== undefined) {
-            queryParameters = queryParameters.set('from', <any>from);
-        }
-        if (count !== undefined) {
-            queryParameters = queryParameters.set('count', <any>count);
+            queryParameters.set('regexp', <any>regexp);
         }
 
-        let headers = this.defaultHeaders;
+        if (from !== undefined) {
+            queryParameters.set('from', <any>from);
+        }
+
+        if (count !== undefined) {
+            queryParameters.set('count', <any>count);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<Escrow>>(`${this.basePath}/escrowfilter`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * List all stored values of an escrow.
      * @param escrow GUID of escrow
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowhistory(escrow: string, observe?: 'body', reportProgress?: boolean): Observable<Array<Escrow>>;
-    public escrowhistory(escrow: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Escrow>>>;
-    public escrowhistory(escrow: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Escrow>>>;
-    public escrowhistory(escrow: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowhistoryWithHttpInfo(escrow: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowhistory';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'escrow' is not null or undefined
         if (escrow === null || escrow === undefined) {
             throw new Error('Required parameter escrow was null or undefined when calling escrowhistory.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (escrow !== undefined) {
-            queryParameters = queryParameters.set('escrow', <any>escrow);
+            queryParameters.set('escrow', <any>escrow);
         }
 
-        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<Escrow>>(`${this.basePath}/escrowhistory`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Show stored values of a single escrow
      * @param escrow GUID of escrow
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowinfo(escrow: string, observe?: 'body', reportProgress?: boolean): Observable<Escrow>;
-    public escrowinfo(escrow: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Escrow>>;
-    public escrowinfo(escrow: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Escrow>>;
-    public escrowinfo(escrow: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowinfoWithHttpInfo(escrow: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowinfo';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'escrow' is not null or undefined
         if (escrow === null || escrow === undefined) {
             throw new Error('Required parameter escrow was null or undefined when calling escrowinfo.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (escrow !== undefined) {
-            queryParameters = queryParameters.set('escrow', <any>escrow);
+            queryParameters.set('escrow', <any>escrow);
         }
 
-        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Escrow>(`${this.basePath}/escrowinfo`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -601,268 +783,237 @@ export class EscrowService {
      * @param escrow GUID of escrow
      * @param count The number of results to return
      * @param from The number of results to skip
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowlist(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, escrow?: string, count?: number, from?: number, observe?: 'body', reportProgress?: boolean): Observable<Array<Escrow>>;
-    public escrowlist(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, escrow?: string, count?: number, from?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Escrow>>>;
-    public escrowlist(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, escrow?: string, count?: number, from?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Escrow>>>;
-    public escrowlist(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, escrow?: string, count?: number, from?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowlistWithHttpInfo(buyerAliases?: Array<string>, sellerAliases?: Array<string>, arbiterAliases?: Array<string>, escrow?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowlist';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (buyerAliases) {
-            queryParameters = queryParameters.set('buyerAliases', buyerAliases.join(COLLECTION_FORMATS['csv']));
-        }
-        if (sellerAliases) {
-            queryParameters = queryParameters.set('sellerAliases', sellerAliases.join(COLLECTION_FORMATS['csv']));
-        }
-        if (arbiterAliases) {
-            queryParameters = queryParameters.set('arbiterAliases', arbiterAliases.join(COLLECTION_FORMATS['csv']));
-        }
-        if (escrow !== undefined) {
-            queryParameters = queryParameters.set('escrow', <any>escrow);
-        }
-        if (count !== undefined) {
-            queryParameters = queryParameters.set('count', <any>count);
-        }
-        if (from !== undefined) {
-            queryParameters = queryParameters.set('from', <any>from);
+            queryParameters.set('buyerAliases', buyerAliases.join(COLLECTION_FORMATS['csv']));
         }
 
-        let headers = this.defaultHeaders;
+        if (sellerAliases) {
+            queryParameters.set('sellerAliases', sellerAliases.join(COLLECTION_FORMATS['csv']));
+        }
+
+        if (arbiterAliases) {
+            queryParameters.set('arbiterAliases', arbiterAliases.join(COLLECTION_FORMATS['csv']));
+        }
+
+        if (escrow !== undefined) {
+            queryParameters.set('escrow', <any>escrow);
+        }
+
+        if (count !== undefined) {
+            queryParameters.set('count', <any>count);
+        }
+
+        if (from !== undefined) {
+            queryParameters.set('from', <any>from);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<Escrow>>(`${this.basePath}/escrowlist`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Create new arbitrated Syscoin escrow.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrownew(request: EscrowNewRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public escrownew(request: EscrowNewRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public escrownew(request: EscrowNewRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public escrownew(request: EscrowNewRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrownewWithHttpInfo(request: EscrowNewRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrownew';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling escrownew.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/escrownew`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Refunds escrow funds back to buyer, buyer needs to sign the output transaction and send to the network. User role represents either &#39;seller&#39; or &#39;arbiter&#39;. Enter in rawTx if this is an external payment refund.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowrefund(request: EscrowRefundRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public escrowrefund(request: EscrowRefundRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public escrowrefund(request: EscrowRefundRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public escrowrefund(request: EscrowRefundRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowrefundWithHttpInfo(request: EscrowRefundRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowrefund';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling escrowrefund.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/escrowrefund`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Releases escrow funds to seller, seller needs to sign the output transaction and send to the network. User role represents either &#39;buyer&#39; or &#39;arbiter&#39;. Enter in rawTx if this is an external payment release.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public escrowrelease(request: EscrowReleaseRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public escrowrelease(request: EscrowReleaseRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public escrowrelease(request: EscrowReleaseRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public escrowrelease(request: EscrowReleaseRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public escrowreleaseWithHttpInfo(request: EscrowReleaseRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/escrowrelease';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling escrowrelease.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/escrowrelease`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Generates a multisignature escrow transaction
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public generateescrowmultisig(request: GenerateEscrowMultisigRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public generateescrowmultisig(request: GenerateEscrowMultisigRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public generateescrowmultisig(request: GenerateEscrowMultisigRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public generateescrowmultisig(request: GenerateEscrowMultisigRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public generateescrowmultisigWithHttpInfo(request: GenerateEscrowMultisigRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/generateescrowmultisig';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling generateescrowmultisig.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/generateescrowmultisig`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
 }

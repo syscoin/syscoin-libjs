@@ -11,8 +11,12 @@
  */
 
 
-export interface MultiSignatureInfo { 
+
+export interface MultiSignatureInfo {
     reqsigs: number;
+
     reqsigners: string;
+
     redeemscript: string;
+
 }

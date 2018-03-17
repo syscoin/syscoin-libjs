@@ -9,14 +9,16 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+
 /* tslint:disable:no-unused-variable member-ordering */
 
 import { Inject, Injectable, Optional }                      from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams,
-         HttpResponse, HttpEvent }                           from '@angular/common/http';
-import { CustomHttpUrlEncodingCodec }                        from '../encoder';
+import { Http, Headers, URLSearchParams }                    from '@angular/http';
+import { RequestMethod, RequestOptions, RequestOptionsArgs } from '@angular/http';
+import { Response, ResponseContentType }                     from '@angular/http';
 
 import { Observable }                                        from 'rxjs/Observable';
+import '../rxjs-operators';
 
 import { ErrorResponse } from '../model/errorResponse';
 import { Offer } from '../model/offer';
@@ -39,17 +41,32 @@ import { Configuration }                                     from '../configurat
 export class OffersService {
 
     protected basePath = 'http://localhost:8001';
-    public defaultHeaders = new HttpHeaders();
-    public configuration = new Configuration();
+    public defaultHeaders: Headers = new Headers();
+    public configuration: Configuration = new Configuration();
 
-    constructor(protected httpClient: HttpClient, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
+    constructor(protected http: Http, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
         if (basePath) {
             this.basePath = basePath;
         }
         if (configuration) {
             this.configuration = configuration;
-            this.basePath = basePath || configuration.basePath || this.basePath;
+			this.basePath = basePath || configuration.basePath || this.basePath;
         }
+    }
+
+    /**
+     * 
+     * Extends object by coping non-existing properties.
+     * @param objA object to be extended
+     * @param objB source object
+     */
+    private extendObj<T1,T2>(objA: T1, objB: T2) {
+        for(let key in objB){
+            if(objB.hasOwnProperty(key)){
+                (objA as any)[key] = (objB as any)[key];
+            }
+        }
+        return <T1&T2>objA;
     }
 
     /**
@@ -66,56 +83,322 @@ export class OffersService {
         return false;
     }
 
+    /**
+     * Accept&Pay for a confirmed offer.
+     * @param request 
+     */
+    public offeraccept(request: OfferAcceptRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.offeracceptWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Acknowledge offer payment as seller of offer. Deducts qty of offer and increases number of sold inventory.
+     * @param offerguid 
+     * @param offeracceptguid 
+     */
+    public offeracceptacknowledge(offerguid: string, offeracceptguid: string, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.offeracceptacknowledgeWithHttpInfo(offerguid, offeracceptguid, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * List count of offer accept for a set of aliases. filterpurchases filters results for count of accepts that have been bought with aliases passed in(as buyer), filtersales filters results for count of accepts purchased by aliases passed in(as merchant or affiliate).
+     * @param aliases 
+     * @param filterpurchases 
+     * @param filtersales 
+     */
+    public offeracceptcount(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: boolean, extraHttpRequestParams?: any): Observable<number> {
+        return this.offeracceptcountWithHttpInfo(aliases, filterpurchases, filtersales, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Send feedback and rating for offer accept specified. Ratings are numbers from 1 to 5
+     * @param offerguid 
+     * @param offeracceptguid 
+     * @param feedback 
+     * @param rating 
+     */
+    public offeracceptfeedback(offerguid: string, offeracceptguid: string, feedback?: string, rating?: number, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.offeracceptfeedbackWithHttpInfo(offerguid, offeracceptguid, feedback, rating, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * List offer accepts for a set of aliases. filterpurchases filters results for accepts that have been bought with aliases passed in(as buyer), filtersales filters results for accepts purchased by aliases passed in(as merchant or affiliate).
+     * @param aliases 
+     * @param guid 
+     * @param filterpurchases 
+     * @param filtersales 
+     * @param count The number of results to return
+     * @param from The number of results to skip
+     */
+    public offeracceptlist(aliases?: Array<string>, guid?: string, filterpurchases?: boolean, filtersales?: boolean, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<OfferAccept>> {
+        return this.offeracceptlistWithHttpInfo(aliases, guid, filterpurchases, filtersales, count, from, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Add to the affiliate list of your offer(controls who can resell). Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public offeraddwhitelist(request: OfferAddWhitelistRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.offeraddwhitelistWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Clear the affiliate list of your offer(controls who can resell). Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public offerclearwhitelist(request: OfferClearWhitelistRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.offerclearwhitelistWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Count offers that an array of aliases own.
+     * @param aliases 
+     */
+    public offercount(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<number> {
+        return this.offercountWithHttpInfo(aliases, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * scan and filter offers
+     * @param regexp apply [regexp] on offeres, empty means all offers
+     * @param from show results from number [from]
+     * @param count the number of results to return
+     * @param safesearch shows all offers that are safe to display (not on the ban list)
+     * @param category Category you want to search in, empty for all
+     */
+    public offerfilter(regexp?: string, from?: string, count?: number, safesearch?: string, category?: string, extraHttpRequestParams?: any): Observable<Array<Offer>> {
+        return this.offerfilterWithHttpInfo(regexp, from, count, safesearch, category, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * List all stored values of an offer.
+     * @param offer Offer GUID.
+     */
+    public offerhistory(offer: string, extraHttpRequestParams?: any): Observable<Array<OfferHistoryEntry>> {
+        return this.offerhistoryWithHttpInfo(offer, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Show values of an offer.
+     * @param guid 
+     */
+    public offerinfo(guid: string, extraHttpRequestParams?: any): Observable<Offer> {
+        return this.offerinfoWithHttpInfo(guid, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public offerlink(request: OfferLinkRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.offerlinkWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * list offers that an array of aliases own.
+     * @param aliases 
+     * @param guid 
+     * @param count The number of results to return
+     * @param from The number of results to skip
+     */
+    public offerlist(aliases?: Array<string>, guid?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Array<Offer>> {
+        return this.offerlistWithHttpInfo(aliases, guid, count, from, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Create a new offer on the Syscoin decentralized marketplace. Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public offernew(request: OfferNewRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.offernewWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Remove from the affiliate list of your offer(controls who can resell). Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public offerremovewhitelist(request: OfferRemoveWhitelistRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.offerremovewhitelistWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Perform an update on an offer you control. Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request 
+     */
+    public offerupdate(request: OfferUpdateRequest, extraHttpRequestParams?: any): Observable<Array<string>> {
+        return this.offerupdateWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * List all affiliates for this offer.
+     * @param offerguid 
+     */
+    public offerwhitelist(offerguid: string, extraHttpRequestParams?: any): Observable<Array<OfferWhitelistEntry>> {
+        return this.offerwhitelistWithHttpInfo(offerguid, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
 
     /**
      * 
      * Accept&amp;Pay for a confirmed offer.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offeraccept(request: OfferAcceptRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public offeraccept(request: OfferAcceptRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public offeraccept(request: OfferAcceptRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public offeraccept(request: OfferAcceptRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offeracceptWithHttpInfo(request: OfferAcceptRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offeraccept';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling offeraccept.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/offeraccept`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -123,59 +406,53 @@ export class OffersService {
      * Acknowledge offer payment as seller of offer. Deducts qty of offer and increases number of sold inventory.
      * @param offerguid 
      * @param offeracceptguid 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offeracceptacknowledge(offerguid: string, offeracceptguid: string, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public offeracceptacknowledge(offerguid: string, offeracceptguid: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public offeracceptacknowledge(offerguid: string, offeracceptguid: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public offeracceptacknowledge(offerguid: string, offeracceptguid: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offeracceptacknowledgeWithHttpInfo(offerguid: string, offeracceptguid: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offeracceptacknowledge';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'offerguid' is not null or undefined
         if (offerguid === null || offerguid === undefined) {
             throw new Error('Required parameter offerguid was null or undefined when calling offeracceptacknowledge.');
         }
+        // verify required parameter 'offeracceptguid' is not null or undefined
         if (offeracceptguid === null || offeracceptguid === undefined) {
             throw new Error('Required parameter offeracceptguid was null or undefined when calling offeracceptacknowledge.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (offerguid !== undefined) {
-            queryParameters = queryParameters.set('offerguid', <any>offerguid);
-        }
-        if (offeracceptguid !== undefined) {
-            queryParameters = queryParameters.set('offeracceptguid', <any>offeracceptguid);
+            queryParameters.set('offerguid', <any>offerguid);
         }
 
-        let headers = this.defaultHeaders;
+        if (offeracceptguid !== undefined) {
+            queryParameters.set('offeracceptguid', <any>offeracceptguid);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/offeracceptacknowledge`,
-            null,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -184,55 +461,49 @@ export class OffersService {
      * @param aliases 
      * @param filterpurchases 
      * @param filtersales 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offeracceptcount(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: boolean, observe?: 'body', reportProgress?: boolean): Observable<number>;
-    public offeracceptcount(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
-    public offeracceptcount(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
-    public offeracceptcount(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offeracceptcountWithHttpInfo(aliases?: Array<string>, filterpurchases?: boolean, filtersales?: boolean, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offeracceptcount';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (aliases) {
-            queryParameters = queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
-        }
-        if (filterpurchases !== undefined) {
-            queryParameters = queryParameters.set('filterpurchases', <any>filterpurchases);
-        }
-        if (filtersales !== undefined) {
-            queryParameters = queryParameters.set('filtersales', <any>filtersales);
+            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
         }
 
-        let headers = this.defaultHeaders;
+        if (filterpurchases !== undefined) {
+            queryParameters.set('filterpurchases', <any>filterpurchases);
+        }
+
+        if (filtersales !== undefined) {
+            queryParameters.set('filtersales', <any>filtersales);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<number>(`${this.basePath}/offeracceptcount`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -242,65 +513,61 @@ export class OffersService {
      * @param offeracceptguid 
      * @param feedback 
      * @param rating 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offeracceptfeedback(offerguid: string, offeracceptguid: string, feedback?: string, rating?: number, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public offeracceptfeedback(offerguid: string, offeracceptguid: string, feedback?: string, rating?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public offeracceptfeedback(offerguid: string, offeracceptguid: string, feedback?: string, rating?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public offeracceptfeedback(offerguid: string, offeracceptguid: string, feedback?: string, rating?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offeracceptfeedbackWithHttpInfo(offerguid: string, offeracceptguid: string, feedback?: string, rating?: number, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offeracceptfeedback';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'offerguid' is not null or undefined
         if (offerguid === null || offerguid === undefined) {
             throw new Error('Required parameter offerguid was null or undefined when calling offeracceptfeedback.');
         }
+        // verify required parameter 'offeracceptguid' is not null or undefined
         if (offeracceptguid === null || offeracceptguid === undefined) {
             throw new Error('Required parameter offeracceptguid was null or undefined when calling offeracceptfeedback.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (offerguid !== undefined) {
-            queryParameters = queryParameters.set('offerguid', <any>offerguid);
-        }
-        if (offeracceptguid !== undefined) {
-            queryParameters = queryParameters.set('offeracceptguid', <any>offeracceptguid);
-        }
-        if (feedback !== undefined) {
-            queryParameters = queryParameters.set('feedback', <any>feedback);
-        }
-        if (rating !== undefined) {
-            queryParameters = queryParameters.set('rating', <any>rating);
+            queryParameters.set('offerguid', <any>offerguid);
         }
 
-        let headers = this.defaultHeaders;
+        if (offeracceptguid !== undefined) {
+            queryParameters.set('offeracceptguid', <any>offeracceptguid);
+        }
+
+        if (feedback !== undefined) {
+            queryParameters.set('feedback', <any>feedback);
+        }
+
+        if (rating !== undefined) {
+            queryParameters.set('rating', <any>rating);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/offeracceptfeedback`,
-            null,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -312,215 +579,190 @@ export class OffersService {
      * @param filtersales 
      * @param count The number of results to return
      * @param from The number of results to skip
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offeracceptlist(aliases?: Array<string>, guid?: string, filterpurchases?: boolean, filtersales?: boolean, count?: number, from?: number, observe?: 'body', reportProgress?: boolean): Observable<Array<OfferAccept>>;
-    public offeracceptlist(aliases?: Array<string>, guid?: string, filterpurchases?: boolean, filtersales?: boolean, count?: number, from?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<OfferAccept>>>;
-    public offeracceptlist(aliases?: Array<string>, guid?: string, filterpurchases?: boolean, filtersales?: boolean, count?: number, from?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<OfferAccept>>>;
-    public offeracceptlist(aliases?: Array<string>, guid?: string, filterpurchases?: boolean, filtersales?: boolean, count?: number, from?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offeracceptlistWithHttpInfo(aliases?: Array<string>, guid?: string, filterpurchases?: boolean, filtersales?: boolean, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offeracceptlist';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (aliases) {
-            queryParameters = queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
-        }
-        if (guid !== undefined) {
-            queryParameters = queryParameters.set('guid', <any>guid);
-        }
-        if (filterpurchases !== undefined) {
-            queryParameters = queryParameters.set('filterpurchases', <any>filterpurchases);
-        }
-        if (filtersales !== undefined) {
-            queryParameters = queryParameters.set('filtersales', <any>filtersales);
-        }
-        if (count !== undefined) {
-            queryParameters = queryParameters.set('count', <any>count);
-        }
-        if (from !== undefined) {
-            queryParameters = queryParameters.set('from', <any>from);
+            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
         }
 
-        let headers = this.defaultHeaders;
+        if (guid !== undefined) {
+            queryParameters.set('guid', <any>guid);
+        }
+
+        if (filterpurchases !== undefined) {
+            queryParameters.set('filterpurchases', <any>filterpurchases);
+        }
+
+        if (filtersales !== undefined) {
+            queryParameters.set('filtersales', <any>filtersales);
+        }
+
+        if (count !== undefined) {
+            queryParameters.set('count', <any>count);
+        }
+
+        if (from !== undefined) {
+            queryParameters.set('from', <any>from);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<OfferAccept>>(`${this.basePath}/offeracceptlist`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Add to the affiliate list of your offer(controls who can resell). Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offeraddwhitelist(request: OfferAddWhitelistRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public offeraddwhitelist(request: OfferAddWhitelistRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public offeraddwhitelist(request: OfferAddWhitelistRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public offeraddwhitelist(request: OfferAddWhitelistRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offeraddwhitelistWithHttpInfo(request: OfferAddWhitelistRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offeraddwhitelist';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling offeraddwhitelist.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/offeraddwhitelist`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Clear the affiliate list of your offer(controls who can resell). Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offerclearwhitelist(request: OfferClearWhitelistRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public offerclearwhitelist(request: OfferClearWhitelistRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public offerclearwhitelist(request: OfferClearWhitelistRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public offerclearwhitelist(request: OfferClearWhitelistRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offerclearwhitelistWithHttpInfo(request: OfferClearWhitelistRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offerclearwhitelist';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling offerclearwhitelist.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/offerclearwhitelist`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Count offers that an array of aliases own.
      * @param aliases 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offercount(aliases?: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<number>;
-    public offercount(aliases?: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
-    public offercount(aliases?: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
-    public offercount(aliases?: Array<string>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offercountWithHttpInfo(aliases?: Array<string>, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offercount';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (aliases) {
-            queryParameters = queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
+            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
         }
 
-        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<number>(`${this.basePath}/offercount`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -531,216 +773,191 @@ export class OffersService {
      * @param count the number of results to return
      * @param safesearch shows all offers that are safe to display (not on the ban list)
      * @param category Category you want to search in, empty for all
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offerfilter(regexp?: string, from?: string, count?: number, safesearch?: string, category?: string, observe?: 'body', reportProgress?: boolean): Observable<Array<Offer>>;
-    public offerfilter(regexp?: string, from?: string, count?: number, safesearch?: string, category?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Offer>>>;
-    public offerfilter(regexp?: string, from?: string, count?: number, safesearch?: string, category?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Offer>>>;
-    public offerfilter(regexp?: string, from?: string, count?: number, safesearch?: string, category?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offerfilterWithHttpInfo(regexp?: string, from?: string, count?: number, safesearch?: string, category?: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offerfilter';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (regexp !== undefined) {
-            queryParameters = queryParameters.set('regexp', <any>regexp);
-        }
-        if (from !== undefined) {
-            queryParameters = queryParameters.set('from', <any>from);
-        }
-        if (count !== undefined) {
-            queryParameters = queryParameters.set('count', <any>count);
-        }
-        if (safesearch !== undefined) {
-            queryParameters = queryParameters.set('safesearch', <any>safesearch);
-        }
-        if (category !== undefined) {
-            queryParameters = queryParameters.set('category', <any>category);
+            queryParameters.set('regexp', <any>regexp);
         }
 
-        let headers = this.defaultHeaders;
+        if (from !== undefined) {
+            queryParameters.set('from', <any>from);
+        }
+
+        if (count !== undefined) {
+            queryParameters.set('count', <any>count);
+        }
+
+        if (safesearch !== undefined) {
+            queryParameters.set('safesearch', <any>safesearch);
+        }
+
+        if (category !== undefined) {
+            queryParameters.set('category', <any>category);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<Offer>>(`${this.basePath}/offerfilter`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * List all stored values of an offer.
      * @param offer Offer GUID.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offerhistory(offer: string, observe?: 'body', reportProgress?: boolean): Observable<Array<OfferHistoryEntry>>;
-    public offerhistory(offer: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<OfferHistoryEntry>>>;
-    public offerhistory(offer: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<OfferHistoryEntry>>>;
-    public offerhistory(offer: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offerhistoryWithHttpInfo(offer: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offerhistory';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'offer' is not null or undefined
         if (offer === null || offer === undefined) {
             throw new Error('Required parameter offer was null or undefined when calling offerhistory.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (offer !== undefined) {
-            queryParameters = queryParameters.set('offer', <any>offer);
+            queryParameters.set('offer', <any>offer);
         }
 
-        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<OfferHistoryEntry>>(`${this.basePath}/offerhistory`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Show values of an offer.
      * @param guid 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offerinfo(guid: string, observe?: 'body', reportProgress?: boolean): Observable<Offer>;
-    public offerinfo(guid: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Offer>>;
-    public offerinfo(guid: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Offer>>;
-    public offerinfo(guid: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offerinfoWithHttpInfo(guid: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offerinfo';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'guid' is not null or undefined
         if (guid === null || guid === undefined) {
             throw new Error('Required parameter guid was null or undefined when calling offerinfo.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (guid !== undefined) {
-            queryParameters = queryParameters.set('guid', <any>guid);
+            queryParameters.set('guid', <any>guid);
         }
 
-        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Offer>(`${this.basePath}/offerinfo`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offerlink(request: OfferLinkRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public offerlink(request: OfferLinkRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public offerlink(request: OfferLinkRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public offerlink(request: OfferLinkRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offerlinkWithHttpInfo(request: OfferLinkRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offerlink';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling offerlink.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/offerlink`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
@@ -750,263 +967,230 @@ export class OffersService {
      * @param guid 
      * @param count The number of results to return
      * @param from The number of results to skip
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offerlist(aliases?: Array<string>, guid?: string, count?: number, from?: number, observe?: 'body', reportProgress?: boolean): Observable<Array<Offer>>;
-    public offerlist(aliases?: Array<string>, guid?: string, count?: number, from?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Offer>>>;
-    public offerlist(aliases?: Array<string>, guid?: string, count?: number, from?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Offer>>>;
-    public offerlist(aliases?: Array<string>, guid?: string, count?: number, from?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offerlistWithHttpInfo(aliases?: Array<string>, guid?: string, count?: number, from?: number, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offerlist';
 
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
         if (aliases) {
-            queryParameters = queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
-        }
-        if (guid !== undefined) {
-            queryParameters = queryParameters.set('guid', <any>guid);
-        }
-        if (count !== undefined) {
-            queryParameters = queryParameters.set('count', <any>count);
-        }
-        if (from !== undefined) {
-            queryParameters = queryParameters.set('from', <any>from);
+            queryParameters.set('aliases', aliases.join(COLLECTION_FORMATS['csv']));
         }
 
-        let headers = this.defaultHeaders;
+        if (guid !== undefined) {
+            queryParameters.set('guid', <any>guid);
+        }
+
+        if (count !== undefined) {
+            queryParameters.set('count', <any>count);
+        }
+
+        if (from !== undefined) {
+            queryParameters.set('from', <any>from);
+        }
+
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<Offer>>(`${this.basePath}/offerlist`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Create a new offer on the Syscoin decentralized marketplace. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offernew(request: OfferNewRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public offernew(request: OfferNewRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public offernew(request: OfferNewRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public offernew(request: OfferNewRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offernewWithHttpInfo(request: OfferNewRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offernew';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling offernew.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/offernew`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Remove from the affiliate list of your offer(controls who can resell). Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offerremovewhitelist(request: OfferRemoveWhitelistRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public offerremovewhitelist(request: OfferRemoveWhitelistRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public offerremovewhitelist(request: OfferRemoveWhitelistRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public offerremovewhitelist(request: OfferRemoveWhitelistRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offerremovewhitelistWithHttpInfo(request: OfferRemoveWhitelistRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offerremovewhitelist';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling offerremovewhitelist.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/offerremovewhitelist`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * Perform an update on an offer you control. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offerupdate(request: OfferUpdateRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
-    public offerupdate(request: OfferUpdateRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
-    public offerupdate(request: OfferUpdateRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
-    public offerupdate(request: OfferUpdateRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offerupdateWithHttpInfo(request: OfferUpdateRequest, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offerupdate';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'request' is not null or undefined
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling offerupdate.');
         }
 
-        let headers = this.defaultHeaders;
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        headers.set('Content-Type', 'application/json');
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
-        }
-
-        return this.httpClient.post<Array<string>>(`${this.basePath}/offerupdate`,
-            request,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
     /**
      * 
      * List all affiliates for this offer.
      * @param offerguid 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
      */
-    public offerwhitelist(offerguid: string, observe?: 'body', reportProgress?: boolean): Observable<Array<OfferWhitelistEntry>>;
-    public offerwhitelist(offerguid: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<OfferWhitelistEntry>>>;
-    public offerwhitelist(offerguid: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<OfferWhitelistEntry>>>;
-    public offerwhitelist(offerguid: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public offerwhitelistWithHttpInfo(offerguid: string, extraHttpRequestParams?: any): Observable<Response> {
+        const path = this.basePath + '/offerwhitelist';
+
+        let queryParameters = new URLSearchParams();
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // verify required parameter 'offerguid' is not null or undefined
         if (offerguid === null || offerguid === undefined) {
             throw new Error('Required parameter offerguid was null or undefined when calling offerwhitelist.');
         }
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (offerguid !== undefined) {
-            queryParameters = queryParameters.set('offerguid', <any>offerguid);
+            queryParameters.set('offerguid', <any>offerguid);
         }
 
-        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let produces: string[] = [
+            'application/json'
+        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers = headers.set('token', this.configuration.apiKeys["token"]);
+            headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<Array<OfferWhitelistEntry>>(`${this.basePath}/offerwhitelist`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
+        return this.http.request(path, requestOptions);
     }
 
 }
