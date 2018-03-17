@@ -772,7 +772,7 @@ export class GeneralService {
     /**
      * Returns all addresses and balances associated with address
      */
-    public syscoinlistreceivebyaddress(extraHttpRequestParams?: any): Observable<SyscoinAddressEntry> {
+    public syscoinlistreceivebyaddress(extraHttpRequestParams?: any): Observable<Array<SyscoinAddressEntry>> {
         return this.syscoinlistreceivebyaddressWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
