@@ -12,15 +12,13 @@
 
 
 
-export interface WalletPassphraseChangeRequest {
-    /**
-     * The current passphrase
-     */
-    oldpassphrase: string;
+export interface SyscoinAddressEntry {
+    address?: string;
 
-    /**
-     * The new passphrase
-     */
-    newpassphrase: string;
+    balance?: number;
+
+    label?: string;
+
+    alias?: string;
 
 }

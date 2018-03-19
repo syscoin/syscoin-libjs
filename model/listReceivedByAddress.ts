@@ -12,15 +12,21 @@
 
 
 
-export interface WalletPassphraseChangeRequest {
-    /**
-     * The current passphrase
-     */
-    oldpassphrase: string;
+export interface ListReceivedByAddress {
+    address?: string;
 
-    /**
-     * The new passphrase
-     */
-    newpassphrase: string;
+    v2address?: string;
+
+    account?: string;
+
+    amount?: number;
+
+    confirmations?: number;
+
+    label?: string;
+
+    txids?: Array<string>;
+
+    ismine?: boolean;
 
 }
