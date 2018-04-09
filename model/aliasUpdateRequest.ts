@@ -11,61 +11,37 @@
  */
 
 
-
-export interface AliasUpdateRequest {
-    /**
-     * Alias peg which will be used for conversion operations on all Syscoin services related to this Alias
-     */
-    aliaspeg: string;
-
+export interface AliasUpdateRequest { 
     /**
      * Alias name
      */
     aliasname: string;
-
     /**
-     * Alias public profile data, 1023 chars max.
+     * alias public profile data, 256 characters max.
      */
-    publicvalue: string;
-
+    publicvalue?: string;
     /**
-     * Alias private profile data, 1023 chars max. Will be private and readable by owner only.
+     * 0 for none, 1 for accepting certificate transfers, 2 for accepting asset transfers and 3 for all. Default is 3.
      */
-    privatevalue?: string;
-
+    accept_transfers_flags?: number;
     /**
-     * Used to generate your public/private key that controls this alias. Warning: Calling this function over a public network can lead to someone reading your password in plain text.
+     * Epoch time when to expire alias. It is exponentially more expensive per year, calculation is FEERATE*(2.88^years). FEERATE is the dynamic satoshi per byte fee set in the rate peg alias used for this alias. Defaults to 1 hour.
      */
-    password?: string;
-
+    expire_timestamp?: number;
     /**
-     * set to No if this alias should only show in the search when safe search is not selected. Defaults to Yes (alias shows with or without safe search selected in search lists).
+     * Address for this alias.
      */
-    safesearch?: string;
-
+    address: string;
     /**
-     * receiver syscoin alias pub key, if transferring alias.
+     * Encrypted private key used for encryption decryption of private data related to this alias. Should be encrypted to publickey.
      */
-    toalias_pubkey?: string;
-
+    encryption_privatekey?: string;
     /**
-     * set to No if this alias should not allow a certificate to be transferred to it. Defaults to Yes.
+     * Public key used for encryption decryption of private data related to this alias.
      */
-    accepttransfers?: string;
-
+    encryption_publickey?: string;
     /**
-     * Time in seconds. Future time when to expire alias. It is exponentially more expensive per year, calculation is FEERATE*(1.5^years). FEERATE is the dynamic satoshi per byte fee set in the rate peg alias used for this alias. Defaults to 1 year.
+     * Witness alias name that will sign for web-of-trust notarization of this transaction.
      */
-    expire?: string;
-
-    /**
-     * For multisig aliases only. The number of required signatures out of the n aliases for a multisig alias update.
-     */
-    nrequired?: number;
-
-    /**
-     * For multisig aliases only. A json array of aliases which are used to sign on an update to this alias. [ \"alias\"    Existing syscoin alias name ,... ]
-     */
-    aliases?: Array<string>;
-
+    witness?: string;
 }

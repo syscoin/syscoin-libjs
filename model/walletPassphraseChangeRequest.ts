@@ -11,16 +11,13 @@
  */
 
 
-
-export interface WalletPassphraseChangeRequest {
+export interface WalletPassphraseChangeRequest { 
     /**
      * The current passphrase
      */
     oldpassphrase: string;
-
     /**
      * The new passphrase
      */
     newpassphrase: string;
-
 }

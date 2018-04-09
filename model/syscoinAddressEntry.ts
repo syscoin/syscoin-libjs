@@ -11,14 +11,9 @@
  */
 
 
-
-export interface SyscoinAddressEntry {
+export interface SyscoinAddressEntry { 
     address?: string;
-
     balance?: number;
-
     label?: string;
-
     alias?: string;
-
 }

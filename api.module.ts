@@ -1,27 +1,47 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpModule } from '@angular/http';
-import { Configuration } from './configuration';
+import {ModuleWithProviders, NgModule, Optional, SkipSelf} from '@angular/core';
+import {Configuration} from './configuration';
 
-import { AliasesService } from './api/aliases.service';
-import { BlockmarketService } from './api/blockmarket.service';
-import { CertificatesService } from './api/certificates.service';
-import { EscrowService } from './api/escrow.service';
-import { GeneralService } from './api/general.service';
-import { MessagingService } from './api/messaging.service';
-import { OffersService } from './api/offers.service';
+import {Http} from '@angular/http';
+
+import {AliasesService} from './api/aliases.service';
+import {AssetService} from './api/asset.service';
+import {BlockmarketService} from './api/blockmarket.service';
+import {CertificatesService} from './api/certificates.service';
+import {EscrowService} from './api/escrow.service';
+import {GeneralService} from './api/general.service';
+import {MasternodesService} from './api/masternodes.service';
+import {OffersService} from './api/offers.service';
 
 @NgModule({
-  imports:      [ CommonModule, HttpModule ],
+  imports: [],
   declarations: [],
   exports:      [],
-  providers:    [ AliasesService, BlockmarketService, CertificatesService, EscrowService, GeneralService, MessagingService, OffersService ]
+  providers: [
+    AliasesService,
+    AssetService,
+    BlockmarketService,
+    CertificatesService,
+    EscrowService,
+    GeneralService,
+    MasternodesService,
+    OffersService]
 })
 export class ApiModule {
-    public static forConfig(configurationFactory: () => Configuration): ModuleWithProviders {
+  constructor(@Optional() @SkipSelf() parentModule: ApiModule,
+              @Optional() http: Http) {
+    if (parentModule) {
+      throw new Error('ApiModule is already loaded. Import in your base AppModule only.');
+    }
+    if (!http) {
+      throw new Error('You need to import the HttpModule in your AppModule! \n' +
+        'See also https://github.com/angular/angular/issues/20575');
+    }
+  }
+
+  public static forRoot(configurationFactory: () => Configuration): ModuleWithProviders {
         return {
             ngModule: ApiModule,
-            providers: [ {provide: Configuration, useFactory: configurationFactory}]
+          providers: [{provide: Configuration, useFactory: configurationFactory}]
         }
     }
 }

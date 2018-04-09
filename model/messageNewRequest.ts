@@ -11,31 +11,25 @@
  */
 
 
-
-export interface MessageNewRequest {
+export interface MessageNewRequest { 
     /**
      * Subject of message.
      */
     subject: string;
-
     /**
      * Alias to send message from.
      */
     fromalias: string;
-
     /**
      * Alias to send message to.
      */
     toalias: string;
-
     /**
      * Message encrypted to from alias.
      */
     frommessage: string;
-
     /**
      * Message encrypted to sending alias.
      */
     tomessage: string;
-
 }

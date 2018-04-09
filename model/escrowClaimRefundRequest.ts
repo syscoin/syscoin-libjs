@@ -11,10 +11,7 @@
  */
 
 
-
-export interface EscrowClaimRefundRequest {
+export interface EscrowClaimRefundRequest { 
     guid: string;
-
     rawtx?: string;
-
 }

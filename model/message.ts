@@ -11,20 +11,12 @@
  */
 
 
-
-export interface Message {
+export interface Message { 
     GUID?: string;
-
     txid?: string;
-
     time?: number;
-
     from?: string;
-
     to?: string;
-
     subject?: string;
-
     message?: string;
-
 }

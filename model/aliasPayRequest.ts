@@ -11,26 +11,21 @@
  */
 
 
-
-export interface AliasPayRequest {
+export interface AliasPayRequest { 
     /**
-     * Alias you own to pay from
+     * Alias to pay from
      */
-    alias: string;
-
+    aliasfrom: string;
     /**
-     * A json object with aliases and amounts { \"address\":amount   (numeric or string) The syscoin alias is the key, the numeric amount (can be string) in SYS is the value ,... }
+     * A stringified JSON object with aliases and amounts. { \"address\":amount, ... } (numeric or string) The syscoin alias is the key, the numeric amount (can be string) in SYS is the value.
      */
     amounts: string;
-
     /**
-     * Only use the balance confirmed at least this many times.
+     * Set to true to use InstantSend to send this transaction or false otherwise.
      */
-    minconf?: number;
-
+    instantsend?: boolean;
     /**
-     * A comment
+     * Set to true to subtract fee from amount or false otherwise.
      */
-    comment?: string;
-
+    subtractfeefromamount?: string;
 }

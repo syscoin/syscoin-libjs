@@ -11,11 +11,9 @@
  */
 
 
-
-export interface ImportWalletRequest {
+export interface ImportWalletRequest { 
     /**
      * The wallet file
      */
     filename: string;
-
 }

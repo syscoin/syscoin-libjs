@@ -9,58 +9,79 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-
 /* tslint:disable:no-unused-variable member-ordering */
 
-import { Inject, Injectable, Optional }                      from '@angular/core';
-import { Http, Headers, URLSearchParams }                    from '@angular/http';
-import { RequestMethod, RequestOptions, RequestOptionsArgs } from '@angular/http';
-import { Response, ResponseContentType }                     from '@angular/http';
+import {Inject, Injectable, Optional} from '@angular/core';
+import {
+  Headers,
+  Http,
+  RequestMethod,
+  RequestOptions,
+  RequestOptionsArgs,
+  Response,
+  URLSearchParams
+} from '@angular/http';
+import {CustomQueryEncoderHelper} from '../encoder';
 
-import { Observable }                                        from 'rxjs/Observable';
+import {Observable} from 'rxjs/Observable';
 import '../rxjs-operators';
 
-import { Account } from '../model/account';
-import { AddMultisigAddressRequest } from '../model/addMultisigAddressRequest';
-import { EncryptWalletRequest } from '../model/encryptWalletRequest';
-import { ErrorResponse } from '../model/errorResponse';
-import { GetBlockResponse } from '../model/getBlockResponse';
-import { GetBlockchainInfoResponse } from '../model/getBlockchainInfoResponse';
-import { GetNewAddressRequest } from '../model/getNewAddressRequest';
-import { ImportAddressRequest } from '../model/importAddressRequest';
-import { ImportPrivKeyRequest } from '../model/importPrivKeyRequest';
-import { ImportPubKeyRequest } from '../model/importPubKeyRequest';
-import { ImportWalletRequest } from '../model/importWalletRequest';
-import { Info } from '../model/info';
-import { ListReceivedByAddress } from '../model/listReceivedByAddress';
-import { ListSinceBlockResponse } from '../model/listSinceBlockResponse';
-import { MiningInfo } from '../model/miningInfo';
-import { MoveRequest } from '../model/moveRequest';
-import { NetworkInfo } from '../model/networkInfo';
-import { PeerInfoResponse } from '../model/peerInfoResponse';
-import { SendFromRequest } from '../model/sendFromRequest';
-import { SendManyRequest } from '../model/sendManyRequest';
-import { SendToAddressRequest } from '../model/sendToAddressRequest';
-import { SignMessageRequest } from '../model/signMessageRequest';
-import { SyscoinAddressEntry } from '../model/syscoinAddressEntry';
-import { Transaction } from '../model/transaction';
-import { TransactionListEntry } from '../model/transactionListEntry';
-import { ValidateAddressResponse } from '../model/validateAddressResponse';
-import { WalletInfo } from '../model/walletInfo';
-import { WalletPassphraseChangeRequest } from '../model/walletPassphraseChangeRequest';
-import { WalletPassphraseRequest } from '../model/walletPassphraseRequest';
-import { AddressGrouping } from "../";
+import {Account} from '../model/account';
+import {AddMultisigAddressRequest} from '../model/addMultisigAddressRequest';
+import {AddressGrouping} from '../model/addressGrouping';
+import {DumpHdInfoResponse} from '../model/dumpHdInfoResponse';
+import {EncryptWalletRequest} from '../model/encryptWalletRequest';
+import {FundRawTransactionRequest} from '../model/fundRawTransactionRequest';
+import {GetAddressBalanceResponse} from '../model/getAddressBalanceResponse';
+import {GetAddressDeltasResponseObject} from '../model/getAddressDeltasResponseObject';
+import {GetAddressMemPoolResponseObject} from '../model/getAddressMemPoolResponseObject';
+import {GetAddressUTXOsEntry} from '../model/getAddressUTXOsEntry';
+import {GetAddressUtxosRequest} from '../model/getAddressUtxosRequest';
+import {GetBlockResponse} from '../model/getBlockResponse';
+import {GetBlockchainInfoResponse} from '../model/getBlockchainInfoResponse';
+import {GetChainTipsResponse} from '../model/getChainTipsResponse';
+import {GetNewAddressRequest} from '../model/getNewAddressRequest';
+import {GetSpentInfoResponse} from '../model/getSpentInfoResponse';
+import {GovernanceInfoResponse} from '../model/governanceInfoResponse';
+import {ImportAddressRequest} from '../model/importAddressRequest';
+import {ImportPrivKeyRequest} from '../model/importPrivKeyRequest';
+import {ImportPubKeyRequest} from '../model/importPubKeyRequest';
+import {ImportWalletRequest} from '../model/importWalletRequest';
+import {Info} from '../model/info';
+import {InstantSendToAddressRequest} from '../model/instantSendToAddressRequest';
+import {ListReceivedByAddress} from '../model/listReceivedByAddress';
+import {ListSinceBlockResponse} from '../model/listSinceBlockResponse';
+import {LockUnspentRequest} from '../model/lockUnspentRequest';
+import {MiningInfo} from '../model/miningInfo';
+import {MoveRequest} from '../model/moveRequest';
+import {NetworkInfo} from '../model/networkInfo';
+import {PeerInfoResponse} from '../model/peerInfoResponse';
+import {PoolInfoResponse} from '../model/poolInfoResponse';
+import {SendFromRequest} from '../model/sendFromRequest';
+import {SendManyRequest} from '../model/sendManyRequest';
+import {SendRawTransactionRequest} from '../model/sendRawTransactionRequest';
+import {SendToAddressRequest} from '../model/sendToAddressRequest';
+import {SignMessageRequest} from '../model/signMessageRequest';
+import {SignRawTransactionRequest} from '../model/signRawTransactionRequest';
+import {SyscoinAddressEntry} from '../model/syscoinAddressEntry';
+import {Transaction} from '../model/transaction';
+import {TransactionListEntry} from '../model/transactionListEntry';
+import {UnspentListEntry} from '../model/unspentListEntry';
+import {ValidateAddressResponse} from '../model/validateAddressResponse';
+import {WalletInfo} from '../model/walletInfo';
+import {WalletPassphraseChangeRequest} from '../model/walletPassphraseChangeRequest';
+import {WalletPassphraseRequest} from '../model/walletPassphraseRequest';
 
-import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
-import { Configuration }                                     from '../configuration';
+import {BASE_PATH, COLLECTION_FORMATS} from '../variables';
+import {Configuration} from '../configuration';
 
 
 @Injectable()
 export class GeneralService {
 
     protected basePath = 'http://localhost:8001';
-    public defaultHeaders: Headers = new Headers();
-    public configuration: Configuration = new Configuration();
+  public defaultHeaders = new Headers();
+  public configuration = new Configuration();
 
     constructor(protected http: Http, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
         if (basePath) {
@@ -68,23 +89,8 @@ export class GeneralService {
         }
         if (configuration) {
             this.configuration = configuration;
-			this.basePath = basePath || configuration.basePath || this.basePath;
+          this.basePath = basePath || configuration.basePath || this.basePath;
         }
-    }
-
-    /**
-     *
-     * Extends object by coping non-existing properties.
-     * @param objA object to be extended
-     * @param objB source object
-     */
-    private extendObj<T1,T2>(objA: T1, objB: T2) {
-        for(let key in objB){
-            if(objB.hasOwnProperty(key)){
-                (objA as any)[key] = (objB as any)[key];
-            }
-        }
-        return <T1&T2>objA;
     }
 
     /**
@@ -105,7 +111,7 @@ export class GeneralService {
      * Add a nrequired-to-sign multisignature address to the wallet. Each key is a Syscoin address or hex-encoded public key. If 'account' is specified (DEPRECATED), assign address to that account.
      * @param request
      */
-    public addmultisigaddress(request: AddMultisigAddressRequest, extraHttpRequestParams?: any): Observable<string> {
+    public addmultisigaddress(request: AddMultisigAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.addmultisigaddressWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -116,11 +122,40 @@ export class GeneralService {
             });
     }
 
+  /**
+   * Change debug category on the fly. Specify single category or use comma to specify many.
+   * @param command 0|1|addrman|alert|bench|coindb|db|lock|rand |rpc|selectcoins|mempool|mempoolrej|net|proxy |prune|http|libevent|tor|zmq|syscoin|privatesend|instantsend |masternode|spork|keepass|mnpayments|gobject
+   */
+  public debug(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
+    return this.debugWithHttpInfo(command, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Returns an object containing sensitive private info about this HD wallet.
+   */
+  public dumphdinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<DumpHdInfoResponse> {
+    return this.dumphdinfoWithHttpInfo(extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
     /**
      * Reveals the private key corresponding to 'syscoinaddress'. Then the importprivkey can be used with this output.
      * @param address The syscoin address for the private key
      */
-    public dumpprivkey(address: string, extraHttpRequestParams?: any): Observable<string> {
+    public dumpprivkey(address: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.dumpprivkeyWithHttpInfo(address, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -135,7 +170,7 @@ export class GeneralService {
      * Dumps all wallet keys in a human-readable format.
      * @param filename The filename
      */
-    public dumpwallet(filename: string, extraHttpRequestParams?: any): Observable<string> {
+    public dumpwallet(filename: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.dumpwalletWithHttpInfo(filename, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -150,7 +185,7 @@ export class GeneralService {
      * Encrypts the wallet with 'passphrase'. This is for first time encryption. After this, any calls that interact with private keys such as sending or signing will require the passphrase to be set prior the making these calls. Use the walletpassphrase call for this, and then walletlock call. If the wallet is already encrypted, use the walletpassphrasechange call. Note that this will shutdown the server.
      * @param request
      */
-    public encryptwallet(request: EncryptWalletRequest, extraHttpRequestParams?: any): Observable<string> {
+    public encryptwallet(request: EncryptWalletRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.encryptwalletWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -161,12 +196,27 @@ export class GeneralService {
             });
     }
 
+  /**
+   * Add inputs to a transaction until it has enough in value to meet its out value.
+   * @param request
+   */
+  public fundrawtransaction(request: FundRawTransactionRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
+    return this.fundrawtransactionWithHttpInfo(request, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
     /**
      * Mine up to numblocks blocks immediately (before the RPC call returns).
      * @param numBlocks How many blocks are generated immediately.
      * @param maxtries ﻿How many iterations to try (default &#x3D; 1000000).
      */
-    public generate(numBlocks: number, maxtries?: number, extraHttpRequestParams?: any): Observable<Array<string>> {
+    public generate(numBlocks: number, maxtries?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
         return this.generateWithHttpInfo(numBlocks, maxtries, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -180,7 +230,7 @@ export class GeneralService {
     /**
      * Generates a public key for a wallet.
      */
-    public generatepublickey(extraHttpRequestParams?: any): Observable<Array<string>> {
+    public generatepublickey(extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
         return this.generatepublickeyWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -195,7 +245,7 @@ export class GeneralService {
      * DEPRECATED. Returns the account associated with the given address.
      * @param syscoinaddress The syscoin address for account lookup.
      */
-    public getaccount(syscoinaddress: string, extraHttpRequestParams?: any): Observable<string> {
+    public getaccount(syscoinaddress: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.getaccountWithHttpInfo(syscoinaddress, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -210,7 +260,7 @@ export class GeneralService {
      * DEPRECATED. Returns the current Syscoin address for receiving payments to this account.
      * @param account The account name for the address. It can also be set to the empty string \&quot;\&quot; to represent the default account. The account does not need to exist, it will be created and a new address created  if there is no account by the given name.
      */
-    public getaccountaddress(account: string, extraHttpRequestParams?: any): Observable<string> {
+    public getaccountaddress(account: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.getaccountaddressWithHttpInfo(account, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -221,11 +271,43 @@ export class GeneralService {
             });
     }
 
+  /**
+   * get address balance
+   * @param addresses
+   */
+  public getaddressbalance(addresses: Array<string>, extraHttpRequestParams?: RequestOptionsArgs): Observable<GetAddressBalanceResponse> {
+    return this.getaddressbalanceWithHttpInfo(addresses, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * getaddressdeltas
+   * @param addresses
+   * @param start
+   * @param end
+   */
+  public getaddressdeltas(addresses: Array<string>, start: number, end: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<GetAddressDeltasResponseObject>> {
+    return this.getaddressdeltasWithHttpInfo(addresses, start, end, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
     /**
      * DEPRECATED. Returns the list of addresses for the given account.
      * @param account
      */
-    public getaddressesbyaccount(account: string, extraHttpRequestParams?: any): Observable<Array<string>> {
+    public getaddressesbyaccount(account: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
         return this.getaddressesbyaccountWithHttpInfo(account, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -236,13 +318,60 @@ export class GeneralService {
             });
     }
 
+  /**
+   * getaddressdeltas
+   * @param addresses
+   */
+  public getaddressmempool(addresses: Array<string>, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<GetAddressMemPoolResponseObject>> {
+    return this.getaddressmempoolWithHttpInfo(addresses, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Get address transaction ids
+   * @param addresses
+   * @param start
+   * @param end
+   */
+  public getaddresstxids(addresses: Array<string>, start: number, end: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
+    return this.getaddresstxidsWithHttpInfo(addresses, start, end, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Returns all unspent outputs for addresses or aliases
+   * @param addresses
+   */
+  public getaddressutxos(addresses: GetAddressUtxosRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<GetAddressUTXOsEntry>> {
+    return this.getaddressutxosWithHttpInfo(addresses, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
     /**
      * If account is not specified, returns the server's total available balance. If account is specified (DEPRECATED), returns the balance in the account. Note that the account \"\" is not the same as leaving the parameter out. The server total may be different to the balance in the default \"\" account.
-     * @param account DEPRECATED. The selected account, or \&quot;*\&quot; for entire wallet. It may be the default account using \&quot;\&quot;.
+     * @param account It need \&quot;*\&quot; for entire wallet
      * @param minconf Only include transactions confirmed at least this many times.
      * @param includeWatchonly Also include balance in watchonly addresses (see &#39;importaddress&#39;)
      */
-    public getbalance(account?: string, minconf?: number, includeWatchonly?: boolean, extraHttpRequestParams?: any): Observable<number> {
+    public getbalance(account?: string, minconf?: number, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<number> {
         return this.getbalanceWithHttpInfo(account, minconf, includeWatchonly, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -254,11 +383,11 @@ export class GeneralService {
     }
 
     /**
-     * ﻿If verbose is false, returns a string that is serialized, hex-encoded data for block 'hash'. If verbose is true, returns an Object with information about block <hash>.
+     * If verbose is false, returns a string that is serialized, hex-encoded data for block 'hash'. If verbose is true, returns an Object with information about block <hash>.
      * @param hash
      * @param verbose
      */
-    public getblock(hash: string, verbose?: boolean, extraHttpRequestParams?: any): Observable<GetBlockResponse> {
+    public getblock(hash: string, verbose?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<GetBlockResponse> {
         return this.getblockWithHttpInfo(hash, verbose, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -272,7 +401,7 @@ export class GeneralService {
     /**
      * Returns an object containing various state info regarding block chain processing.
      */
-    public getblockchaininfo(extraHttpRequestParams?: any): Observable<GetBlockchainInfoResponse> {
+    public getblockchaininfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<GetBlockchainInfoResponse> {
         return this.getblockchaininfoWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -286,7 +415,7 @@ export class GeneralService {
     /**
      * Returns the number of blocks in the longest block chain.
      */
-    public getblockcount(extraHttpRequestParams?: any): Observable<number> {
+    public getblockcount(extraHttpRequestParams?: RequestOptionsArgs): Observable<number> {
         return this.getblockcountWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -297,10 +426,99 @@ export class GeneralService {
             });
     }
 
+  /**
+   * Returns array of hashes of blocks within the timestamp range provided.
+   * @param high
+   * @param low
+   */
+  public getblockhashes(high: number, low: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
+    return this.getblockhashesWithHttpInfo(high, low, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Returns an array of items with information about <count> blockheaders starting from <hash>. If verbose is false, each item is a string that is serialized, hex-encoded data for a single blockheader. If verbose is true, each item is an Object with information about a single blockheader.
+   * @param hash
+   * @param count
+   * @param verbose
+   */
+  public getblockheaders(hash: string, count: number, verbose?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
+    return this.getblockheadersWithHttpInfo(hash, count, verbose, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Add inputs to a transaction until it has enough in value to meet its out value.
+   */
+  public getblocktemplate(extraHttpRequestParams?: RequestOptionsArgs): Observable<any> {
+    return this.getblocktemplateWithHttpInfo(extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Returns chain tips
+   */
+  public getchaintips(extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<GetChainTipsResponse>> {
+    return this.getchaintipsWithHttpInfo(extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Returns true if generation is ON, otherwise false
+   */
+  public getgenerate(extraHttpRequestParams?: RequestOptionsArgs): Observable<boolean> {
+    return this.getgenerateWithHttpInfo(extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Returns an object containing governance parameters
+   */
+  public getgovernanceinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<GovernanceInfoResponse> {
+    return this.getgovernanceinfoWithHttpInfo(extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
     /**
      * Returns an object containing various state info.
      */
-    public getinfo(extraHttpRequestParams?: any): Observable<Info> {
+    public getinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Info> {
         return this.getinfoWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -314,7 +532,7 @@ export class GeneralService {
     /**
      * Returns a json object containing mining-related information.
      */
-    public getmininginfo(extraHttpRequestParams?: any): Observable<MiningInfo> {
+    public getmininginfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<MiningInfo> {
         return this.getmininginfoWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -328,7 +546,7 @@ export class GeneralService {
     /**
      * Returns a json object containing network-related information.
      */
-    public getnetworkinfo(extraHttpRequestParams?: any): Observable<NetworkInfo> {
+    public getnetworkinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<NetworkInfo> {
         return this.getnetworkinfoWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -343,7 +561,7 @@ export class GeneralService {
      * Returns a new Syscoin address for receiving payments. If 'account' is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to 'account'.
      * @param request
      */
-    public getnewaddress(request?: GetNewAddressRequest, extraHttpRequestParams?: any): Observable<string> {
+    public getnewaddress(request?: GetNewAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.getnewaddressWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -357,7 +575,7 @@ export class GeneralService {
     /**
      * Returns data about each connected network node as a json array of objects.
      */
-    public getpeerinfo(extraHttpRequestParams?: any): Observable<PeerInfoResponse> {
+    public getpeerinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<PeerInfoResponse> {
         return this.getpeerinfoWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -369,12 +587,27 @@ export class GeneralService {
     }
 
     /**
-     * DEPRECATED. Returns the total amount received by addresses with <account> in transactions with at least [minconf] confirmations.
+     * Returns an object containing mixing pool related information
+     */
+    public getpoolinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<PoolInfoResponse> {
+      return this.getpoolinfoWithHttpInfo(extraHttpRequestParams)
+        .map((response: Response) => {
+          if (response.status === 204) {
+            return undefined;
+          } else {
+            return response.json() || {};
+          }
+        });
+    }
+
+  /**
+   * Returns the total amount received by addresses with <account> in transactions with at least [minconf] confirmations.
      * @param account The selected account, may be the default account using \&quot;\&quot;.
      * @param minconf Only include transactions confirmed at least this many times.
+   * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
      */
-    public getreceivedbyaccount(account: string, minconf?: number, extraHttpRequestParams?: any): Observable<number> {
-        return this.getreceivedbyaccountWithHttpInfo(account, minconf, extraHttpRequestParams)
+  public getreceivedbyaccount(account: string, minconf?: number, addlockconf?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<number> {
+    return this.getreceivedbyaccountWithHttpInfo(account, minconf, addlockconf, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -388,9 +621,41 @@ export class GeneralService {
      * Returns the total amount received by the given syscoinaddress in transactions with at least minconf confirmations.
      * @param syscoinaddress The syscoin address for transactions.
      * @param minconf Only include transactions confirmed at least this many times.
+     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
      */
-    public getreceivedbyaddress(syscoinaddress: string, minconf?: number, extraHttpRequestParams?: any): Observable<number> {
-        return this.getreceivedbyaddressWithHttpInfo(syscoinaddress, minconf, extraHttpRequestParams)
+    public getreceivedbyaddress(syscoinaddress: string, minconf?: number, addlockconf?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<number> {
+      return this.getreceivedbyaddressWithHttpInfo(syscoinaddress, minconf, addlockconf, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Returns the txid and index where an output is spent
+     * @param txid
+     * @param index
+     */
+    public getspentinfo(txid: string, index: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<GetSpentInfoResponse> {
+      return this.getspentinfoWithHttpInfo(txid, index, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Returns the absolute maximum sum of superblock payments allowed.
+     * @param index The block index
+     */
+    public getsuperblockbudget(index: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<number> {
+      return this.getsuperblockbudgetWithHttpInfo(index, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -405,8 +670,8 @@ export class GeneralService {
      * @param txid The transaction id
      * @param includeWatchonly Whether to include watchonly addresses in balance calculation and details[]
      */
-    public gettransaction(txid: string, includeWatchonly?: boolean, extraHttpRequestParams?: any): Observable<Transaction> {
-        return this.gettransactionWithHttpInfo(txid, includeWatchonly, extraHttpRequestParams)
+    public gettransaction(txid: string, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Transaction> {
+      return this.gettransactionWithHttpInfo(txid, includeWatchonly, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -419,37 +684,8 @@ export class GeneralService {
     /**
      * Returns the server's total unconfirmed balance
      */
-    public getunconfirmedbalance(extraHttpRequestParams?: any): Observable<number> {
-        return this.getunconfirmedbalanceWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns a new Syscoin (starts with 1) address for receiving payments. If 'account' is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to 'account'.
-     * @param account DEPRECATED. The account name for the address to be linked to. If not provided, the default account \&quot;\&quot; is used. It can also be set to the empty string \&quot;\&quot; to represent the default account. The account does not need to exist, it will be created if there is no account by the given name.
-     */
-    public getv2address(account?: string, extraHttpRequestParams?: any): Observable<string> {
-        return this.getv2addressWithHttpInfo(account, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns wallet balance for all accounts. Does not include watch only accounts.
-     */
-    public getwalletbalance(extraHttpRequestParams?: any): Observable<number> {
-        return this.getwalletbalanceWithHttpInfo(extraHttpRequestParams)
+    public getunconfirmedbalance(extraHttpRequestParams?: RequestOptionsArgs): Observable<number> {
+      return this.getunconfirmedbalanceWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -462,7 +698,7 @@ export class GeneralService {
     /**
      * Returns an object containing various wallet state info.
      */
-    public getwalletinfo(extraHttpRequestParams?: any): Observable<WalletInfo> {
+    public getwalletinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<WalletInfo> {
         return this.getwalletinfoWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -474,11 +710,11 @@ export class GeneralService {
     }
 
     /**
-     * Returns a new ZCash address for receiving payments in ZCash transaparent tokens. so payments received with the address will be credited to 'account'.
-     * @param address
+     * Manage governance objects.
+     * @param command &#39;check&#39; - Validate governance object data (proposal only) &#39;prepare&#39; - Prepare governance object by signing and creating tx &#39;submit&#39; - Submit governance object to network &#39;deserialize&#39; - Deserialize governance object from hex string to JSON &#39;count&#39; - Count governance objects and votes &#39;get&#39; - Get governance object by hash &#39;getvotes&#39; - Get all votes for a governance object hash (including old votes) &#39;getcurrentvotes&#39; - Get only current (tallying) votes for a governance object hash (does not include old votes) &#39;list&#39; - List governance objects (can be filtered by signal and/or object type) &#39;diff&#39; - List differences since last diff &#39;vote-alias&#39; - Vote on a governance object by masternode alias (using masternode.conf setup) &#39;vote-conf&#39; - Vote on a governance object by masternode configured in syscoin.conf &#39;vote-many&#39;- Vote on a governance object by all masternodes (using masternode.conf setup)
      */
-    public getzaddress(address: string, extraHttpRequestParams?: any): Observable<WalletInfo> {
-        return this.getzaddressWithHttpInfo(address, extraHttpRequestParams)
+    public gobject(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
+      return this.gobjectWithHttpInfo(command, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -492,7 +728,7 @@ export class GeneralService {
      * Adds a script (in hex) or address that can be watched as if it were in your wallet but cannot be used to spend.
      * @param request
      */
-    public importaddress(request: ImportAddressRequest, extraHttpRequestParams?: any): Observable<string> {
+    public importaddress(request: ImportAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.importaddressWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -507,24 +743,8 @@ export class GeneralService {
      * Adds a private key (as returned by dumpprivkey) to your wallet.
      * @param request
      */
-    public importprivkey(request: ImportPrivKeyRequest, extraHttpRequestParams?: any): Observable<string> {
+    public importprivkey(request: ImportPrivKeyRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.importprivkeyWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Imports funds without rescan. Corresponding address or script must previously be included in wallet. Aimed towards pruned wallets. The end-user is responsible to import additional transactions that subsequently spend the imported outputs or rescan after the point in the blockchain the transaction is included.
-     * @param rawtransaction
-     * @param txoutproof
-     */
-    public importprunedfunds(rawtransaction: string, txoutproof: string, extraHttpRequestParams?: any): Observable<string> {
-        return this.importprunedfundsWithHttpInfo(rawtransaction, txoutproof, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -538,8 +758,8 @@ export class GeneralService {
      * Adds a public key (in hex) that can be watched as if it were in your wallet but cannot be used to spend.
      * @param request
      */
-    public importpubkey(request: ImportPubKeyRequest, extraHttpRequestParams?: any): Observable<string> {
-        return this.importpubkeyWithHttpInfo(request, extraHttpRequestParams)
+    public importpubkey(request: ImportPubKeyRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
+      return this.importpubkeyWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -553,8 +773,8 @@ export class GeneralService {
      * Imports keys from a wallet dump file (see dumpwallet).
      * @param request
      */
-    public importwallet(request: ImportWalletRequest, extraHttpRequestParams?: any): Observable<string> {
-        return this.importwalletWithHttpInfo(request, extraHttpRequestParams)
+    public importwallet(request: ImportWalletRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
+      return this.importwalletWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -565,12 +785,28 @@ export class GeneralService {
     }
 
     /**
-     * DEPRECATED. Returns Object that has account names as keys, account balances as values.
+     * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request
+     */
+    public instantsendtoaddress(request: InstantSendToAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
+      return this.instantsendtoaddressWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Returns Object that has account names as keys, account balances as values.
      * @param minconf Only include transactions with at least this many confirmations
+     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
      * @param includeWatchonly Include balances in watchonly addresses (see &#39;importaddress&#39;)
      */
-    public listaccounts(minconf?: number, includeWatchonly?: boolean, extraHttpRequestParams?: any): Observable<any> {
-        return this.listaccountsWithHttpInfo(minconf, includeWatchonly, extraHttpRequestParams)
+    public listaccounts(minconf?: number, addlockconf?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<any> {
+      return this.listaccountsWithHttpInfo(minconf, addlockconf, includeWatchonly, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -583,7 +819,7 @@ export class GeneralService {
     /**
      * Lists groups of addresses which have had their common ownership made public by common use as inputs or as the resulting change in past transactions
      */
-    public listaddressgroupings(extraHttpRequestParams?: any): Observable<Array<Array<AddressGrouping>>> {
+    public listaddressgroupings(extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<AddressGrouping>> {
         return this.listaddressgroupingsWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -595,13 +831,14 @@ export class GeneralService {
     }
 
     /**
-     * DEPRECATED. List balances by account.
+     * List balances by account.
      * @param minconf Only include transactions confirmed at least this many times.
+     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
      * @param includeempty Whether to include accounts that haven&#39;t received any payments.
      * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
      */
-    public listreceivedbyaccount(minconf?: number, includeempty?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: any): Observable<Array<Account>> {
-        return this.listreceivedbyaccountWithHttpInfo(minconf, includeempty, includeWatchonly, extraHttpRequestParams)
+    public listreceivedbyaccount(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<Account>> {
+      return this.listreceivedbyaccountWithHttpInfo(minconf, addlockconf, includeempty, includeWatchonly, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -614,11 +851,12 @@ export class GeneralService {
     /**
      * List balances by receiving address.
      * @param minconf Only include transactions confirmed at least this many times.
+     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
      * @param includeempty Whether to include accounts that haven&#39;t received any payments.
      * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
      */
-    public listreceivedbyaddress(minconf?: number, includeempty?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: any): Observable<Array<ListReceivedByAddress>> {
-        return this.listreceivedbyaddressWithHttpInfo(minconf, includeempty, includeWatchonly, extraHttpRequestParams)
+    public listreceivedbyaddress(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<ListReceivedByAddress>> {
+      return this.listreceivedbyaddressWithHttpInfo(minconf, addlockconf, includeempty, includeWatchonly, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -632,10 +870,10 @@ export class GeneralService {
      * Get all transactions in blocks since block [blockhash], or all transactions if omitted
      * @param blockhash The block hash to list transactions since
      * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     * @param targetConfirmations
+     * @param target_confirmations
      */
-    public listsinceblock(blockhash?: string, includeWatchonly?: boolean, targetConfirmations?: number, extraHttpRequestParams?: any): Observable<Array<ListSinceBlockResponse>> {
-        return this.listsinceblockWithHttpInfo(blockhash, includeWatchonly, targetConfirmations, extraHttpRequestParams)
+    public listsinceblock(blockhash?: string, includeWatchonly?: boolean, target_confirmations?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<ListSinceBlockResponse>> {
+      return this.listsinceblockWithHttpInfo(blockhash, includeWatchonly, target_confirmations, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -647,13 +885,105 @@ export class GeneralService {
 
     /**
      * Returns up to 'count' most recent transactions skipping the first 'from' transactions for account 'account'.
-     * @param account DEPRECATED. The account name. Should be \&quot;*\&quot;.
+     * @param account The account name. Should be \&quot;*\&quot;.
      * @param count The number of transactions to return
      * @param from The number of transactions to skip
      * @param includeWatchonly Include transactions to watchonly addresses (see &#39;importaddress&#39;)
      */
-    public listtransactions(account?: string, count?: number, from?: number, includeWatchonly?: boolean, extraHttpRequestParams?: any): Observable<Array<TransactionListEntry>> {
+    public listtransactions(account?: string, count?: number, from?: number, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<TransactionListEntry>> {
         return this.listtransactionsWithHttpInfo(account, count, from, includeWatchonly, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
+    }
+
+    /**
+     * Returns array of unspent transaction outputs with between minconf and maxconf (inclusive) confirmations. Optionally filter to only include txouts paid to specified addresses. Results are an array of Objects, each of which has: {txid, vout, scriptPubKey, amount, confirmations}
+     * @param minconf The minimum confirmations to filter.
+     * @param maxconf The maximum confirmations to filter
+     * @param adresses A json array of syscoin addresses to filter
+     */
+    public listunspent(minconf?: number, maxconf?: number, adresses?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<UnspentListEntry>> {
+      return this.listunspentWithHttpInfo(minconf, maxconf, adresses, extraHttpRequestParams)
+        .map((response: Response) => {
+          if (response.status === 204) {
+            return undefined;
+          } else {
+            return response.json() || {};
+          }
+        });
+    }
+
+  /**
+   * Updates list of temporarily unspendable outputs.
+     * @param request
+     */
+  public lockunspent(request: LockUnspentRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
+    return this.lockunspentWithHttpInfo(request, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Set of commands to execute masternode related actions.
+   * @param command &#39;count&#39; - Print number of all known masternodes (optional &#39;ps&#39;, &#39;enabled&#39;, &#39;all&#39;, &#39;qualify&#39;) &#39;current&#39; - Print info on current masternode winner to be paid the next block (calculated locally) &#39;debug&#39; - Print masternode status &#39;genkey&#39; - Generate new masternodeprivkey &#39;outputs&#39; - Print masternode compatible outputs &#39;start&#39; - Start local Hot masternode configured in syscoin.conf &#39;start-alias&#39; - Start single remote masternode by assigned alias configured in masternode.conf &#39;start-[mode]&#39; - Start remote masternodes configured in masternode.conf ([mode] can be one of &#39;all&#39;, &#39;missing&#39;, or &#39;disabled&#39;) &#39;status&#39; - Print masternode status information &#39;list&#39; - Print list of all known masternodes (see masternodelist for more info) &#39;list-conf&#39; - Print masternode.conf in JSON format &#39;winner&#39; - Print info on next masternode winner to vote for &#39;winners&#39;- Print list of masternode winners
+   */
+  public masternode(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
+    return this.masternodeWithHttpInfo(command, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Set of commands to create and relay masternode broadcast messages.
+   * @param command &#39;create-alias&#39; - Create single remote masternode broadcast message by assigned alias configured in masternode.conf &#39;create-all&#39; - Create remote masternode broadcast messages for all masternodes configured in masternode.conf &#39;decode&#39; - Decode masternode broadcast message &#39;relay&#39; - Relay masternode broadcast message to the network
+   */
+  public masternodebroadcast(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
+    return this.masternodebroadcastWithHttpInfo(command, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Get a list of masternodes in different modes.
+   * @param mode (optional/required to use filter, defaults &#x3D; status) The mode to run list in &#39;activeseconds&#39; - Print number of seconds masternode recognized by the network as enabled (since latest issued \\\&quot;masternode start/start-many/start-alias\\\&quot;) &#39;addr&#39; - Print ip address associated with a masternode (can be additionally filtered, partial match) &#39;full&#39; - Print info in format &#39;status protocol payee lastseen activeseconds lastpaidtime lastpaidblock IP&#39; (can be additionally filtered, partial match) &#39;info&#39; - Print info in format &#39;status protocol payee lastseen activeseconds sentinelversion sentinelstate IP&#39; (can be additionally filtered, partial match) &#39;lastpaidblock&#39; - Print the last block height a node was paid on the network &#39;lastpaidtime&#39; - Print the last time a node was paid on the network &#39;lastseen&#39; - Print timestamp of when a masternode was last seen on the network &#39;payee&#39; - Print Syscoin address associated with a masternode (can be additionally filtered,partial match) &#39;protocol&#39; - Print protocol of a masternode (can be additionally filtered, exact match) &#39;pubkey&#39; - Print the masternode (not collateral) public key &#39;rank&#39; - Print rank of a masternode based on current block &#39;status&#39; - Print masternode status PRE_ENABLED / ENABLED / EXPIRED / WATCHDOG_EXPIRED / NEW_START_REQUIRED / UPDATE_REQUIRED / POSE_BAN / OUTPOINT_SPENT (can be additionally filtered, partial match)
+   */
+  public masternodelist(mode?: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
+    return this.masternodelistWithHttpInfo(mode, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Returns the sync status, updates to the next step or resets it entirely.
+   * @param command &#39;status&#39; - Sync status &#39;next&#39; - Update to next step &#39;reset&#39; - Reset it entirely
+   */
+  public mnsync(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
+    return this.mnsyncWithHttpInfo(command, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -667,23 +997,8 @@ export class GeneralService {
      * DEPRECATED. Move a specified amount from one account in your wallet to another.
      * @param request
      */
-    public move(request: MoveRequest, extraHttpRequestParams?: any): Observable<boolean> {
-        return this.moveWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Deletes the specified transaction from the wallet. Meant for use with pruned wallets and as a companion to importprunedfunds. This will effect wallet balances.
-     * @param txid
-     */
-    public removeprunedfunds(txid: string, extraHttpRequestParams?: any): Observable<string> {
-        return this.removeprunedfundsWithHttpInfo(txid, extraHttpRequestParams)
+    public move(request: MoveRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<boolean> {
+      return this.moveWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -697,7 +1012,7 @@ export class GeneralService {
      * DEPRECATED (use sendtoaddress). Sent an amount from an account to a syscoin address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request
      */
-    public sendfrom(request: SendFromRequest, extraHttpRequestParams?: any): Observable<string> {
+    public sendfrom(request: SendFromRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.sendfromWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -712,7 +1027,7 @@ export class GeneralService {
      * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request
      */
-    public sendmany(request: SendManyRequest, extraHttpRequestParams?: any): Observable<string> {
+    public sendmany(request: SendManyRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.sendmanyWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -727,7 +1042,7 @@ export class GeneralService {
      * Send an amount to a given address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request
      */
-    public sendtoaddress(request: SendToAddressRequest, extraHttpRequestParams?: any): Observable<string> {
+    public sendtoaddress(request: SendToAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.sendtoaddressWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -738,11 +1053,42 @@ export class GeneralService {
             });
     }
 
+  /**
+   * Set 'generate' true or false to turn generation on or off. Generation is limited to 'genproclimit' processors, -1 is unlimited. See the getgenerate call for the current setting
+   * @param generate
+   * @param genproclimit
+   */
+  public setgenerate(generate: boolean, genproclimit?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
+    return this.setgenerateWithHttpInfo(generate, genproclimit, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
+  /**
+   * Set 'networkactive' true or false
+   * @param state
+   */
+  public setnetworkactive(state: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<boolean> {
+    return this.setnetworkactiveWithHttpInfo(state, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
     /**
      * Sign a message with the private key of an address. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request
      */
-    public signmessage(request: SignMessageRequest, extraHttpRequestParams?: any): Observable<string> {
+    public signmessage(request: SignMessageRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.signmessageWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -753,13 +1099,27 @@ export class GeneralService {
             });
     }
 
+  /**
+   * Sign inputs for raw transaction (serialized, hex-encoded).
+   * @param request
+   */
+  public signrawtransaction(request: SignRawTransactionRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
+    return this.signrawtransactionWithHttpInfo(request, extraHttpRequestParams)
+      .map((response: Response) => {
+        if (response.status === 204) {
+          return undefined;
+        } else {
+          return response.json() || {};
+        }
+      });
+  }
+
     /**
      * Decode raw syscoin transaction (serialized, hex-encoded) and display information pertaining to the service that is included in the transactiion data output(OP_RETURN)
-     * @param alias
-     * @param hexstring
+     * @param hexstring The transaction hex string.
      */
-    public syscoindecoderawtransaction(alias: string, hexstring: string, extraHttpRequestParams?: any): Observable<string> {
-        return this.syscoindecoderawtransactionWithHttpInfo(alias, hexstring, extraHttpRequestParams)
+    public syscoindecoderawtransaction(hexstring: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
+      return this.syscoindecoderawtransactionWithHttpInfo(hexstring, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -772,7 +1132,7 @@ export class GeneralService {
     /**
      * Returns all addresses and balances associated with address
      */
-    public syscoinlistreceivedbyaddress(extraHttpRequestParams?: any): Observable<Array<SyscoinAddressEntry>> {
+    public syscoinlistreceivedbyaddress(extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<SyscoinAddressEntry>> {
         return this.syscoinlistreceivedbyaddressWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -784,11 +1144,11 @@ export class GeneralService {
     }
 
     /**
-     * Sign inputs for raw transaction (serialized, hex-encoded) and sends them out to the network if signing is complete
-     * @param hexstring
+     * Signed raw transaction (serialized, hex-encoded) sent out to the network.
+     * @param request
      */
-    public syscoinsignrawtransaction(hexstring: string, extraHttpRequestParams?: any): Observable<string> {
-        return this.syscoinsignrawtransactionWithHttpInfo(hexstring, extraHttpRequestParams)
+    public syscoinsendrawtransaction(request: SendRawTransactionRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
+      return this.syscoinsendrawtransactionWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
                     return undefined;
@@ -802,7 +1162,7 @@ export class GeneralService {
      * Return information about the given syscoin address.
      * @param syscoinaddress
      */
-    public validateaddress(syscoinaddress: string, extraHttpRequestParams?: any): Observable<ValidateAddressResponse> {
+    public validateaddress(syscoinaddress: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<ValidateAddressResponse> {
         return this.validateaddressWithHttpInfo(syscoinaddress, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -819,7 +1179,7 @@ export class GeneralService {
      * @param signature The signature provided by the signer in base 64 encoding (see signmessage).
      * @param message The message that was signed.
      */
-    public verifymessage(syscoinaddress: string, signature: string, message: string, extraHttpRequestParams?: any): Observable<boolean> {
+    public verifymessage(syscoinaddress: string, signature: string, message: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<boolean> {
         return this.verifymessageWithHttpInfo(syscoinaddress, signature, message, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -833,7 +1193,7 @@ export class GeneralService {
     /**
      * Removes the wallet encryption key from memory, locking the wallet. After calling this method, you will need to call walletpassphrase again before being able to call any methods which require the wallet to be unlocked.
      */
-    public walletlock(extraHttpRequestParams?: any): Observable<string> {
+    public walletlock(extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.walletlockWithHttpInfo(extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -848,7 +1208,7 @@ export class GeneralService {
      * Stores the wallet decryption key in memory for 'timeout' seconds. This is needed prior to performing transactions related to private keys such as sending syscoins
      * @param request
      */
-    public walletpassphrase(request: WalletPassphraseRequest, extraHttpRequestParams?: any): Observable<string> {
+    public walletpassphrase(request: WalletPassphraseRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.walletpassphraseWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -863,7 +1223,7 @@ export class GeneralService {
      * Changes the wallet passphrase from 'oldpassphrase' to 'newpassphrase'.
      * @param request
      */
-    public walletpassphrasechange(request: WalletPassphraseChangeRequest, extraHttpRequestParams?: any): Observable<string> {
+    public walletpassphrasechange(request: WalletPassphraseChangeRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
         return this.walletpassphrasechangeWithHttpInfo(request, extraHttpRequestParams)
             .map((response: Response) => {
                 if (response.status === 204) {
@@ -879,76 +1239,180 @@ export class GeneralService {
      *
      * Add a nrequired-to-sign multisignature address to the wallet. Each key is a Syscoin address or hex-encoded public key. If &#39;account&#39; is specified (DEPRECATED), assign address to that account.
      * @param request
+
      */
-    public addmultisigaddressWithHttpInfo(request: AddMultisigAddressRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/addmultisigaddress';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'request' is not null or undefined
+    public addmultisigaddressWithHttpInfo(request: AddMultisigAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling addmultisigaddress.');
         }
 
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        headers.set('Content-Type', 'application/json');
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Post,
             headers: headers,
             body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
+          withCredentials: this.configuration.withCredentials
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/addmultisigaddress`, requestOptions);
+    }
+
+  /**
+   *
+   * Change debug category on the fly. Specify single category or use comma to specify many.
+   * @param command 0|1|addrman|alert|bench|coindb|db|lock|rand |rpc|selectcoins|mempool|mempoolrej|net|proxy |prune|http|libevent|tor|zmq|syscoin|privatesend|instantsend |masternode|spork|keepass|mnpayments|gobject
+
+   */
+  public debugWithHttpInfo(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (command === null || command === undefined) {
+      throw new Error('Required parameter command was null or undefined when calling debug.');
+    }
+
+    let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+    if (command !== undefined) {
+      queryParameters.set('command', <any>command);
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      search: queryParameters,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/debug`, requestOptions);
+  }
+
+  /**
+   *
+   * Returns an object containing sensitive private info about this HD wallet.
+
+   */
+  public dumphdinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      withCredentials: this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/dumphdinfo`, requestOptions);
     }
 
     /**
      *
      * Reveals the private key corresponding to &#39;syscoinaddress&#39;. Then the importprivkey can be used with this output.
      * @param address The syscoin address for the private key
+
      */
-    public dumpprivkeyWithHttpInfo(address: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/dumpprivkey';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'address' is not null or undefined
+    public dumpprivkeyWithHttpInfo(address: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (address === null || address === undefined) {
             throw new Error('Required parameter address was null or undefined when calling dumpprivkey.');
         }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (address !== undefined) {
             queryParameters.set('address', <any>address);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -961,39 +1425,45 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/dumpprivkey`, requestOptions);
     }
 
     /**
      *
      * Dumps all wallet keys in a human-readable format.
      * @param filename The filename
+
      */
-    public dumpwalletWithHttpInfo(filename: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/dumpwallet';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'filename' is not null or undefined
+    public dumpwalletWithHttpInfo(filename: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (filename === null || filename === undefined) {
             throw new Error('Required parameter filename was null or undefined when calling dumpwallet.');
         }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (filename !== undefined) {
             queryParameters.set('filename', <any>filename);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -1006,88 +1476,149 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/dumpwallet`, requestOptions);
     }
 
     /**
      *
      * Encrypts the wallet with &#39;passphrase&#39;. This is for first time encryption. After this, any calls that interact with private keys such as sending or signing will require the passphrase to be set prior the making these calls. Use the walletpassphrase call for this, and then walletlock call. If the wallet is already encrypted, use the walletpassphrasechange call. Note that this will shutdown the server.
      * @param request
+
      */
-    public encryptwalletWithHttpInfo(request: EncryptWalletRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/encryptwallet';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'request' is not null or undefined
+    public encryptwalletWithHttpInfo(request: EncryptWalletRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling encryptwallet.');
         }
 
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
+      }
+
         // to determine the Accept header
-        let produces: string[] = [
+      let httpHeaderAccepts: string[] = [
             'application/json'
         ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Post,
+        headers: headers,
+        body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
-        headers.set('Content-Type', 'application/json');
-
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/encryptwallet`, requestOptions);
     }
+
+  /**
+   *
+   * Add inputs to a transaction until it has enough in value to meet its out value.
+   * @param request
+
+   */
+  public fundrawtransactionWithHttpInfo(request: FundRawTransactionRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (request === null || request === undefined) {
+      throw new Error('Required parameter request was null or undefined when calling fundrawtransaction.');
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+    let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+    if (httpContentTypeSelected != undefined) {
+      headers.set('Content-Type', httpContentTypeSelected);
+    }
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Post,
+      headers: headers,
+      body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/fundrawtransaction`, requestOptions);
+  }
 
     /**
      *
      * Mine up to numblocks blocks immediately (before the RPC call returns).
      * @param numBlocks How many blocks are generated immediately.
      * @param maxtries ﻿How many iterations to try (default &#x3D; 1000000).
+
      */
-    public generateWithHttpInfo(numBlocks: number, maxtries?: number, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/generate';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'numBlocks' is not null or undefined
+    public generateWithHttpInfo(numBlocks: number, maxtries?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (numBlocks === null || numBlocks === undefined) {
             throw new Error('Required parameter numBlocks was null or undefined when calling generate.');
         }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (numBlocks !== undefined) {
             queryParameters.set('numBlocks', <any>numBlocks);
         }
-
         if (maxtries !== undefined) {
             queryParameters.set('maxtries', <any>maxtries);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -1100,35 +1631,40 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/generate`, requestOptions);
     }
 
     /**
      *
      * Generates a public key for a wallet.
+
      */
-    public generatepublickeyWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/generatepublickey';
+    public generatepublickeyWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
-        let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
             headers: headers,
-            search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -1136,39 +1672,45 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/generatepublickey`, requestOptions);
     }
 
     /**
      *
      * DEPRECATED. Returns the account associated with the given address.
      * @param syscoinaddress The syscoin address for account lookup.
+
      */
-    public getaccountWithHttpInfo(syscoinaddress: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getaccount';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'syscoinaddress' is not null or undefined
+    public getaccountWithHttpInfo(syscoinaddress: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (syscoinaddress === null || syscoinaddress === undefined) {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling getaccount.');
         }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (syscoinaddress !== undefined) {
             queryParameters.set('syscoinaddress', <any>syscoinaddress);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -1181,135 +1723,419 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/getaccount`, requestOptions);
     }
 
     /**
      *
      * DEPRECATED. Returns the current Syscoin address for receiving payments to this account.
      * @param account The account name for the address. It can also be set to the empty string \&quot;\&quot; to represent the default account. The account does not need to exist, it will be created and a new address created  if there is no account by the given name.
+
      */
-    public getaccountaddressWithHttpInfo(account: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getaccountaddress';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'account' is not null or undefined
+    public getaccountaddressWithHttpInfo(account: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (account === null || account === undefined) {
             throw new Error('Required parameter account was null or undefined when calling getaccountaddress.');
         }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (account !== undefined) {
             queryParameters.set('account', <any>account);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
-        return this.http.request(path, requestOptions);
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Get,
+        headers: headers,
+        search: queryParameters,
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
+
+      return this.http.request(`${this.basePath}/getaccountaddress`, requestOptions);
     }
+
+  /**
+   *
+   * get address balance
+   * @param addresses
+
+   */
+  public getaddressbalanceWithHttpInfo(addresses: Array<string>, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (addresses === null || addresses === undefined) {
+      throw new Error('Required parameter addresses was null or undefined when calling getaddressbalance.');
+    }
+
+    let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+    if (addresses) {
+      queryParameters.set('addresses', addresses.join(COLLECTION_FORMATS['csv']));
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      search: queryParameters,
+      withCredentials: this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/getaddressbalance`, requestOptions);
+  }
+
+  /**
+   *
+   * getaddressdeltas
+   * @param addresses
+   * @param start
+   * @param end
+
+   */
+  public getaddressdeltasWithHttpInfo(addresses: Array<string>, start: number, end: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (addresses === null || addresses === undefined) {
+      throw new Error('Required parameter addresses was null or undefined when calling getaddressdeltas.');
+    }
+    if (start === null || start === undefined) {
+      throw new Error('Required parameter start was null or undefined when calling getaddressdeltas.');
+    }
+    if (end === null || end === undefined) {
+      throw new Error('Required parameter end was null or undefined when calling getaddressdeltas.');
+    }
+
+    let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+    if (addresses) {
+      queryParameters.set('addresses', addresses.join(COLLECTION_FORMATS['csv']));
+    }
+    if (start !== undefined) {
+      queryParameters.set('start', <any>start);
+    }
+    if (end !== undefined) {
+      queryParameters.set('end', <any>end);
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      search: queryParameters,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/getaddressdeltas`, requestOptions);
+  }
 
     /**
      *
      * DEPRECATED. Returns the list of addresses for the given account.
      * @param account
+
      */
-    public getaddressesbyaccountWithHttpInfo(account: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getaddressesbyaccount';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'account' is not null or undefined
+    public getaddressesbyaccountWithHttpInfo(account: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (account === null || account === undefined) {
             throw new Error('Required parameter account was null or undefined when calling getaddressesbyaccount.');
         }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (account !== undefined) {
             queryParameters.set('account', <any>account);
         }
 
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
+      }
 
         // to determine the Accept header
-        let produces: string[] = [
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
             'application/json'
         ];
 
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Get,
+        headers: headers,
+        search: queryParameters,
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
+      return this.http.request(`${this.basePath}/getaddressesbyaccount`, requestOptions);
+    }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
+  /**
+   *
+   * getaddressdeltas
+   * @param addresses
 
-        return this.http.request(path, requestOptions);
+   */
+  public getaddressmempoolWithHttpInfo(addresses: Array<string>, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (addresses === null || addresses === undefined) {
+      throw new Error('Required parameter addresses was null or undefined when calling getaddressmempool.');
+    }
+
+    let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+    if (addresses) {
+      queryParameters.set('addresses', addresses.join(COLLECTION_FORMATS['csv']));
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      search: queryParameters,
+      withCredentials: this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/getaddressmempool`, requestOptions);
+  }
+
+  /**
+   *
+   * Get address transaction ids
+   * @param addresses
+   * @param start
+   * @param end
+
+   */
+  public getaddresstxidsWithHttpInfo(addresses: Array<string>, start: number, end: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (addresses === null || addresses === undefined) {
+      throw new Error('Required parameter addresses was null or undefined when calling getaddresstxids.');
+    }
+    if (start === null || start === undefined) {
+      throw new Error('Required parameter start was null or undefined when calling getaddresstxids.');
+    }
+    if (end === null || end === undefined) {
+      throw new Error('Required parameter end was null or undefined when calling getaddresstxids.');
+    }
+
+    let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+    if (addresses) {
+      queryParameters.set('addresses', addresses.join(COLLECTION_FORMATS['csv']));
+    }
+    if (start !== undefined) {
+      queryParameters.set('start', <any>start);
+    }
+    if (end !== undefined) {
+      queryParameters.set('end', <any>end);
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      search: queryParameters,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/getaddresstxids`, requestOptions);
+  }
+
+  /**
+   *
+   * Returns all unspent outputs for addresses or aliases
+   * @param addresses
+
+   */
+  public getaddressutxosWithHttpInfo(addresses: GetAddressUtxosRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (addresses === null || addresses === undefined) {
+      throw new Error('Required parameter addresses was null or undefined when calling getaddressutxos.');
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+    let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+    if (httpContentTypeSelected != undefined) {
+      headers.set('Content-Type', httpContentTypeSelected);
+    }
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Post,
+      headers: headers,
+      body: addresses == null ? '' : JSON.stringify(addresses), // https://github.com/angular/angular/issues/10612
+      withCredentials: this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/getaddressutxos`, requestOptions);
     }
 
     /**
      *
      * If account is not specified, returns the server&#39;s total available balance. If account is specified (DEPRECATED), returns the balance in the account. Note that the account \&quot;\&quot; is not the same as leaving the parameter out. The server total may be different to the balance in the default \&quot;\&quot; account.
-     * @param account DEPRECATED. The selected account, or \&quot;*\&quot; for entire wallet. It may be the default account using \&quot;\&quot;.
+     * @param account It need \&quot;*\&quot; for entire wallet
      * @param minconf Only include transactions confirmed at least this many times.
      * @param includeWatchonly Also include balance in watchonly addresses (see &#39;importaddress&#39;)
+
      */
-    public getbalanceWithHttpInfo(account?: string, minconf?: number, includeWatchonly?: boolean, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getbalance';
+    public getbalanceWithHttpInfo(account?: string, minconf?: number, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (account !== undefined) {
             queryParameters.set('account', <any>account);
         }
-
         if (minconf !== undefined) {
             queryParameters.set('minconf', <any>minconf);
         }
-
         if (includeWatchonly !== undefined) {
             queryParameters.set('includeWatchonly', <any>includeWatchonly);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -1322,44 +2148,49 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/getbalance`, requestOptions);
     }
 
     /**
      *
-     * ﻿If verbose is false, returns a string that is serialized, hex-encoded data for block &#39;hash&#39;. If verbose is true, returns an Object with information about block &lt;hash&gt;.
+     * If verbose is false, returns a string that is serialized, hex-encoded data for block &#39;hash&#39;. If verbose is true, returns an Object with information about block &lt;hash&gt;.
      * @param hash
      * @param verbose
+
      */
-    public getblockWithHttpInfo(hash: string, verbose?: boolean, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getblock';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'hash' is not null or undefined
+    public getblockWithHttpInfo(hash: string, verbose?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (hash === null || hash === undefined) {
             throw new Error('Required parameter hash was null or undefined when calling getblock.');
         }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (hash !== undefined) {
             queryParameters.set('hash', <any>hash);
         }
-
         if (verbose !== undefined) {
             queryParameters.set('verbose', <any>verbose);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -1372,300 +2203,671 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/getblock`, requestOptions);
     }
 
     /**
      *
      * Returns an object containing various state info regarding block chain processing.
-     */
-    public getblockchaininfoWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getblockchaininfo';
 
-        let queryParameters = new URLSearchParams();
+     */
+    public getblockchaininfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
+      }
 
         // to determine the Accept header
-        let produces: string[] = [
+      let httpHeaderAccepts: string[] = [
             'application/json'
         ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Get,
+        headers: headers,
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/getblockchaininfo`, requestOptions);
     }
+
+  /**
+   *
+   * Returns the number of blocks in the longest block chain.
+
+   */
+  public getblockcountWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/getblockcount`, requestOptions);
+  }
 
     /**
      *
-     * Returns the number of blocks in the longest block chain.
-     */
-    public getblockcountWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getblockcount';
+     * Returns array of hashes of blocks within the timestamp range provided.
+     * @param high
+     * @param low
 
-        let queryParameters = new URLSearchParams();
+     */
+    public getblockhashesWithHttpInfo(high: number, low: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+      if (high === null || high === undefined) {
+        throw new Error('Required parameter high was null or undefined when calling getblockhashes.');
+      }
+      if (low === null || low === undefined) {
+        throw new Error('Required parameter low was null or undefined when calling getblockhashes.');
+      }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+      if (high !== undefined) {
+        queryParameters.set('high', <any>high);
+      }
+      if (low !== undefined) {
+        queryParameters.set('low', <any>low);
+      }
+
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
+      }
 
         // to determine the Accept header
-        let produces: string[] = [
+      let httpHeaderAccepts: string[] = [
             'application/json'
         ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Get,
+        headers: headers,
+        search: queryParameters,
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/getblockhashes`, requestOptions);
     }
+
+  /**
+   *
+   * Returns an array of items with information about &lt;count&gt; blockheaders starting from &lt;hash&gt;. If verbose is false, each item is a string that is serialized, hex-encoded data for a single blockheader. If verbose is true, each item is an Object with information about a single blockheader.
+   * @param hash
+   * @param count
+   * @param verbose
+
+   */
+  public getblockheadersWithHttpInfo(hash: string, count: number, verbose?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (hash === null || hash === undefined) {
+      throw new Error('Required parameter hash was null or undefined when calling getblockheaders.');
+    }
+    if (count === null || count === undefined) {
+      throw new Error('Required parameter count was null or undefined when calling getblockheaders.');
+    }
+
+    let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+    if (hash !== undefined) {
+      queryParameters.set('hash', <any>hash);
+    }
+    if (count !== undefined) {
+      queryParameters.set('count', <any>count);
+    }
+    if (verbose !== undefined) {
+      queryParameters.set('verbose', <any>verbose);
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      search: queryParameters,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/getblockheaders`, requestOptions);
+  }
+
+    /**
+     *
+     * Add inputs to a transaction until it has enough in value to meet its out value.
+
+     */
+    public getblocktemplateWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
+      }
+
+        // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Get,
+        headers: headers,
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
+
+      return this.http.request(`${this.basePath}/getblocktemplate`, requestOptions);
+    }
+
+  /**
+   *
+   * Returns chain tips
+
+   */
+  public getchaintipsWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/getchaintips`, requestOptions);
+  }
+
+    /**
+     *
+     * Returns true if generation is ON, otherwise false
+
+     */
+    public getgenerateWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
+      }
+
+        // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Get,
+        headers: headers,
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
+
+      return this.http.request(`${this.basePath}/getgenerate`, requestOptions);
+    }
+
+  /**
+   *
+   * Returns an object containing governance parameters
+
+   */
+  public getgovernanceinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/getgovernanceinfo`, requestOptions);
+  }
 
     /**
      *
      * Returns an object containing various state info.
-     */
-    public getinfoWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getinfo';
 
-        let queryParameters = new URLSearchParams();
+     */
+    public getinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
+      }
 
         // to determine the Accept header
-        let produces: string[] = [
+      let httpHeaderAccepts: string[] = [
             'application/json'
         ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Get,
+        headers: headers,
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/getinfo`, requestOptions);
     }
 
-    /**
-     *
-     * Returns a json object containing mining-related information.
-     */
-    public getmininginfoWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getmininginfo';
+  /**
+   *
+   * Returns a json object containing mining-related information.
 
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+   */
+  public getmininginfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
-
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
-
-
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
     }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/getmininginfo`, requestOptions);
+  }
 
     /**
      *
      * Returns a json object containing network-related information.
-     */
-    public getnetworkinfoWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getnetworkinfo';
 
-        let queryParameters = new URLSearchParams();
+     */
+    public getnetworkinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
+      }
 
         // to determine the Accept header
-        let produces: string[] = [
+      let httpHeaderAccepts: string[] = [
             'application/json'
         ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Get,
+        headers: headers,
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/getnetworkinfo`, requestOptions);
     }
 
-    /**
-     *
-     * Returns a new Syscoin address for receiving payments. If &#39;account&#39; is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to &#39;account&#39;.
-     * @param request
-     */
-    public getnewaddressWithHttpInfo(request?: GetNewAddressRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getnewaddress';
+  /**
+   *
+   * Returns a new Syscoin address for receiving payments. If &#39;account&#39; is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to &#39;account&#39;.
+   * @param request
 
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+   */
+  public getnewaddressWithHttpInfo(request?: GetNewAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
-
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
-
-
-        headers.set('Content-Type', 'application/json');
-
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
     }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+    let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+    if (httpContentTypeSelected != undefined) {
+      headers.set('Content-Type', httpContentTypeSelected);
+    }
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Post,
+      headers: headers,
+      body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/getnewaddress`, requestOptions);
+  }
 
     /**
      *
      * Returns data about each connected network node as a json array of objects.
-     */
-    public getpeerinfoWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getpeerinfo';
 
-        let queryParameters = new URLSearchParams();
+     */
+    public getpeerinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
+      }
 
         // to determine the Accept header
-        let produces: string[] = [
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
             'application/json'
         ];
 
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Get,
+        headers: headers,
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
-
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/getpeerinfo`, requestOptions);
     }
+
+  /**
+   *
+   * Returns an object containing mixing pool related information
+
+   */
+  public getpoolinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/getpoolinfo`, requestOptions);
+  }
 
     /**
      *
-     * DEPRECATED. Returns the total amount received by addresses with &lt;account&gt; in transactions with at least [minconf] confirmations.
+     * Returns the total amount received by addresses with &lt;account&gt; in transactions with at least [minconf] confirmations.
      * @param account The selected account, may be the default account using \&quot;\&quot;.
      * @param minconf Only include transactions confirmed at least this many times.
+     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
+
      */
-    public getreceivedbyaccountWithHttpInfo(account: string, minconf?: number, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getreceivedbyaccount';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'account' is not null or undefined
+    public getreceivedbyaccountWithHttpInfo(account: string, minconf?: number, addlockconf?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (account === null || account === undefined) {
             throw new Error('Required parameter account was null or undefined when calling getreceivedbyaccount.');
         }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (account !== undefined) {
             queryParameters.set('account', <any>account);
         }
-
         if (minconf !== undefined) {
             queryParameters.set('minconf', <any>minconf);
         }
+      if (addlockconf !== undefined) {
+        queryParameters.set('addlockconf', <any>addlockconf);
+      }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -1678,7 +2880,7 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/getreceivedbyaccount`, requestOptions);
     }
 
     /**
@@ -1686,36 +2888,45 @@ export class GeneralService {
      * Returns the total amount received by the given syscoinaddress in transactions with at least minconf confirmations.
      * @param syscoinaddress The syscoin address for transactions.
      * @param minconf Only include transactions confirmed at least this many times.
+     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
+
      */
-    public getreceivedbyaddressWithHttpInfo(syscoinaddress: string, minconf?: number, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getreceivedbyaddress';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'syscoinaddress' is not null or undefined
+    public getreceivedbyaddressWithHttpInfo(syscoinaddress: string, minconf?: number, addlockconf?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (syscoinaddress === null || syscoinaddress === undefined) {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling getreceivedbyaddress.');
         }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (syscoinaddress !== undefined) {
             queryParameters.set('syscoinaddress', <any>syscoinaddress);
         }
-
         if (minconf !== undefined) {
             queryParameters.set('minconf', <any>minconf);
         }
+      if (addlockconf !== undefined) {
+        queryParameters.set('addlockconf', <any>addlockconf);
+      }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -1728,7 +2939,116 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/getreceivedbyaddress`, requestOptions);
+    }
+
+    /**
+     *
+     * Returns the txid and index where an output is spent
+     * @param txid
+     * @param index
+
+     */
+    public getspentinfoWithHttpInfo(txid: string, index: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+        if (txid === null || txid === undefined) {
+          throw new Error('Required parameter txid was null or undefined when calling getspentinfo.');
+        }
+      if (index === null || index === undefined) {
+        throw new Error('Required parameter index was null or undefined when calling getspentinfo.');
+      }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+        if (txid !== undefined) {
+            queryParameters.set('txid', <any>txid);
+        }
+      if (index !== undefined) {
+        queryParameters.set('index', <any>index);
+        }
+
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+        }
+
+      return this.http.request(`${this.basePath}/getspentinfo`, requestOptions);
+    }
+
+    /**
+     *
+     * Returns the absolute maximum sum of superblock payments allowed.
+     * @param index The block index
+
+     */
+    public getsuperblockbudgetWithHttpInfo(index: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+      if (index === null || index === undefined) {
+        throw new Error('Required parameter index was null or undefined when calling getsuperblockbudget.');
+      }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+      if (index !== undefined) {
+        queryParameters.set('index', <any>index);
+      }
+
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Get,
+            headers: headers,
+            search: queryParameters,
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+        }
+
+      return this.http.request(`${this.basePath}/getsuperblockbudget`, requestOptions);
     }
 
     /**
@@ -1736,36 +3056,41 @@ export class GeneralService {
      * Get detailed information about in-wallet transaction &lt;txid&gt;
      * @param txid The transaction id
      * @param includeWatchonly Whether to include watchonly addresses in balance calculation and details[]
+
      */
-    public gettransactionWithHttpInfo(txid: string, includeWatchonly?: boolean, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/gettransaction';
+    public gettransactionWithHttpInfo(txid: string, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+      if (txid === null || txid === undefined) {
+        throw new Error('Required parameter txid was null or undefined when calling gettransaction.');
+      }
 
-        let queryParameters = new URLSearchParams();
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+      if (txid !== undefined) {
+        queryParameters.set('txid', <any>txid);
+      }
+      if (includeWatchonly !== undefined) {
+        queryParameters.set('includeWatchonly', <any>includeWatchonly);
+      }
+
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'txid' is not null or undefined
-        if (txid === null || txid === undefined) {
-            throw new Error('Required parameter txid was null or undefined when calling gettransaction.');
-        }
-        if (txid !== undefined) {
-            queryParameters.set('txid', <any>txid);
-        }
-
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', <any>includeWatchonly);
-        }
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -1778,35 +3103,40 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/gettransaction`, requestOptions);
     }
 
     /**
      *
      * Returns the server&#39;s total unconfirmed balance
+
      */
-    public getunconfirmedbalanceWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getunconfirmedbalance';
+    public getunconfirmedbalanceWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
-        let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
             headers: headers,
-            search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -1814,112 +3144,40 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
-    }
-
-    /**
-     *
-     * Returns a new Syscoin (starts with 1) address for receiving payments. If &#39;account&#39; is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to &#39;account&#39;.
-     * @param account DEPRECATED. The account name for the address to be linked to. If not provided, the default account \&quot;\&quot; is used. It can also be set to the empty string \&quot;\&quot; to represent the default account. The account does not need to exist, it will be created if there is no account by the given name.
-     */
-    public getv2addressWithHttpInfo(account?: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getv2address';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        if (account !== undefined) {
-            queryParameters.set('account', <any>account);
-        }
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
-
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
-
-
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
-    }
-
-    /**
-     *
-     * Returns wallet balance for all accounts. Does not include watch only accounts.
-     */
-    public getwalletbalanceWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getwalletbalance';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
-
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
-
-
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/getunconfirmedbalance`, requestOptions);
     }
 
     /**
      *
      * Returns an object containing various wallet state info.
+
      */
-    public getwalletinfoWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getwalletinfo';
+    public getwalletinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
-        let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
             headers: headers,
-            search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -1927,39 +3185,45 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/getwalletinfo`, requestOptions);
     }
 
     /**
      *
-     * Returns a new ZCash address for receiving payments in ZCash transaparent tokens. so payments received with the address will be credited to &#39;account&#39;.
-     * @param address
+     * Manage governance objects.
+     * @param command &#39;check&#39; - Validate governance object data (proposal only) &#39;prepare&#39; - Prepare governance object by signing and creating tx &#39;submit&#39; - Submit governance object to network &#39;deserialize&#39; - Deserialize governance object from hex string to JSON &#39;count&#39; - Count governance objects and votes &#39;get&#39; - Get governance object by hash &#39;getvotes&#39; - Get all votes for a governance object hash (including old votes) &#39;getcurrentvotes&#39; - Get only current (tallying) votes for a governance object hash (does not include old votes) &#39;list&#39; - List governance objects (can be filtered by signal and/or object type) &#39;diff&#39; - List differences since last diff &#39;vote-alias&#39; - Vote on a governance object by masternode alias (using masternode.conf setup) &#39;vote-conf&#39; - Vote on a governance object by masternode configured in syscoin.conf &#39;vote-many&#39;- Vote on a governance object by all masternodes (using masternode.conf setup)
+
      */
-    public getzaddressWithHttpInfo(address: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/getzaddress';
+    public gobjectWithHttpInfo(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+      if (command === null || command === undefined) {
+        throw new Error('Required parameter command was null or undefined when calling gobject.');
+      }
 
-        let queryParameters = new URLSearchParams();
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+      if (command !== undefined) {
+        queryParameters.set('command', <any>command);
+      }
+
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'address' is not null or undefined
-        if (address === null || address === undefined) {
-            throw new Error('Required parameter address was null or undefined when calling getzaddress.');
-        }
-        if (address !== undefined) {
-            queryParameters.set('address', <any>address);
-        }
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -1972,43 +3236,49 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/gobject`, requestOptions);
     }
 
     /**
      *
      * Adds a script (in hex) or address that can be watched as if it were in your wallet but cannot be used to spend.
      * @param request
+
      */
-    public importaddressWithHttpInfo(request: ImportAddressRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/importaddress';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'request' is not null or undefined
+    public importaddressWithHttpInfo(request: ImportAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling importaddress.');
         }
 
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        headers.set('Content-Type', 'application/json');
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Post,
             headers: headers,
             body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -2016,43 +3286,49 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/importaddress`, requestOptions);
     }
 
     /**
      *
      * Adds a private key (as returned by dumpprivkey) to your wallet.
      * @param request
+
      */
-    public importprivkeyWithHttpInfo(request: ImportPrivKeyRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/importprivkey';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'request' is not null or undefined
+    public importprivkeyWithHttpInfo(request: ImportPrivKeyRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling importprivkey.');
         }
 
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        headers.set('Content-Type', 'application/json');
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Post,
             headers: headers,
             body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -2060,97 +3336,49 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
-    }
-
-    /**
-     *
-     * Imports funds without rescan. Corresponding address or script must previously be included in wallet. Aimed towards pruned wallets. The end-user is responsible to import additional transactions that subsequently spend the imported outputs or rescan after the point in the blockchain the transaction is included.
-     * @param rawtransaction
-     * @param txoutproof
-     */
-    public importprunedfundsWithHttpInfo(rawtransaction: string, txoutproof: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/importprunedfunds';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'rawtransaction' is not null or undefined
-        if (rawtransaction === null || rawtransaction === undefined) {
-            throw new Error('Required parameter rawtransaction was null or undefined when calling importprunedfunds.');
-        }
-        // verify required parameter 'txoutproof' is not null or undefined
-        if (txoutproof === null || txoutproof === undefined) {
-            throw new Error('Required parameter txoutproof was null or undefined when calling importprunedfunds.');
-        }
-        if (rawtransaction !== undefined) {
-            queryParameters.set('rawtransaction', <any>rawtransaction);
-        }
-
-        if (txoutproof !== undefined) {
-            queryParameters.set('txoutproof', <any>txoutproof);
-        }
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
-
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
-
-
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/importprivkey`, requestOptions);
     }
 
     /**
      *
      * Adds a public key (in hex) that can be watched as if it were in your wallet but cannot be used to spend.
      * @param request
+
      */
-    public importpubkeyWithHttpInfo(request: ImportPubKeyRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/importpubkey';
+    public importpubkeyWithHttpInfo(request: ImportPubKeyRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+      if (request === null || request === undefined) {
+        throw new Error('Required parameter request was null or undefined when calling importpubkey.');
+      }
 
-        let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'request' is not null or undefined
-        if (request === null || request === undefined) {
-            throw new Error('Required parameter request was null or undefined when calling importpubkey.');
-        }
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        headers.set('Content-Type', 'application/json');
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
+          method: RequestMethod.Post,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
+          body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -2158,43 +3386,49 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/importpubkey`, requestOptions);
     }
 
     /**
      *
      * Imports keys from a wallet dump file (see dumpwallet).
      * @param request
+
      */
-    public importwalletWithHttpInfo(request: ImportWalletRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/importwallet';
+    public importwalletWithHttpInfo(request: ImportWalletRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+      if (request === null || request === undefined) {
+        throw new Error('Required parameter request was null or undefined when calling importwallet.');
+      }
 
-        let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'request' is not null or undefined
-        if (request === null || request === undefined) {
-            throw new Error('Required parameter request was null or undefined when calling importwallet.');
-        }
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        headers.set('Content-Type', 'application/json');
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Post,
             headers: headers,
             body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -2202,40 +3436,100 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/importwallet`, requestOptions);
     }
 
     /**
      *
-     * DEPRECATED. Returns Object that has account names as keys, account balances as values.
-     * @param minconf Only include transactions with at least this many confirmations
-     * @param includeWatchonly Include balances in watchonly addresses (see &#39;importaddress&#39;)
+     * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
+     * @param request
+
      */
-    public listaccountsWithHttpInfo(minconf?: number, includeWatchonly?: boolean, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/listaccounts';
+    public instantsendtoaddressWithHttpInfo(request: InstantSendToAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+      if (request === null || request === undefined) {
+        throw new Error('Required parameter request was null or undefined when calling instantsendtoaddress.');
+      }
 
-        let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', <any>minconf);
-        }
-
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', <any>includeWatchonly);
-        }
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+        }
+
+      return this.http.request(`${this.basePath}/instantsendtoaddress`, requestOptions);
+    }
+
+    /**
+     *
+     * Returns Object that has account names as keys, account balances as values.
+     * @param minconf Only include transactions with at least this many confirmations
+     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
+     * @param includeWatchonly Include balances in watchonly addresses (see &#39;importaddress&#39;)
+
+     */
+    public listaccountsWithHttpInfo(minconf?: number, addlockconf?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+        if (minconf !== undefined) {
+            queryParameters.set('minconf', <any>minconf);
+        }
+      if (addlockconf !== undefined) {
+        queryParameters.set('addlockconf', <any>addlockconf);
+      }
+        if (includeWatchonly !== undefined) {
+            queryParameters.set('includeWatchonly', <any>includeWatchonly);
+        }
+
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -2248,35 +3542,40 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/listaccounts`, requestOptions);
     }
 
     /**
      *
      * Lists groups of addresses which have had their common ownership made public by common use as inputs or as the resulting change in past transactions
+
      */
-    public listaddressgroupingsWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/listaddressgroupings';
+    public listaddressgroupingsWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
-        let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
             headers: headers,
-            search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -2284,45 +3583,54 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/listaddressgroupings`, requestOptions);
     }
 
     /**
      *
-     * DEPRECATED. List balances by account.
+     * List balances by account.
      * @param minconf Only include transactions confirmed at least this many times.
+     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
      * @param includeempty Whether to include accounts that haven&#39;t received any payments.
      * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
+
      */
-    public listreceivedbyaccountWithHttpInfo(minconf?: number, includeempty?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/listreceivedbyaccount';
+    public listreceivedbyaccountWithHttpInfo(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (minconf !== undefined) {
             queryParameters.set('minconf', <any>minconf);
         }
-
+      if (addlockconf !== undefined) {
+        queryParameters.set('addlockconf', <any>addlockconf);
+      }
         if (includeempty !== undefined) {
             queryParameters.set('includeempty', <any>includeempty);
         }
-
         if (includeWatchonly !== undefined) {
             queryParameters.set('includeWatchonly', <any>includeWatchonly);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -2335,45 +3643,54 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/listreceivedbyaccount`, requestOptions);
     }
 
     /**
      *
      * List balances by receiving address.
      * @param minconf Only include transactions confirmed at least this many times.
+     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
      * @param includeempty Whether to include accounts that haven&#39;t received any payments.
      * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
+
      */
-    public listreceivedbyaddressWithHttpInfo(minconf?: number, includeempty?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/listreceivedbyaddress';
+    public listreceivedbyaddressWithHttpInfo(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (minconf !== undefined) {
             queryParameters.set('minconf', <any>minconf);
         }
-
+      if (addlockconf !== undefined) {
+        queryParameters.set('addlockconf', <any>addlockconf);
+      }
         if (includeempty !== undefined) {
             queryParameters.set('includeempty', <any>includeempty);
         }
-
         if (includeWatchonly !== undefined) {
             queryParameters.set('includeWatchonly', <any>includeWatchonly);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -2386,7 +3703,7 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/listreceivedbyaddress`, requestOptions);
     }
 
     /**
@@ -2394,37 +3711,42 @@ export class GeneralService {
      * Get all transactions in blocks since block [blockhash], or all transactions if omitted
      * @param blockhash The block hash to list transactions since
      * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     * @param targetConfirmations
+     * @param target_confirmations
+
      */
-    public listsinceblockWithHttpInfo(blockhash?: string, includeWatchonly?: boolean, targetConfirmations?: number, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/listsinceblock';
+    public listsinceblockWithHttpInfo(blockhash?: string, includeWatchonly?: boolean, target_confirmations?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (blockhash !== undefined) {
             queryParameters.set('blockhash', <any>blockhash);
         }
-
         if (includeWatchonly !== undefined) {
             queryParameters.set('includeWatchonly', <any>includeWatchonly);
         }
-
-        if (targetConfirmations !== undefined) {
-            queryParameters.set('target-confirmations', <any>targetConfirmations);
+      if (target_confirmations !== undefined) {
+        queryParameters.set('target-confirmations', <any>target_confirmations);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -2437,232 +3759,516 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/listsinceblock`, requestOptions);
     }
 
     /**
      *
      * Returns up to &#39;count&#39; most recent transactions skipping the first &#39;from&#39; transactions for account &#39;account&#39;.
-     * @param account DEPRECATED. The account name. Should be \&quot;*\&quot;.
+     * @param account The account name. Should be \&quot;*\&quot;.
      * @param count The number of transactions to return
      * @param from The number of transactions to skip
      * @param includeWatchonly Include transactions to watchonly addresses (see &#39;importaddress&#39;)
+
      */
-    public listtransactionsWithHttpInfo(account?: string, count?: number, from?: number, includeWatchonly?: boolean, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/listtransactions';
+    public listtransactionsWithHttpInfo(account?: string, count?: number, from?: number, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (account !== undefined) {
             queryParameters.set('account', <any>account);
         }
-
         if (count !== undefined) {
             queryParameters.set('count', <any>count);
         }
-
         if (from !== undefined) {
             queryParameters.set('from', <any>from);
         }
-
         if (includeWatchonly !== undefined) {
             queryParameters.set('includeWatchonly', <any>includeWatchonly);
         }
 
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
+      }
 
         // to determine the Accept header
-        let produces: string[] = [
+      let httpHeaderAccepts: string[] = [
             'application/json'
         ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Get,
+        headers: headers,
+        search: queryParameters,
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/listtransactions`, requestOptions);
     }
+
+  /**
+   *
+   * Returns array of unspent transaction outputs with between minconf and maxconf (inclusive) confirmations. Optionally filter to only include txouts paid to specified addresses. Results are an array of Objects, each of which has: {txid, vout, scriptPubKey, amount, confirmations}
+   * @param minconf The minimum confirmations to filter.
+   * @param maxconf The maximum confirmations to filter
+   * @param adresses A json array of syscoin addresses to filter
+
+   */
+  public listunspentWithHttpInfo(minconf?: number, maxconf?: number, adresses?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
+    let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+    if (minconf !== undefined) {
+      queryParameters.set('minconf', <any>minconf);
+    }
+    if (maxconf !== undefined) {
+      queryParameters.set('maxconf', <any>maxconf);
+    }
+    if (adresses !== undefined) {
+      queryParameters.set('adresses', <any>adresses);
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      search: queryParameters,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/listunspent`, requestOptions);
+  }
 
     /**
      *
-     * DEPRECATED. Move a specified amount from one account in your wallet to another.
+     * Updates list of temporarily unspendable outputs.
      * @param request
-     */
-    public moveWithHttpInfo(request: MoveRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/move';
 
-        let queryParameters = new URLSearchParams();
+     */
+    public lockunspentWithHttpInfo(request: LockUnspentRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+      if (request === null || request === undefined) {
+        throw new Error('Required parameter request was null or undefined when calling lockunspent.');
+      }
+
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
-        // verify required parameter 'request' is not null or undefined
-        if (request === null || request === undefined) {
-            throw new Error('Required parameter request was null or undefined when calling move.');
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
-        let produces: string[] = [
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
             'application/json'
         ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Post,
+        headers: headers,
+        body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
-
-        headers.set('Content-Type', 'application/json');
-
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/lockunspent`, requestOptions);
     }
+
+  /**
+   *
+   * Set of commands to execute masternode related actions.
+   * @param command &#39;count&#39; - Print number of all known masternodes (optional &#39;ps&#39;, &#39;enabled&#39;, &#39;all&#39;, &#39;qualify&#39;) &#39;current&#39; - Print info on current masternode winner to be paid the next block (calculated locally) &#39;debug&#39; - Print masternode status &#39;genkey&#39; - Generate new masternodeprivkey &#39;outputs&#39; - Print masternode compatible outputs &#39;start&#39; - Start local Hot masternode configured in syscoin.conf &#39;start-alias&#39; - Start single remote masternode by assigned alias configured in masternode.conf &#39;start-[mode]&#39; - Start remote masternodes configured in masternode.conf ([mode] can be one of &#39;all&#39;, &#39;missing&#39;, or &#39;disabled&#39;) &#39;status&#39; - Print masternode status information &#39;list&#39; - Print list of all known masternodes (see masternodelist for more info) &#39;list-conf&#39; - Print masternode.conf in JSON format &#39;winner&#39; - Print info on next masternode winner to vote for &#39;winners&#39;- Print list of masternode winners
+
+   */
+  public masternodeWithHttpInfo(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (command === null || command === undefined) {
+      throw new Error('Required parameter command was null or undefined when calling masternode.');
+    }
+
+    let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+    if (command !== undefined) {
+      queryParameters.set('command', <any>command);
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      search: queryParameters,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/masternode`, requestOptions);
+  }
 
     /**
      *
-     * Deletes the specified transaction from the wallet. Meant for use with pruned wallets and as a companion to importprunedfunds. This will effect wallet balances.
-     * @param txid
-     */
-    public removeprunedfundsWithHttpInfo(txid: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/removeprunedfunds';
+     * Set of commands to create and relay masternode broadcast messages.
+     * @param command &#39;create-alias&#39; - Create single remote masternode broadcast message by assigned alias configured in masternode.conf &#39;create-all&#39; - Create remote masternode broadcast messages for all masternodes configured in masternode.conf &#39;decode&#39; - Decode masternode broadcast message &#39;relay&#39; - Relay masternode broadcast message to the network
 
-        let queryParameters = new URLSearchParams();
+     */
+    public masternodebroadcastWithHttpInfo(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+      if (command === null || command === undefined) {
+        throw new Error('Required parameter command was null or undefined when calling masternodebroadcast.');
+      }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+      if (command !== undefined) {
+        queryParameters.set('command', <any>command);
+      }
+
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
-        // verify required parameter 'txid' is not null or undefined
-        if (txid === null || txid === undefined) {
-            throw new Error('Required parameter txid was null or undefined when calling removeprunedfunds.');
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
         }
-        if (txid !== undefined) {
-            queryParameters.set('txid', <any>txid);
-        }
-
 
         // to determine the Accept header
-        let produces: string[] = [
+      let httpHeaderAccepts: string[] = [
             'application/json'
         ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Get,
+        headers: headers,
+        search: queryParameters,
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/masternodebroadcast`, requestOptions);
     }
+
+  /**
+   *
+   * Get a list of masternodes in different modes.
+   * @param mode (optional/required to use filter, defaults &#x3D; status) The mode to run list in &#39;activeseconds&#39; - Print number of seconds masternode recognized by the network as enabled (since latest issued \\\&quot;masternode start/start-many/start-alias\\\&quot;) &#39;addr&#39; - Print ip address associated with a masternode (can be additionally filtered, partial match) &#39;full&#39; - Print info in format &#39;status protocol payee lastseen activeseconds lastpaidtime lastpaidblock IP&#39; (can be additionally filtered, partial match) &#39;info&#39; - Print info in format &#39;status protocol payee lastseen activeseconds sentinelversion sentinelstate IP&#39; (can be additionally filtered, partial match) &#39;lastpaidblock&#39; - Print the last block height a node was paid on the network &#39;lastpaidtime&#39; - Print the last time a node was paid on the network &#39;lastseen&#39; - Print timestamp of when a masternode was last seen on the network &#39;payee&#39; - Print Syscoin address associated with a masternode (can be additionally filtered,partial match) &#39;protocol&#39; - Print protocol of a masternode (can be additionally filtered, exact match) &#39;pubkey&#39; - Print the masternode (not collateral) public key &#39;rank&#39; - Print rank of a masternode based on current block &#39;status&#39; - Print masternode status PRE_ENABLED / ENABLED / EXPIRED / WATCHDOG_EXPIRED / NEW_START_REQUIRED / UPDATE_REQUIRED / POSE_BAN / OUTPOINT_SPENT (can be additionally filtered, partial match)
+
+   */
+  public masternodelistWithHttpInfo(mode?: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+
+    let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+    if (mode !== undefined) {
+      queryParameters.set('mode', <any>mode);
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      search: queryParameters,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/masternodelist`, requestOptions);
+  }
 
     /**
      *
-     * DEPRECATED (use sendtoaddress). Sent an amount from an account to a syscoin address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     */
-    public sendfromWithHttpInfo(request: SendFromRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/sendfrom';
+     * Returns the sync status, updates to the next step or resets it entirely.
+     * @param command &#39;status&#39; - Sync status &#39;next&#39; - Update to next step &#39;reset&#39; - Reset it entirely
 
-        let queryParameters = new URLSearchParams();
+     */
+    public mnsyncWithHttpInfo(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+      if (command === null || command === undefined) {
+        throw new Error('Required parameter command was null or undefined when calling mnsync.');
+      }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+      if (command !== undefined) {
+        queryParameters.set('command', <any>command);
+      }
+
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
-        // verify required parameter 'request' is not null or undefined
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
+      }
+
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Get,
+        headers: headers,
+        search: queryParameters,
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
+
+      return this.http.request(`${this.basePath}/mnsync`, requestOptions);
+    }
+
+  /**
+   *
+   * DEPRECATED. Move a specified amount from one account in your wallet to another.
+   * @param request
+
+   */
+  public moveWithHttpInfo(request: MoveRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (request === null || request === undefined) {
-            throw new Error('Required parameter request was null or undefined when calling sendfrom.');
+          throw new Error('Required parameter request was null or undefined when calling move.');
+        }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
-        let produces: string[] = [
+    let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
-
-
-        headers.set('Content-Type', 'application/json');
-
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
     }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+    let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+    if (httpContentTypeSelected != undefined) {
+      headers.set('Content-Type', httpContentTypeSelected);
+    }
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Post,
+      headers: headers,
+      body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+      withCredentials: this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/move`, requestOptions);
+  }
+
+  /**
+   *
+   * DEPRECATED (use sendtoaddress). Sent an amount from an account to a syscoin address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
+   * @param request
+
+   */
+  public sendfromWithHttpInfo(request: SendFromRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (request === null || request === undefined) {
+      throw new Error('Required parameter request was null or undefined when calling sendfrom.');
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+    let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+    if (httpContentTypeSelected != undefined) {
+      headers.set('Content-Type', httpContentTypeSelected);
+    }
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Post,
+      headers: headers,
+      body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/sendfrom`, requestOptions);
+  }
 
     /**
      *
      * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request
+
      */
-    public sendmanyWithHttpInfo(request: SendManyRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/sendmany';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'request' is not null or undefined
+    public sendmanyWithHttpInfo(request: SendManyRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling sendmany.');
         }
 
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        headers.set('Content-Type', 'application/json');
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Post,
             headers: headers,
             body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -2670,136 +4276,301 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/sendmany`, requestOptions);
     }
 
     /**
      *
      * Send an amount to a given address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request
+
      */
-    public sendtoaddressWithHttpInfo(request: SendToAddressRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/sendtoaddress';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'request' is not null or undefined
+    public sendtoaddressWithHttpInfo(request: SendToAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling sendtoaddress.');
         }
 
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        headers.set('Content-Type', 'application/json');
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Post,
             headers: headers,
             body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
+          withCredentials: this.configuration.withCredentials
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/sendtoaddress`, requestOptions);
+    }
+
+  /**
+   *
+   * Set &#39;generate&#39; true or false to turn generation on or off. Generation is limited to &#39;genproclimit&#39; processors, -1 is unlimited. See the getgenerate call for the current setting
+   * @param generate
+   * @param genproclimit
+
+   */
+  public setgenerateWithHttpInfo(generate: boolean, genproclimit?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (generate === null || generate === undefined) {
+      throw new Error('Required parameter generate was null or undefined when calling setgenerate.');
+    }
+
+    let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+    if (generate !== undefined) {
+      queryParameters.set('generate', <any>generate);
+    }
+    if (genproclimit !== undefined) {
+      queryParameters.set('genproclimit', <any>genproclimit);
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      search: queryParameters,
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/setgenerate`, requestOptions);
+  }
+
+  /**
+   *
+   * Set &#39;networkactive&#39; true or false
+   * @param state
+
+   */
+  public setnetworkactiveWithHttpInfo(state: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (state === null || state === undefined) {
+      throw new Error('Required parameter state was null or undefined when calling setnetworkactive.');
+    }
+
+    let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+    if (state !== undefined) {
+      queryParameters.set('state', <any>state);
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Get,
+      headers: headers,
+      search: queryParameters,
+      withCredentials: this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/setnetworkactive`, requestOptions);
     }
 
     /**
      *
      * Sign a message with the private key of an address. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request
+
      */
-    public signmessageWithHttpInfo(request: SignMessageRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/signmessage';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'request' is not null or undefined
+    public signmessageWithHttpInfo(request: SignMessageRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling signmessage.');
         }
 
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+      // authentication (token) required
+      if (this.configuration.apiKeys["token"]) {
+        headers.set('token', this.configuration.apiKeys["token"]);
+      }
+
         // to determine the Accept header
-        let produces: string[] = [
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
             'application/json'
         ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
-        // authentication (token) required
-        if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
-        }
+      let requestOptions: RequestOptionsArgs = new RequestOptions({
+        method: RequestMethod.Post,
+        headers: headers,
+        body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+        withCredentials: this.configuration.withCredentials
+      });
+      // https://github.com/swagger-api/swagger-codegen/issues/4037
+      if (extraHttpRequestParams) {
+        requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+      }
 
-
-        headers.set('Content-Type', 'application/json');
-
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/signmessage`, requestOptions);
     }
+
+  /**
+   *
+   * Sign inputs for raw transaction (serialized, hex-encoded).
+   * @param request
+
+   */
+  public signrawtransactionWithHttpInfo(request: SignRawTransactionRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    if (request === null || request === undefined) {
+      throw new Error('Required parameter request was null or undefined when calling signrawtransaction.');
+    }
+
+    let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+    // authentication (token) required
+    if (this.configuration.apiKeys["token"]) {
+      headers.set('token', this.configuration.apiKeys["token"]);
+    }
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [
+      'application/json'
+    ];
+    let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers.set("Accept", httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    let consumes: string[] = [
+      'application/json'
+    ];
+    let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+    if (httpContentTypeSelected != undefined) {
+      headers.set('Content-Type', httpContentTypeSelected);
+    }
+
+    let requestOptions: RequestOptionsArgs = new RequestOptions({
+      method: RequestMethod.Post,
+      headers: headers,
+      body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+      withCredentials:this.configuration.withCredentials
+    });
+    // https://github.com/swagger-api/swagger-codegen/issues/4037
+    if (extraHttpRequestParams) {
+      requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+    }
+
+    return this.http.request(`${this.basePath}/signrawtransaction`, requestOptions);
+  }
 
     /**
      *
      * Decode raw syscoin transaction (serialized, hex-encoded) and display information pertaining to the service that is included in the transactiion data output(OP_RETURN)
-     * @param alias
-     * @param hexstring
+     * @param hexstring The transaction hex string.
+
      */
-    public syscoindecoderawtransactionWithHttpInfo(alias: string, hexstring: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/syscoindecoderawtransaction';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'alias' is not null or undefined
-        if (alias === null || alias === undefined) {
-            throw new Error('Required parameter alias was null or undefined when calling syscoindecoderawtransaction.');
-        }
-        // verify required parameter 'hexstring' is not null or undefined
+    public syscoindecoderawtransactionWithHttpInfo(hexstring: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (hexstring === null || hexstring === undefined) {
             throw new Error('Required parameter hexstring was null or undefined when calling syscoindecoderawtransaction.');
         }
-        if (alias !== undefined) {
-            queryParameters.set('alias', <any>alias);
-        }
 
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (hexstring !== undefined) {
             queryParameters.set('hexstring', <any>hexstring);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -2812,35 +4583,40 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/syscoindecoderawtransaction`, requestOptions);
     }
 
     /**
      *
      * Returns all addresses and balances associated with address
+
      */
-    public syscoinlistreceivedbyaddressWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/syscoinlistreceivedbyaddress';
+    public syscoinlistreceivedbyaddressWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
-        let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
             headers: headers,
-            search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -2848,44 +4624,49 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/syscoinlistreceivedbyaddress`, requestOptions);
     }
 
     /**
      *
-     * Sign inputs for raw transaction (serialized, hex-encoded) and sends them out to the network if signing is complete
-     * @param hexstring
+     * Signed raw transaction (serialized, hex-encoded) sent out to the network.
+     * @param request
+
      */
-    public syscoinsignrawtransactionWithHttpInfo(hexstring: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/syscoinsignrawtransaction';
+    public syscoinsendrawtransactionWithHttpInfo(request: SendRawTransactionRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+      if (request === null || request === undefined) {
+        throw new Error('Required parameter request was null or undefined when calling syscoinsendrawtransaction.');
+      }
 
-        let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'hexstring' is not null or undefined
-        if (hexstring === null || hexstring === undefined) {
-            throw new Error('Required parameter hexstring was null or undefined when calling syscoinsignrawtransaction.');
-        }
-        if (hexstring !== undefined) {
-            queryParameters.set('hexstring', <any>hexstring);
-        }
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
+          method: RequestMethod.Post,
             headers: headers,
-            search: queryParameters,
+          body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -2893,39 +4674,45 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/syscoinsendrawtransaction`, requestOptions);
     }
 
     /**
      *
      * Return information about the given syscoin address.
      * @param syscoinaddress
+
      */
-    public validateaddressWithHttpInfo(syscoinaddress: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/validateaddress';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'syscoinaddress' is not null or undefined
+    public validateaddressWithHttpInfo(syscoinaddress: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (syscoinaddress === null || syscoinaddress === undefined) {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling validateaddress.');
         }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (syscoinaddress !== undefined) {
             queryParameters.set('syscoinaddress', <any>syscoinaddress);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -2938,7 +4725,7 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/validateaddress`, requestOptions);
     }
 
     /**
@@ -2947,48 +4734,50 @@ export class GeneralService {
      * @param syscoinaddress The syscoin address to use for the signature.
      * @param signature The signature provided by the signer in base 64 encoding (see signmessage).
      * @param message The message that was signed.
+
      */
-    public verifymessageWithHttpInfo(syscoinaddress: string, signature: string, message: string, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/verifymessage';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'syscoinaddress' is not null or undefined
+    public verifymessageWithHttpInfo(syscoinaddress: string, signature: string, message: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (syscoinaddress === null || syscoinaddress === undefined) {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling verifymessage.');
         }
-        // verify required parameter 'signature' is not null or undefined
         if (signature === null || signature === undefined) {
             throw new Error('Required parameter signature was null or undefined when calling verifymessage.');
         }
-        // verify required parameter 'message' is not null or undefined
         if (message === null || message === undefined) {
             throw new Error('Required parameter message was null or undefined when calling verifymessage.');
         }
+
+      let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
         if (syscoinaddress !== undefined) {
             queryParameters.set('syscoinaddress', <any>syscoinaddress);
         }
-
         if (signature !== undefined) {
             queryParameters.set('signature', <any>signature);
         }
-
         if (message !== undefined) {
             queryParameters.set('message', <any>message);
         }
 
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Get,
@@ -3001,35 +4790,41 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/verifymessage`, requestOptions);
     }
 
     /**
      *
      * Removes the wallet encryption key from memory, locking the wallet. After calling this method, you will need to call walletpassphrase again before being able to call any methods which require the wallet to be unlocked.
+
      */
-    public walletlockWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/walletlock';
+    public walletlockWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
 
-        let queryParameters = new URLSearchParams();
         let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
+
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json',
+        'application/octet-stream'
+      ];
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Post,
             headers: headers,
-            search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -3037,43 +4832,49 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/walletlock`, requestOptions);
     }
 
     /**
      *
      * Stores the wallet decryption key in memory for &#39;timeout&#39; seconds. This is needed prior to performing transactions related to private keys such as sending syscoins
      * @param request
+
      */
-    public walletpassphraseWithHttpInfo(request: WalletPassphraseRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/walletpassphrase';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'request' is not null or undefined
+    public walletpassphraseWithHttpInfo(request: WalletPassphraseRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling walletpassphrase.');
         }
 
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        headers.set('Content-Type', 'application/json');
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Post,
             headers: headers,
             body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -3081,43 +4882,49 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/walletpassphrase`, requestOptions);
     }
 
     /**
      *
      * Changes the wallet passphrase from &#39;oldpassphrase&#39; to &#39;newpassphrase&#39;.
      * @param request
+
      */
-    public walletpassphrasechangeWithHttpInfo(request: WalletPassphraseChangeRequest, extraHttpRequestParams?: any): Observable<Response> {
-        const path = this.basePath + '/walletpassphrasechange';
-
-        let queryParameters = new URLSearchParams();
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
-
-        // verify required parameter 'request' is not null or undefined
+    public walletpassphrasechangeWithHttpInfo(request: WalletPassphraseChangeRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling walletpassphrasechange.');
         }
 
-        // to determine the Accept header
-        let produces: string[] = [
-            'application/json'
-        ];
+      let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
             headers.set('token', this.configuration.apiKeys["token"]);
         }
 
+      // to determine the Accept header
+      let httpHeaderAccepts: string[] = [
+        'application/json'
+      ];
+      let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+      if (httpHeaderAcceptSelected != undefined) {
+        headers.set("Accept", httpHeaderAcceptSelected);
+      }
 
-        headers.set('Content-Type', 'application/json');
+      // to determine the Content-Type header
+      let consumes: string[] = [
+        'application/json'
+      ];
+      let httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+      if (httpContentTypeSelected != undefined) {
+        headers.set('Content-Type', httpContentTypeSelected);
+      }
 
         let requestOptions: RequestOptionsArgs = new RequestOptions({
             method: RequestMethod.Post,
             headers: headers,
             body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            search: queryParameters,
             withCredentials:this.configuration.withCredentials
         });
         // https://github.com/swagger-api/swagger-codegen/issues/4037
@@ -3125,7 +4932,7 @@ export class GeneralService {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
         }
 
-        return this.http.request(path, requestOptions);
+      return this.http.request(`${this.basePath}/walletpassphrasechange`, requestOptions);
     }
 
 }

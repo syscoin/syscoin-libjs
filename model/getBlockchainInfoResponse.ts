@@ -11,66 +11,53 @@
  */
 
 
-
-export interface GetBlockchainInfoResponse {
+export interface GetBlockchainInfoResponse { 
     /**
      * Current network name as defined in BIP70 (main, test, regtest)
      */
     chain?: string;
-
     /**
      * the current number of blocks processed in the server
      */
     blocks?: number;
-
     /**
      * the current number of headers we have validated
      */
     headers?: number;
-
     /**
      * the hash of the currently best block
      */
     bestblockhash?: string;
-
     /**
      * the current difficulty
      */
     difficulty?: number;
-
     /**
      * median time for the current best block
      */
     mediantime?: number;
-
     /**
      * estimate of verification progress [0..1]
      */
     verificationprogress?: number;
-
     /**
      * total amount of work in active chain, in hexadecimal
      */
     chainwork?: string;
-
     /**
      * if the blocks are subject to pruning
      */
     pruned?: boolean;
-
     /**
      * lowest-height complete block stored
      */
     pruneheight?: number;
-
     /**
      * status of softforks in progress
      */
     softforks?: Array<any>;
-
     /**
      * status of BIP9 softforks in progress
      */
     bip9_softforks?: any;
-
 }
