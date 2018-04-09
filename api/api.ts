@@ -1,18 +1,17 @@
 export * from './aliases.service';
-import {AliasesService} from './aliases.service';
-import {AssetService} from './asset.service';
-import {BlockmarketService} from './blockmarket.service';
-import {CertificatesService} from './certificates.service';
-import {EscrowService} from './escrow.service';
-import {GeneralService} from './general.service';
-import {MasternodesService} from './masternodes.service';
-import {OffersService} from './offers.service';
-
+import { AliasesService } from './aliases.service';
 export * from './asset.service';
+import { AssetService } from './asset.service';
 export * from './blockmarket.service';
+import { BlockmarketService } from './blockmarket.service';
 export * from './certificates.service';
+import { CertificatesService } from './certificates.service';
 export * from './escrow.service';
+import { EscrowService } from './escrow.service';
 export * from './general.service';
+import { GeneralService } from './general.service';
 export * from './masternodes.service';
+import { MasternodesService } from './masternodes.service';
 export * from './offers.service';
+import { OffersService } from './offers.service';
 export const APIS = [AliasesService, AssetService, BlockmarketService, CertificatesService, EscrowService, GeneralService, MasternodesService, OffersService];
