@@ -11,6 +11,10 @@
  */
 
 
-export interface GetAddressUtxosRequest { 
-    addresses?: Array<string>;
+export interface SignRawTransactionError { 
+    txid?: string;
+    vout?: number;
+    scriptSig?: string;
+    sequence?: number;
+    error?: string;
 }
