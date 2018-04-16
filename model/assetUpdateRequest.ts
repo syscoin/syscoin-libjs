@@ -19,7 +19,7 @@ export interface AssetUpdateRequest {
     /**
      * Public data, 512 characters max.
      */
-    _public?: string;
+    publicvalue?: string;
     /**
      * Set to assets
      */

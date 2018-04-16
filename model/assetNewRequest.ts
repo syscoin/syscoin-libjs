@@ -21,9 +21,9 @@ export interface AssetNewRequest {
      */
     alias?: string;
     /**
-     * Public data, 512 characters max.
+     * Public data, 256 characters max.
      */
-    _public?: string;
+    publicvalue?: string;
     /**
      * Category, 256 characters max. Defaults to assets.
      */

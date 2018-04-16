@@ -23,7 +23,7 @@ export interface CertUpdateRequest {
     /**
      * Public certificate data, 1024 characters max.
      */
-    _public: string;
+    publicvalue?: string;
     /**
      * category, 256 characters max. Defaults to \"certificates\"
      */

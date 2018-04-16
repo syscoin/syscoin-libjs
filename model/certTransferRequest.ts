@@ -23,7 +23,7 @@ export interface CertTransferRequest {
     /**
      * public data, 256 characters max.
      */
-    _public?: string;
+    publicvalue?: string;
     /**
      * Set new access flags for new owner for this certificate, 0 for read-only, 1 for edit, 2 for edit and transfer access. Default is 2.
      */
