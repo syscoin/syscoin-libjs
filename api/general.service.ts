@@ -211,7 +211,7 @@ export class GeneralService {
     /**
      * Mine up to numblocks blocks immediately (before the RPC call returns).
      * @param numBlocks How many blocks are generated immediately.
-     * @param maxtries ﻿How many iterations to try (default &#x3D; 1000000).
+     * @param maxtries How many iterations to try (default &#x3D; 1000000).
      */
     public generate(numBlocks: number, maxtries?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
         return this.generateWithHttpInfo(numBlocks, maxtries, extraHttpRequestParams)
@@ -1580,7 +1580,7 @@ export class GeneralService {
      * 
      * Mine up to numblocks blocks immediately (before the RPC call returns).
      * @param numBlocks How many blocks are generated immediately.
-     * @param maxtries ﻿How many iterations to try (default &#x3D; 1000000).
+     * @param maxtries How many iterations to try (default &#x3D; 1000000).
      
      */
     public generateWithHttpInfo(numBlocks: number, maxtries?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {

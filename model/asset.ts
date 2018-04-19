@@ -13,7 +13,8 @@ import { AssetInput } from './assetInput';
 
 
 export interface Asset { 
-    _id: string;
+    guid: string;
+    symbol?: string;
     txid?: string;
     height?: number;
     time?: number;
@@ -27,4 +28,5 @@ export interface Asset {
     can_adjust_interest_rate?: boolean;
     use_input_ranges?: boolean;
     inputs?: Array<AssetInput>;
+    precision?: number;
 }

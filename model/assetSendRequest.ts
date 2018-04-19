@@ -14,7 +14,7 @@ import { AssetAmount } from './assetAmount';
 
 export interface AssetSendRequest { 
     /**
-     * Asset name.
+     * Asset guid.
      */
     asset: string;
     /**

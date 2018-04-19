@@ -15,7 +15,7 @@ export interface AssetNewRequest {
     /**
      * name, 20 characters max.
      */
-    name?: string;
+    symbol?: string;
     /**
      * An alias you own.
      */
@@ -28,6 +28,10 @@ export interface AssetNewRequest {
      * Category, 256 characters max. Defaults to assets.
      */
     category?: string;
+    /**
+     * Precision of balances. Must be between 0 and 8. The lower it is the higher possible max_supply is available since the supply is represented as a 64 bit integer. With a precision of 8 the max supply is 10 billion.
+     */
+    precision?: number;
     /**
      * Initial supply of asset. Can mint more supply up to total_supply amount or if total_supply is -1 then minting is uncapped.
      */

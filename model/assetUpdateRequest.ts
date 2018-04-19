@@ -13,7 +13,7 @@
 
 export interface AssetUpdateRequest { 
     /**
-     * Asset name.
+     * Asset guid.
      */
     asset?: string;
     /**
