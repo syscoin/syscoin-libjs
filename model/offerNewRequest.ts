@@ -21,7 +21,7 @@ export interface OfferNewRequest {
     currency?: string;
     cert_guid?: string;
     payment_options?: string;
-    _private?: boolean;
+    privatevalue?: boolean;
     units?: number;
     offertype?: string;
     auction_expires?: number;

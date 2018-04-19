@@ -27,7 +27,7 @@ export interface Escrow {
     sysfee?: number;
     fee?: string;
     total?: string;
-    totalwithfee?: number;
+    total_with_fee?: number;
     currency?: string;
     exttxid?: string;
     escrowaddress?: string;

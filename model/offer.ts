@@ -28,7 +28,7 @@ export interface Offer {
     paymentoptions?: string;
     offer_units?: number;
     quantity?: number;
-    _private?: boolean;
+    privatevalue?: boolean;
     description?: string;
     alias?: string;
     address?: string;

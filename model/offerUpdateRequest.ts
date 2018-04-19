@@ -20,7 +20,7 @@ export interface OfferUpdateRequest {
     price?: number;
     description?: string;
     currency?: string;
-    _private?: boolean;
+    privatevalue?: boolean;
     cert_guid?: string;
     commission?: number;
     payment_options?: string;
