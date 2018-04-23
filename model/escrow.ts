@@ -38,7 +38,7 @@ export interface Escrow {
     height?: string;
     pay_message?: string;
     expired?: number;
-    status?: string;
+    status?: number;
     buyer_feedback?: Array<string>;
     avg_buyer_rating?: number;
     seller_feedback?: Array<string>;
