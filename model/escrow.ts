@@ -11,7 +11,7 @@
  */
 
 
-export interface Escrow {
+export interface Escrow { 
     escrowtype?: string;
     escrow?: string;
     time?: string;

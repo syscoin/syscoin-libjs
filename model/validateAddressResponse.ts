@@ -11,7 +11,7 @@
  */
 
 
-export interface ValidateAddressResponse {
+export interface ValidateAddressResponse { 
     /**
      * If the address is valid or not. If not, this is the only property returned.
      */

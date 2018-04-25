@@ -11,7 +11,7 @@
  */
 
 
-export interface Account {
+export interface Account { 
     /**
      * Only returned if imported addresses were involved in transaction
      */

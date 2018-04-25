@@ -11,7 +11,7 @@
  */
 
 
-export interface MiningInfo {
+export interface MiningInfo { 
     /**
      * The current block
      */

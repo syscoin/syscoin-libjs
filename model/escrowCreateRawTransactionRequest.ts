@@ -12,7 +12,7 @@
 import { EscrowCreateRawTransactionDataRequest } from './escrowCreateRawTransactionDataRequest';
 
 
-export interface EscrowCreateRawTransactionRequest {
+export interface EscrowCreateRawTransactionRequest { 
     type: string;
     escrowguid: string;
     inputs: Array<EscrowCreateRawTransactionDataRequest>;

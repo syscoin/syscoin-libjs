@@ -12,5 +12,5 @@
 import { PeerInfo } from './peerInfo';
 
 
-export interface PeerInfoResponse extends Array<PeerInfo> {
+export interface PeerInfoResponse extends Array<PeerInfo> { 
 }

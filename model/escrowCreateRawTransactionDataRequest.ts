@@ -11,7 +11,7 @@
  */
 
 
-export interface EscrowCreateRawTransactionDataRequest {
+export interface EscrowCreateRawTransactionDataRequest { 
     txid?: string;
     vout?: number;
     satoshis?: number;

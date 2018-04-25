@@ -11,7 +11,7 @@
  */
 
 
-export interface ByteMessageInfo {
+export interface ByteMessageInfo { 
     addr: number;
     block?: number;
     getaddr?: number;

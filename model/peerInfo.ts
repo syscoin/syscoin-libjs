@@ -12,7 +12,7 @@
 import { ByteMessageInfo } from './byteMessageInfo';
 
 
-export interface PeerInfo {
+export interface PeerInfo { 
     /**
      * Peer index
      */

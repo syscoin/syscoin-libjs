@@ -11,7 +11,7 @@
  */
 
 
-export interface TransactionListEntry {
+export interface TransactionListEntry { 
     /**
      * DEPRECATED. The account name associated with the transaction. It will be \"\" for the default account.
      */

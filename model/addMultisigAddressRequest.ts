@@ -11,7 +11,7 @@
  */
 
 
-export interface AddMultisigAddressRequest {
+export interface AddMultisigAddressRequest { 
     /**
      * The number of required signatures out of the n keys or addresses.
      */

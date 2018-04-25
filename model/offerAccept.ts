@@ -11,7 +11,7 @@
  */
 
 
-export interface OfferAccept {
+export interface OfferAccept { 
     offer?: string;
     id?: string;
     txid?: string;

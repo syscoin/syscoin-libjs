@@ -11,7 +11,7 @@
  */
 
 
-export interface AliasClearWhiteListRequest {
+export interface AliasClearWhiteListRequest { 
     /**
      * your alias
      */
