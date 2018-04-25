@@ -12,6 +12,7 @@ export * from './asset';
 export * from './assetAllocation';
 export * from './assetAllocationSenderStatus';
 export * from './assetAmount';
+export * from './assetCollectInterestRequest';
 export * from './assetInput';
 export * from './assetNewRequest';
 export * from './assetSendRequest';

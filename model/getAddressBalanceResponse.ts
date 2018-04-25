@@ -11,7 +11,7 @@
  */
 
 
-export interface GetAddressBalanceResponse { 
+export interface GetAddressBalanceResponse {
     /**
      * balance againts address
      */

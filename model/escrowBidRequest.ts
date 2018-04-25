@@ -11,7 +11,7 @@
  */
 
 
-export interface EscrowBidRequest { 
+export interface EscrowBidRequest {
     /**
      * An alias you own.
      */

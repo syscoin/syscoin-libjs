@@ -11,7 +11,7 @@
  */
 
 
-export interface SendRawTransactionRequest { 
+export interface SendRawTransactionRequest {
     hexstring: string;
     allowhighfees?: boolean;
     instantsend?: boolean;

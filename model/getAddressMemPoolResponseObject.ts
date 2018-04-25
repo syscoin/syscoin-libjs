@@ -11,7 +11,7 @@
  */
 
 
-export interface GetAddressMemPoolResponseObject { 
+export interface GetAddressMemPoolResponseObject {
     /**
      * The difference of satoshis
      */

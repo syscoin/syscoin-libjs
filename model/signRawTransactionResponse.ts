@@ -12,7 +12,7 @@
 import { SignRawTransactionError } from './signRawTransactionError';
 
 
-export interface SignRawTransactionResponse { 
+export interface SignRawTransactionResponse {
     hex?: string;
     complete?: boolean;
     errors?: Array<SignRawTransactionError>;

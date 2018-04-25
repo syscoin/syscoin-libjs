@@ -11,7 +11,7 @@
  */
 
 
-export interface ImportPubKeyRequest { 
+export interface ImportPubKeyRequest {
     /**
      * The hex-encoded public key
      */

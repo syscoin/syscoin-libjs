@@ -11,7 +11,7 @@
  */
 
 
-export interface AssetUpdateRequest { 
+export interface AssetUpdateRequest {
     /**
      * Asset guid.
      */

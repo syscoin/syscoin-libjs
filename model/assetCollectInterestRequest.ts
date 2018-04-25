@@ -11,7 +11,17 @@
  */
 
 
-export interface FundRawTransactionRequest {
-    hexstring?: string;
-    watching?: boolean;
+export interface AssetCollectInterestRequest {
+    /**
+     * Asset guid.
+     */
+    asset: string;
+    /**
+     * Alias that holds this asset allocation.
+     */
+    alias: string;
+    /**
+     * Witness alias name that will sign for web-of-trust notarization of this transaction.
+     */
+    witness?: string;
 }

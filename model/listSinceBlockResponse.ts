@@ -12,7 +12,7 @@
 import { SinceBlockTransactionEntry } from './sinceBlockTransactionEntry';
 
 
-export interface ListSinceBlockResponse { 
+export interface ListSinceBlockResponse {
     transactions?: Array<SinceBlockTransactionEntry>;
     /**
      * The hash of the last block

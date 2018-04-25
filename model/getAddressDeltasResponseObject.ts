@@ -11,7 +11,7 @@
  */
 
 
-export interface GetAddressDeltasResponseObject { 
+export interface GetAddressDeltasResponseObject {
     /**
      * The difference of satoshis
      */

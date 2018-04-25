@@ -12,7 +12,7 @@
 import { LockUnspentTransaction } from './lockUnspentTransaction';
 
 
-export interface LockUnspentRequest { 
+export interface LockUnspentRequest {
     unlock?: boolean;
     transactions?: Array<LockUnspentTransaction>;
 }

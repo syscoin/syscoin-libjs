@@ -11,7 +11,7 @@
  */
 
 
-export interface SinceBlockTransactionEntry { 
+export interface SinceBlockTransactionEntry {
     /**
      * DEPRECATED. The account name associated with the transaction. Will be \"\" for the default account.
      */

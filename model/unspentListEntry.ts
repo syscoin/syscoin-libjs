@@ -11,7 +11,7 @@
  */
 
 
-export interface UnspentListEntry { 
+export interface UnspentListEntry {
     /**
      * The transaction id
      */
