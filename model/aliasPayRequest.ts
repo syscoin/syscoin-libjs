@@ -9,6 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { AliasPayRequestAmounts } from './aliasPayRequestAmounts';
 
 
 export interface AliasPayRequest {
@@ -16,16 +17,13 @@ export interface AliasPayRequest {
      * Alias to pay from
      */
     aliasfrom: string;
-    /**
-     * A stringified JSON object with aliases and amounts. { \"address\":amount, ... } (numeric or string) The syscoin alias is the key, the numeric amount (can be string) in SYS is the value.
-     */
-    amounts: string;
+    amounts: AliasPayRequestAmounts;
     /**
      * Set to true to use InstantSend to send this transaction or false otherwise.
      */
     instantsend?: boolean;
     /**
-     * Set to true to subtract fee from amount or false otherwise.
+     * An addresses array to subtract fee from them.
      */
-    subtractfeefromamount?: string;
+    subtractfeefromamount?: Array<string>;
 }
