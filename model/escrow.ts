@@ -11,7 +11,7 @@
  */
 
 
-export interface Escrow {
+export interface Escrow { 
     escrowtype?: string;
     escrow?: string;
     time?: string;
@@ -33,7 +33,7 @@ export interface Escrow {
     escrowaddress?: string;
     paymentoption?: number;
     paymemntoption_display?: string;
-    redeem_txid?: string;
+    redeem_script?: string;
     txid?: string;
     height?: string;
     pay_message?: string;

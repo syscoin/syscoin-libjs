@@ -21,6 +21,7 @@ import { Observable }                                        from 'rxjs/Observab
 import '../rxjs-operators';
 
 import { Alias } from '../model/alias';
+import { AliasAddScriptRequest } from '../model/aliasAddScriptRequest';
 import { AliasClearWhiteListRequest } from '../model/aliasClearWhiteListRequest';
 import { AliasNewFundRequest } from '../model/aliasNewFundRequest';
 import { AliasNewRequest } from '../model/aliasNewRequest';
@@ -63,6 +64,21 @@ export class AliasesService {
             }
         }
         return false;
+    }
+
+    /**
+     * add a redeem script to alias
+     * @param request 
+     */
+    public aliasaddscript(request: AliasAddScriptRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
+        return this.aliasaddscriptWithHttpInfo(request, extraHttpRequestParams)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json() || {};
+                }
+            });
     }
 
     /**
@@ -200,6 +216,56 @@ export class AliasesService {
             });
     }
 
+
+    /**
+     * 
+     * add a redeem script to alias
+     * @param request 
+     
+     */
+    public aliasaddscriptWithHttpInfo(request: AliasAddScriptRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+        if (request === null || request === undefined) {
+            throw new Error('Required parameter request was null or undefined when calling aliasaddscript.');
+        }
+
+        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers.set("Accept", httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        let consumes: string[] = [
+            'application/json'
+        ];
+        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let requestOptions: RequestOptionsArgs = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headers,
+            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
+            withCredentials:this.configuration.withCredentials
+        });
+        // https://github.com/swagger-api/swagger-codegen/issues/4037
+        if (extraHttpRequestParams) {
+            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+        }
+
+        return this.http.request(`${this.basePath}/aliasaddscript`, requestOptions);
+    }
 
     /**
      * 
