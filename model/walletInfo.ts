@@ -11,7 +11,7 @@
  */
 
 
-export interface WalletInfo {
+export interface WalletInfo { 
     /**
      * the wallet version
      */

@@ -9,8 +9,11 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { PeerInfo } from './peerInfo';
 
 
-export interface PeerInfoResponse extends Array<PeerInfo> { 
+/**
+ * An object with aliases (pay to) and amounts. { \"address\":amount, ... } (numeric or string) The syscoin alias is the key, the numeric amount (can be string) in SYS is the value.
+ */
+export interface AliasPayRequestAmounts { 
+    alias?: number;
 }

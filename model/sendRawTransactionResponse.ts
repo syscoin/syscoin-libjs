@@ -11,6 +11,6 @@
  */
 
 
-export interface SendRawTransactionResponse {
+export interface SendRawTransactionResponse { 
     txid?: string;
 }

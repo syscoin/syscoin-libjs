@@ -6,6 +6,7 @@ export * from './aliasClearWhiteListRequest';
 export * from './aliasNewFundRequest';
 export * from './aliasNewRequest';
 export * from './aliasPayRequest';
+export * from './aliasPayRequestAmounts';
 export * from './aliasUpdateRequest';
 export * from './aliasUpdateWhitelistRequest';
 export * from './asset';

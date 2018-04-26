@@ -12,7 +12,7 @@
 import { TransactionDetailEntry } from './transactionDetailEntry';
 
 
-export interface Transaction {
+export interface Transaction { 
     /**
      * The transaction amount in SYS
      */

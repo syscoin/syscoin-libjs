@@ -11,7 +11,7 @@
  */
 
 
-export interface GetBlockResponse {
+export interface GetBlockResponse { 
     /**
      * The block hash (same as provided)
      */

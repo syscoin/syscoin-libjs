@@ -11,7 +11,7 @@
  */
 
 
-export interface ImportPrivKeyRequest {
+export interface ImportPrivKeyRequest { 
     /**
      * The private key (see dumpprivkey)
      */

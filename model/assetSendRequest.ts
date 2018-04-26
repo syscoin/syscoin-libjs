@@ -12,7 +12,7 @@
 import { AssetAmount } from './assetAmount';
 
 
-export interface AssetSendRequest {
+export interface AssetSendRequest { 
     /**
      * Asset guid.
      */

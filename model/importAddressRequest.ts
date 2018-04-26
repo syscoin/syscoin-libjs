@@ -11,7 +11,7 @@
  */
 
 
-export interface ImportAddressRequest {
+export interface ImportAddressRequest { 
     /**
      * The hex-encoded script (or address)
      */

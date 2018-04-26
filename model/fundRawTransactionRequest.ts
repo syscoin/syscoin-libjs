@@ -11,7 +11,7 @@
  */
 
 
-export interface FundRawTransactionRequest {
+export interface FundRawTransactionRequest { 
     hexstring?: string;
     watching?: boolean;
 }

@@ -12,7 +12,7 @@
 import { WhitelistEntry } from './whitelistEntry';
 
 
-export interface AliasUpdateWhitelistRequest {
+export interface AliasUpdateWhitelistRequest { 
     /**
      * owner alias controlling this whitelist.
      */

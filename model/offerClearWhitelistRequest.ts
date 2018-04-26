@@ -11,6 +11,6 @@
  */
 
 
-export interface OfferClearWhitelistRequest {
+export interface OfferClearWhitelistRequest { 
     offerguid: string;
 }

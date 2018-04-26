@@ -12,7 +12,7 @@
 import { AssetInput } from './assetInput';
 
 
-export interface AssetAmount {
+export interface AssetAmount { 
     /**
      * alias to send to
      */

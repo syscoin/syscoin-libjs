@@ -11,7 +11,7 @@
  */
 
 
-export interface WhitelistEntry {
+export interface WhitelistEntry { 
     alias?: string;
     discount_percentage?: number;
 }
