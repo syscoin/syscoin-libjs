@@ -11,7 +11,7 @@
  */
 
 
-export interface CertNewRequest { 
+export interface CertNewRequest {
     /**
      * An alias you own.
      */

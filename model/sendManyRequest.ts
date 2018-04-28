@@ -11,7 +11,7 @@
  */
 
 
-export interface SendManyRequest { 
+export interface SendManyRequest {
     /**
      * The account to send the funds from. Should be \"\" for the default account
      */

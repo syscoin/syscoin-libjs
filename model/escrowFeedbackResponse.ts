@@ -11,7 +11,7 @@
  */
 
 
-export interface EscrowFeedbackResponse { 
+export interface EscrowFeedbackResponse {
     _id?: string;
     offer?: string;
     escrow?: string;

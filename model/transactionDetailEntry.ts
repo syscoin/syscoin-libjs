@@ -11,7 +11,7 @@
  */
 
 
-export interface TransactionDetailEntry { 
+export interface TransactionDetailEntry {
     /**
      * DEPRECATED. The account name involved in the transaction, can be \"\" for the default account.
      */

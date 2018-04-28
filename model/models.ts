@@ -2,6 +2,7 @@ export * from './account';
 export * from './addMultisigAddressRequest';
 export * from './addressGrouping';
 export * from './alias';
+export * from './aliasAddScriptRequest';
 export * from './aliasClearWhiteListRequest';
 export * from './aliasNewFundRequest';
 export * from './aliasNewRequest';

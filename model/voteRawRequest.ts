@@ -11,7 +11,7 @@
  */
 
 
-export interface VoteRawRequest { 
+export interface VoteRawRequest {
     masternode_tx_hash: string;
     masternode_tx_index: number;
     governance_hash: string;

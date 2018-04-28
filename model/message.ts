@@ -11,7 +11,7 @@
  */
 
 
-export interface Message { 
+export interface Message {
     GUID?: string;
     txid?: string;
     time?: number;

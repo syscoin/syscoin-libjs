@@ -11,7 +11,7 @@
  */
 
 
-export interface EscrowCompleteReleaseRequest { 
+export interface EscrowCompleteReleaseRequest {
     /**
      * Escrow ID
      */

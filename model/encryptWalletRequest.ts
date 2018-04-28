@@ -11,7 +11,7 @@
  */
 
 
-export interface EncryptWalletRequest { 
+export interface EncryptWalletRequest {
     /**
      * The pass phrase to encrypt the wallet with. It must be at least 1 character, but should be long.
      */

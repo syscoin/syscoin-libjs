@@ -12,7 +12,7 @@
 import { AssetInput } from './assetInput';
 
 
-export interface AssetAllocation { 
+export interface AssetAllocation {
     _id: string;
     asset?: string;
     txid?: string;

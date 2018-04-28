@@ -11,7 +11,7 @@
  */
 
 
-export interface Offer { 
+export interface Offer {
     _id: string;
     cert?: string;
     txid?: string;

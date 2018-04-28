@@ -11,7 +11,7 @@
  */
 
 
-export interface SendToAddressRequest { 
+export interface SendToAddressRequest {
     /**
      * The syscoin address to send to.
      */

@@ -11,7 +11,7 @@
  */
 
 
-export interface ListReceivedByAddress { 
+export interface ListReceivedByAddress {
     address?: string;
     v2address?: string;
     account?: string;

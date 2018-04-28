@@ -11,7 +11,7 @@
  */
 
 
-export interface MoveRequest { 
+export interface MoveRequest {
     /**
      * The name of the account to move funds from. May be the default account using \"\".
      */

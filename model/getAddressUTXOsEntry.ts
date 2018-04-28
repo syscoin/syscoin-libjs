@@ -11,7 +11,7 @@
  */
 
 
-export interface GetAddressUTXOsEntry { 
+export interface GetAddressUTXOsEntry {
     address?: string;
     txid?: string;
     outputIndex?: number;

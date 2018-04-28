@@ -11,7 +11,7 @@
  */
 
 
-export interface GetSpentInfoResponse { 
+export interface GetSpentInfoResponse {
     txid?: string;
     index?: number;
 }

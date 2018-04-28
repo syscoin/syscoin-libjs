@@ -11,7 +11,7 @@
  */
 
 
-export interface GovernanceInfoResponse { 
+export interface GovernanceInfoResponse {
     governanceminquorum?: number;
     masternodewatchdogmaxseconds?: number;
     proposalfee?: number;

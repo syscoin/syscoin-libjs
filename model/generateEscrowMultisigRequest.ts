@@ -11,7 +11,7 @@
  */
 
 
-export interface GenerateEscrowMultisigRequest { 
+export interface GenerateEscrowMultisigRequest {
     buyer: string;
     offerguid: string;
     quantity: number;
