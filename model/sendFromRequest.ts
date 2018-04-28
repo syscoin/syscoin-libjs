@@ -11,7 +11,7 @@
  */
 
 
-export interface SendFromRequest { 
+export interface SendFromRequest {
     /**
      * The name of the account to send funds from. May be the default account using \"\".
      */

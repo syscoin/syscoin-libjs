@@ -11,7 +11,7 @@
  */
 
 
-export interface CertTransferRequest { 
+export interface CertTransferRequest {
     /**
      * Certificate guidkey.
      */

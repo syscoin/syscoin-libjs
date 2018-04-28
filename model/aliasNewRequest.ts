@@ -11,7 +11,7 @@
  */
 
 
-export interface AliasNewRequest { 
+export interface AliasNewRequest {
     /**
      * Alias name
      */

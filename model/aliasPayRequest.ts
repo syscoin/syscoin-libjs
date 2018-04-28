@@ -12,7 +12,7 @@
 import { AliasPayRequestAmounts } from './aliasPayRequestAmounts';
 
 
-export interface AliasPayRequest { 
+export interface AliasPayRequest {
     /**
      * Alias to pay from
      */

@@ -11,6 +11,6 @@
  */
 
 
-export interface SignRawTransactionRequest { 
+export interface SignRawTransactionRequest {
     hexstring?: string;
 }

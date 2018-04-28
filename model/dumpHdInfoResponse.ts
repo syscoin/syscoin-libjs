@@ -11,7 +11,7 @@
  */
 
 
-export interface DumpHdInfoResponse { 
+export interface DumpHdInfoResponse {
     hdseed?: string;
     mnemonic?: string;
     mnemonicpassphrase?: string;

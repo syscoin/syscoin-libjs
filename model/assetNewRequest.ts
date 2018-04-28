@@ -11,7 +11,7 @@
  */
 
 
-export interface AssetNewRequest { 
+export interface AssetNewRequest {
     /**
      * name, 20 characters max.
      */

@@ -11,7 +11,7 @@
  */
 
 
-export interface OfferLinkRequest { 
+export interface OfferLinkRequest {
     /**
      * An alias you own.
      */

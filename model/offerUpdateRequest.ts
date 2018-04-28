@@ -11,7 +11,7 @@
  */
 
 
-export interface OfferUpdateRequest { 
+export interface OfferUpdateRequest {
     alias?: string;
     guid?: string;
     category?: string;

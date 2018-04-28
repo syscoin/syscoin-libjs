@@ -11,7 +11,7 @@
  */
 
 
-export interface EscrowNewRequest { 
+export interface EscrowNewRequest {
     /**
      * True or false. Get deposit and total escrow amount aswell as escrow address for funding. If buynow is false pass bid amount in bid_in_payment_option to get total needed to complete escrow. If buynow is true amount is calculated based on offer price and quantity.
      */

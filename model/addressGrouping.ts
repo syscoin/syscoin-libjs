@@ -11,7 +11,7 @@
  */
 
 
-export interface AddressGrouping { 
+export interface AddressGrouping {
     /**
      * The syscoin address
      */

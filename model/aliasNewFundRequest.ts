@@ -11,7 +11,7 @@
  */
 
 
-export interface AliasNewFundRequest { 
+export interface AliasNewFundRequest {
     hexstring?: string;
     addresses?: Array<any>;
 }

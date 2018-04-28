@@ -11,7 +11,7 @@
  */
 
 
-export interface OfferAcceptRequest { 
+export interface OfferAcceptRequest {
     /**
      * An alias of the buyer.
      */

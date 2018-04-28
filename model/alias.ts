@@ -11,7 +11,7 @@
  */
 
 
-export interface Alias { 
+export interface Alias {
     _id: string;
     encryption_privatekey?: string;
     encryption_publickey?: string;

@@ -11,7 +11,7 @@
  */
 
 
-export interface PoolInfoResponse { 
+export interface PoolInfoResponse {
     state?: string;
     mixing_mode?: string;
     queue?: number;
