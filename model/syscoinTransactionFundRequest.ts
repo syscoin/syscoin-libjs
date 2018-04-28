@@ -11,7 +11,7 @@
  */
 
 
-export interface AliasNewFundRequest {
+export interface SyscoinTransactionFundRequest {
     hexstring?: string;
     addresses?: Array<any>;
 }
