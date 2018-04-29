@@ -11,16 +11,7 @@
  */
 
 
-export interface Cert {
-    _id?: string;
-    txid?: string;
-    height?: number;
-    time?: number;
-    title?: string;
-    publicvalue?: string;
-    category?: string;
-    alias?: string;
-    access_flags?: number;
-    expires_on?: number;
-    expired?: boolean;
+export interface AliasNewFundRequest {
+    hexstring?: string;
+    addresses?: Array<any>;
 }
