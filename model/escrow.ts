@@ -11,41 +11,38 @@
  */
 
 
-export interface Escrow {
-    escrowtype?: string;
-    escrow?: string;
-    time?: string;
+export interface Escrow { 
+    _id?: string;
+    time?: number;
     seller?: string;
     arbiter?: string;
     buyer?: string;
+    witness?: string;
     offer?: string;
-    offerlink_seller?: string;
-    offertitle?: string;
-    quantity?: string;
-    price?: string;
-    systotal?: number;
-    sysfee?: number;
-    fee?: string;
-    total?: string;
+    offer_price?: number;
+    reseller?: string;
+    quantity?: number;
     total_with_fee?: number;
+    total_without_fee?: number;
+    bid_in_offer_currency_per_unit?: number;
+    total_or_bid_in_payment_option_per_unit?: number;
+    buynow?: boolean;
+    commission?: number;
+    arbiterfee?: number;
+    networkfee?: number;
+    witnessfee?: number;
+    shipping?: number;
+    deposit?: number;
     currency?: string;
     exttxid?: string;
     escrowaddress?: string;
-    paymentoption?: number;
-    paymemntoption_display?: string;
+    paymentoption?: string;
+    redeem_txid?: string;
     redeem_script?: string;
     txid?: string;
-    height?: string;
-    pay_message?: string;
-    expired?: number;
+    height?: number;
+    role?: number;
+    expired?: boolean;
+    acknowledged?: boolean;
     status?: number;
-    buyer_feedback?: Array<string>;
-    avg_buyer_rating?: number;
-    seller_feedback?: Array<string>;
-    avg_seller_feedback?: number;
-    arbiter_feedback?: Array<string>;
-    avg_arbiter_rating?: number;
-    avg_rating_count?: number;
-    avg_rating?: number;
-    avg_rating_display?: string;
 }
