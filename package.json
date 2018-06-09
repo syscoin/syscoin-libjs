@@ -1,5 +1,5 @@
 {
-  "name": "@syscoinorg/syscoinlibjs",
+  "name": "@syscoin/syscoinlibjs",
   "version": "3.0.0-beta",
   "description": "Syscoin API JS client",
   "main": "dist/index.js",
