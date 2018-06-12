@@ -11,6 +11,6 @@
  */
 
 
-export interface AliasAddScriptRequest {
+export interface AliasAddScriptRequest { 
     script?: string;
 }

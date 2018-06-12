@@ -11,7 +11,7 @@
  */
 
 
-export interface MessageNewRequest {
+export interface MessageNewRequest { 
     /**
      * Subject of message.
      */

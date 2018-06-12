@@ -11,6 +11,6 @@
  */
 
 
-export interface GetAddressUTXOsRequest {
+export interface GetAddressUTXOsRequest { 
     addresses?: Array<string>;
 }

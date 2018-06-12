@@ -11,7 +11,7 @@
  */
 
 
-export interface Cert {
+export interface Cert { 
     _id?: string;
     txid?: string;
     height?: number;

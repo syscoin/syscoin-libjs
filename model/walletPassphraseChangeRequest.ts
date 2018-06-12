@@ -11,7 +11,7 @@
  */
 
 
-export interface WalletPassphraseChangeRequest {
+export interface WalletPassphraseChangeRequest { 
     /**
      * The current passphrase
      */

@@ -12,7 +12,7 @@
 import { AssetInput } from './assetInput';
 
 
-export interface Asset {
+export interface Asset { 
     guid: string;
     symbol?: string;
     txid?: string;

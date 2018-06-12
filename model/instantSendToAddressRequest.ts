@@ -11,7 +11,7 @@
  */
 
 
-export interface InstantSendToAddressRequest {
+export interface InstantSendToAddressRequest { 
     /**
      * (string, required) The syscoin address to send to.
      */
