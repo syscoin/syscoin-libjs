@@ -17,7 +17,7 @@ export interface OfferAccept {
     txid?: string;
     title?: string;
     exttxid?: string;
-    paymentoption?: number;
+    paymentoption?: string;
     paymentoption_display?: string;
     height?: number;
     time?: string;
