@@ -20,7 +20,7 @@ export interface Escrow {
     witness?: string;
     offer?: string;
     offer_price?: number;
-    offer_title?: number;
+    offer_title?: string;
     reseller?: string;
     quantity?: number;
     total_with_fee?: number;
