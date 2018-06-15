@@ -11,7 +11,7 @@
  */
 
 
-export interface AssetInput {
+export interface AssetInput { 
     start?: number;
     end?: number;
 }

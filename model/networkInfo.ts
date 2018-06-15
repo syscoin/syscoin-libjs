@@ -12,7 +12,7 @@
 import { NetworkInfoDetails } from './networkInfoDetails';
 
 
-export interface NetworkInfo {
+export interface NetworkInfo { 
     version?: number;
     subversion?: string;
     protocolversion?: number;

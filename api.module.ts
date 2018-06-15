@@ -1,7 +1,7 @@
 import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpModule } from '@angular/http';
 import { Configuration } from './configuration';
+
+import { Http } from '@angular/http';
 
 import { AliasesService } from './api/aliases.service';
 import { AssetService } from './api/asset.service';
@@ -13,7 +13,7 @@ import { MasternodesService } from './api/masternodes.service';
 import { OffersService } from './api/offers.service';
 
 @NgModule({
-  imports:      [ CommonModule, HttpModule ],
+  imports:      [],
   declarations: [],
   exports:      [],
   providers: [
@@ -34,9 +34,14 @@ export class ApiModule {
         }
     }
 
-    constructor( @Optional() @SkipSelf() parentModule: ApiModule) {
+    constructor( @Optional() @SkipSelf() parentModule: ApiModule,
+                 @Optional() http: Http) {
         if (parentModule) {
-            throw new Error('ApiModule is already loaded. Import your base AppModule only.');
+            throw new Error('ApiModule is already loaded. Import in your base AppModule only.');
+        }
+        if (!http) {
+            throw new Error('You need to import the HttpModule in your AppModule! \n' +
+            'See also https://github.com/angular/angular/issues/20575');
         }
     }
 }

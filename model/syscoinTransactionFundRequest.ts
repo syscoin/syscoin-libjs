@@ -11,7 +11,7 @@
  */
 
 
-export interface SyscoinTransactionFundRequest {
+export interface SyscoinTransactionFundRequest { 
     hexstring?: string;
     addresses?: Array<any>;
 }

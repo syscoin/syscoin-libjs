@@ -11,7 +11,7 @@
  */
 
 
-export interface GetChainTipsResponse {
+export interface GetChainTipsResponse { 
     height?: number;
     hash?: string;
     difficulty?: number;

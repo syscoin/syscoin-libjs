@@ -11,7 +11,7 @@
  */
 
 
-export interface GetBlockchainInfoResponse {
+export interface GetBlockchainInfoResponse { 
     /**
      * Current network name as defined in BIP70 (main, test, regtest)
      */

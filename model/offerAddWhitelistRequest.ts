@@ -11,7 +11,7 @@
  */
 
 
-export interface OfferAddWhitelistRequest {
+export interface OfferAddWhitelistRequest { 
     /**
      * offer guid that you are adding to
      */

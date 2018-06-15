@@ -11,7 +11,7 @@
  */
 
 
-export interface EscrowNewRequest {
+export interface EscrowNewRequest { 
     /**
      * True or false. Get deposit and total escrow amount aswell as escrow address for funding. If buynow is false pass bid amount in bid_in_payment_option to get total needed to complete escrow. If buynow is true amount is calculated based on offer price and quantity.
      */
@@ -39,7 +39,7 @@ export interface EscrowNewRequest {
     /**
      * Total amount of the offer price. Amount is in paymentOption currency. It is per unit of purchase.
      */
-    total_in_payment_option: number;
+    price_per_unit_in_payment_option: number;
     /**
      * Amount to add to shipping for merchant. Amount is in paymentOption currency. Example; If merchant requests 0.1 BTC for shipping and escrow is paid in BTC, enter 0.1 here. Default is 0. Buyer can also add shipping using escrowaddshipping upon merchant request.
      */

@@ -11,7 +11,7 @@
  */
 
 
-export interface AssetAllocationCollectInterestRequest {
+export interface AssetAllocationCollectInterestRequest { 
     /**
      * Asset guid.
      */

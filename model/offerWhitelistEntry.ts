@@ -11,7 +11,7 @@
  */
 
 
-export interface OfferWhitelistEntry {
+export interface OfferWhitelistEntry { 
     alias?: string;
     expiresin?: number;
     offer_discount_percentage?: number;
