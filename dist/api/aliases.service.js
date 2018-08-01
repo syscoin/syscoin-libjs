@@ -25,17 +25,15 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var http_1 = require("@angular/http");
-var http_2 = require("@angular/http");
+var http_1 = require("@angular/common/http");
 var encoder_1 = require("../encoder");
-require("../rxjs-operators");
 var variables_1 = require("../variables");
 var configuration_1 = require("../configuration");
 var AliasesService = /** @class */ (function () {
-    function AliasesService(http, basePath, configuration) {
-        this.http = http;
+    function AliasesService(httpClient, basePath, configuration) {
+        this.httpClient = httpClient;
         this.basePath = 'http://localhost:8001';
-        this.defaultHeaders = new http_1.Headers();
+        this.defaultHeaders = new http_1.HttpHeaders();
         this.configuration = new configuration_1.Configuration();
         if (basePath) {
             this.basePath = basePath;
@@ -59,170 +57,16 @@ var AliasesService = /** @class */ (function () {
         }
         return false;
     };
-    /**
-     * add a redeem script to alias
-     * @param request
-     */
-    AliasesService.prototype.aliasaddscript = function (request, extraHttpRequestParams) {
-        return this.aliasaddscriptWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns the total amount received by the given alias in transactions with at least minconf confirmations.
-     * @param alias The syscoin alias for transactions
-     */
-    AliasesService.prototype.aliasbalance = function (alias, extraHttpRequestParams) {
-        return this.aliasbalanceWithHttpInfo(alias, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Clear your whitelist(controls who can resell).
-     * @param request
-     */
-    AliasesService.prototype.aliasclearwhitelist = function (request, extraHttpRequestParams) {
-        return this.aliasclearwhitelistWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Show values of an alias.
-     * @param aliasname
-     */
-    AliasesService.prototype.aliasinfo = function (aliasname, extraHttpRequestParams) {
-        return this.aliasinfoWithHttpInfo(aliasname, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Creates a new Syscoin Alias. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     */
-    AliasesService.prototype.aliasnew = function (request, extraHttpRequestParams) {
-        return this.aliasnewWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Send multiple times from an alias. Amounts are double-precision floating point numbers.
-     * @param request
-     */
-    AliasesService.prototype.aliaspay = function (request, extraHttpRequestParams) {
-        return this.aliaspayWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Update and possibly transfer an alias. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     */
-    AliasesService.prototype.aliasupdate = function (request, extraHttpRequestParams) {
-        return this.aliasupdateWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Update to the whitelist(controls who can resell). Array of whitelist entries in parameter 1.
-     * @param request
-     */
-    AliasesService.prototype.aliasupdatewhitelist = function (request, extraHttpRequestParams) {
-        return this.aliasupdatewhitelistWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * List all affiliates for this alias.
-     * @param aliasname
-     */
-    AliasesService.prototype.aliaswhitelist = function (aliasname, extraHttpRequestParams) {
-        return this.aliaswhitelistWithHttpInfo(aliasname, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * fund an alias creation (possibly other operations in the future)
-     * @param request
-     */
-    AliasesService.prototype.syscointxfund = function (request, extraHttpRequestParams) {
-        return this.syscointxfundWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     *
-     * add a redeem script to alias
-     * @param request
-     
-     */
-    AliasesService.prototype.aliasaddscriptWithHttpInfo = function (request, extraHttpRequestParams) {
+    AliasesService.prototype.aliasaddscript = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling aliasaddscript.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -230,7 +74,7 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -238,38 +82,29 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set("Content-Type", httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/aliasaddscript", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/aliasaddscript", requestOptions);
     };
-    /**
-     *
-     * Returns the total amount received by the given alias in transactions with at least minconf confirmations.
-     * @param alias The syscoin alias for transactions
-     
-     */
-    AliasesService.prototype.aliasbalanceWithHttpInfo = function (alias, extraHttpRequestParams) {
+    AliasesService.prototype.aliasbalance = function (alias, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (alias === null || alias === undefined) {
             throw new Error('Required parameter alias was null or undefined when calling aliasbalance.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
         if (alias !== undefined) {
-            queryParameters.set('alias', alias);
+            queryParameters = queryParameters.set('alias', alias);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -277,38 +112,30 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/aliasbalance", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/aliasbalance", requestOptions);
     };
-    /**
-     *
-     * Clear your whitelist(controls who can resell).
-     * @param request
-     
-     */
-    AliasesService.prototype.aliasclearwhitelistWithHttpInfo = function (request, extraHttpRequestParams) {
+    AliasesService.prototype.aliasclearwhitelist = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling aliasclearwhitelist.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -316,7 +143,7 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -324,38 +151,29 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set("Content-Type", httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/aliasclearwhitelist", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/aliasclearwhitelist", requestOptions);
     };
-    /**
-     *
-     * Show values of an alias.
-     * @param aliasname
-     
-     */
-    AliasesService.prototype.aliasinfoWithHttpInfo = function (aliasname, extraHttpRequestParams) {
+    AliasesService.prototype.aliasinfo = function (aliasname, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (aliasname === null || aliasname === undefined) {
             throw new Error('Required parameter aliasname was null or undefined when calling aliasinfo.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
         if (aliasname !== undefined) {
-            queryParameters.set('aliasname', aliasname);
+            queryParameters = queryParameters.set('aliasname', aliasname);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -363,38 +181,30 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/aliasinfo", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/aliasinfo", requestOptions);
     };
-    /**
-     *
-     * Creates a new Syscoin Alias. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     
-     */
-    AliasesService.prototype.aliasnewWithHttpInfo = function (request, extraHttpRequestParams) {
+    AliasesService.prototype.aliasnew = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling aliasnew.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -402,7 +212,7 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -410,34 +220,25 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set("Content-Type", httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/aliasnew", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/aliasnew", requestOptions);
     };
-    /**
-     *
-     * Send multiple times from an alias. Amounts are double-precision floating point numbers.
-     * @param request
-     
-     */
-    AliasesService.prototype.aliaspayWithHttpInfo = function (request, extraHttpRequestParams) {
+    AliasesService.prototype.aliaspay = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling aliaspay.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -445,7 +246,7 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -453,34 +254,25 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set("Content-Type", httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/aliaspay", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/aliaspay", requestOptions);
     };
-    /**
-     *
-     * Update and possibly transfer an alias. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     
-     */
-    AliasesService.prototype.aliasupdateWithHttpInfo = function (request, extraHttpRequestParams) {
+    AliasesService.prototype.aliasupdate = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling aliasupdate.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -488,7 +280,7 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -496,34 +288,25 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set("Content-Type", httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/aliasupdate", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/aliasupdate", requestOptions);
     };
-    /**
-     *
-     * Update to the whitelist(controls who can resell). Array of whitelist entries in parameter 1.
-     * @param request
-     
-     */
-    AliasesService.prototype.aliasupdatewhitelistWithHttpInfo = function (request, extraHttpRequestParams) {
+    AliasesService.prototype.aliasupdatewhitelist = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling aliasupdatewhitelist.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -531,7 +314,7 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -539,38 +322,29 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set("Content-Type", httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/aliasupdatewhitelist", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/aliasupdatewhitelist", requestOptions);
     };
-    /**
-     *
-     * List all affiliates for this alias.
-     * @param aliasname
-     
-     */
-    AliasesService.prototype.aliaswhitelistWithHttpInfo = function (aliasname, extraHttpRequestParams) {
+    AliasesService.prototype.aliaswhitelist = function (aliasname, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (aliasname === null || aliasname === undefined) {
             throw new Error('Required parameter aliasname was null or undefined when calling aliaswhitelist.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
         if (aliasname !== undefined) {
-            queryParameters.set('aliasname', aliasname);
+            queryParameters = queryParameters.set('aliasname', aliasname);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -578,38 +352,30 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/aliaswhitelist", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/aliaswhitelist", requestOptions);
     };
-    /**
-     *
-     * fund an alias creation (possibly other operations in the future)
-     * @param request
-     
-     */
-    AliasesService.prototype.syscointxfundWithHttpInfo = function (request, extraHttpRequestParams) {
+    AliasesService.prototype.syscointxfund = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling syscointxfund.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -617,7 +383,7 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -625,24 +391,19 @@ var AliasesService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set("Content-Type", httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/syscointxfund", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/syscointxfund", requestOptions);
     };
     AliasesService = __decorate([
         core_1.Injectable(),
         __param(1, core_1.Optional()), __param(1, core_1.Inject(variables_1.BASE_PATH)), __param(2, core_1.Optional()),
-        __metadata("design:paramtypes", [http_1.Http, String, configuration_1.Configuration])
+        __metadata("design:paramtypes", [http_1.HttpClient, String, configuration_1.Configuration])
     ], AliasesService);
     return AliasesService;
 }());

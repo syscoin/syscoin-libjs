@@ -25,17 +25,15 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var http_1 = require("@angular/http");
-var http_2 = require("@angular/http");
+var http_1 = require("@angular/common/http");
 var encoder_1 = require("../encoder");
-require("../rxjs-operators");
 var variables_1 = require("../variables");
 var configuration_1 = require("../configuration");
 var BlockmarketService = /** @class */ (function () {
-    function BlockmarketService(http, basePath, configuration) {
-        this.http = http;
+    function BlockmarketService(httpClient, basePath, configuration) {
+        this.httpClient = httpClient;
         this.basePath = 'http://localhost:8001';
-        this.defaultHeaders = new http_1.Headers();
+        this.defaultHeaders = new http_1.HttpHeaders();
         this.configuration = new configuration_1.Configuration();
         if (basePath) {
             this.basePath = basePath;
@@ -59,64 +57,41 @@ var BlockmarketService = /** @class */ (function () {
         }
         return false;
     };
-    /**
-     * Returns a session token for use with subsquent protected calls.
-     * @param auth SHA1 hash of the user&#39;s authentication information- usernamepassword.
-     */
-    BlockmarketService.prototype.login = function (auth, extraHttpRequestParams) {
-        return this.loginWithHttpInfo(auth, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     *
-     * Returns a session token for use with subsquent protected calls.
-     * @param auth SHA1 hash of the user&#39;s authentication information- usernamepassword.
-     
-     */
-    BlockmarketService.prototype.loginWithHttpInfo = function (auth, extraHttpRequestParams) {
+    BlockmarketService.prototype.login = function (auth, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (auth === null || auth === undefined) {
             throw new Error('Required parameter auth was null or undefined when calling login.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
         if (auth !== undefined) {
-            queryParameters.set('auth', auth);
+            queryParameters = queryParameters.set('auth', auth);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // to determine the Accept header
         var httpHeaderAccepts = [
             'application/json'
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/login", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/login", requestOptions);
     };
     BlockmarketService = __decorate([
         core_1.Injectable(),
         __param(1, core_1.Optional()), __param(1, core_1.Inject(variables_1.BASE_PATH)), __param(2, core_1.Optional()),
-        __metadata("design:paramtypes", [http_1.Http, String, configuration_1.Configuration])
+        __metadata("design:paramtypes", [http_1.HttpClient, String, configuration_1.Configuration])
     ], BlockmarketService);
     return BlockmarketService;
 }());

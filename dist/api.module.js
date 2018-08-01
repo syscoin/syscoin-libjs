@@ -13,9 +13,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var common_1 = require("@angular/common");
-var http_1 = require("@angular/http");
 var configuration_1 = require("./configuration");
+var http_1 = require("@angular/common/http");
 var aliases_service_1 = require("./api/aliases.service");
 var asset_service_1 = require("./api/asset.service");
 var blockmarket_service_1 = require("./api/blockmarket.service");
@@ -25,9 +24,13 @@ var general_service_1 = require("./api/general.service");
 var masternodes_service_1 = require("./api/masternodes.service");
 var offers_service_1 = require("./api/offers.service");
 var ApiModule = /** @class */ (function () {
-    function ApiModule(parentModule) {
+    function ApiModule(parentModule, http) {
         if (parentModule) {
-            throw new Error('ApiModule is already loaded. Import your base AppModule only.');
+            throw new Error('ApiModule is already loaded. Import in your base AppModule only.');
+        }
+        if (!http) {
+            throw new Error('You need to import the HttpClientModule in your AppModule! \n' +
+                'See also https://github.com/angular/angular/issues/20575');
         }
     }
     ApiModule_1 = ApiModule;
@@ -40,7 +43,7 @@ var ApiModule = /** @class */ (function () {
     var ApiModule_1;
     ApiModule = ApiModule_1 = __decorate([
         core_1.NgModule({
-            imports: [common_1.CommonModule, http_1.HttpModule],
+            imports: [],
             declarations: [],
             exports: [],
             providers: [
@@ -55,7 +58,9 @@ var ApiModule = /** @class */ (function () {
             ]
         }),
         __param(0, core_1.Optional()), __param(0, core_1.SkipSelf()),
-        __metadata("design:paramtypes", [ApiModule])
+        __param(1, core_1.Optional()),
+        __metadata("design:paramtypes", [ApiModule,
+            http_1.HttpClient])
     ], ApiModule);
     return ApiModule;
 }());

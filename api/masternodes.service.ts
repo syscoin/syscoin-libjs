@@ -12,13 +12,11 @@
 /* tslint:disable:no-unused-variable member-ordering */
 
 import { Inject, Injectable, Optional }                      from '@angular/core';
-import { Http, Headers, URLSearchParams }                    from '@angular/http';
-import { RequestMethod, RequestOptions, RequestOptionsArgs } from '@angular/http';
-import { Response, ResponseContentType }                     from '@angular/http';
-import { CustomQueryEncoderHelper }                          from '../encoder';
+import { HttpClient, HttpHeaders, HttpParams,
+         HttpResponse, HttpEvent }                           from '@angular/common/http';
+import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs/Observable';
-import '../rxjs-operators';
 
 import { ErrorResponse } from '../model/errorResponse';
 import { VoteRawRequest } from '../model/voteRawRequest';
@@ -31,10 +29,10 @@ import { Configuration }                                     from '../configurat
 export class MasternodesService {
 
     protected basePath = 'http://localhost:8001';
-    public defaultHeaders = new Headers();
+    public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
 
-    constructor(protected http: Http, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
+    constructor(protected httpClient: HttpClient, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
         if (basePath) {
             this.basePath = basePath;
         }
@@ -58,93 +56,36 @@ export class MasternodesService {
         return false;
     }
 
-    /**
-     * Imports keys from an Electrum wallet export file (.csv or .json).
-     * @param filename (string, required) The Electrum wallet export file, should be in csv or json format
-     * @param index (numeric, optional, default&#x3D;0) Rescan the wallet for transactions starting from this block index
-     */
-    public importelectrumwallet(filename: string, index?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.importelectrumwalletWithHttpInfo(filename, index, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Anonymous mixing and sending coins.
-     * @param command &#39;start&#39; - Start Mixing &#39;stop&#39; - Stop mixing &#39;reset&#39; - Reset mixing 
-     */
-    public privatesend(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.privatesendWithHttpInfo(command, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Keep-alive message for masternode via TCP ping requests.
-     * @param version Sentinel version in the form &#39;x.x.x&#39;
-     */
-    public sentinelping(version: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<boolean> {
-        return this.sentinelpingWithHttpInfo(version, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Compile and relay a governance vote with provided external signature instead of signing vote internally.
-     * @param request 
-     */
-    public voteraw(request: VoteRawRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.voterawWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
 
     /**
      * 
      * Imports keys from an Electrum wallet export file (.csv or .json).
      * @param filename (string, required) The Electrum wallet export file, should be in csv or json format
      * @param index (numeric, optional, default&#x3D;0) Rescan the wallet for transactions starting from this block index
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public importelectrumwalletWithHttpInfo(filename: string, index?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public importelectrumwallet(filename: string, index?: number, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public importelectrumwallet(filename: string, index?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public importelectrumwallet(filename: string, index?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public importelectrumwallet(filename: string, index?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (filename === null || filename === undefined) {
             throw new Error('Required parameter filename was null or undefined when calling importelectrumwallet.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (filename !== undefined) {
-            queryParameters.set('filename', <any>filename);
+            queryParameters = queryParameters.set('filename', <any>filename);
         }
         if (index !== undefined) {
-            queryParameters.set('index', <any>index);
+            queryParameters = queryParameters.set('index', <any>index);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
@@ -153,7 +94,7 @@ export class MasternodesService {
         ];
         let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
@@ -161,41 +102,42 @@ export class MasternodesService {
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/importelectrumwallet`, requestOptions);
+        return this.httpClient.get<string>(`${this.basePath}/importelectrumwallet`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Anonymous mixing and sending coins.
      * @param command &#39;start&#39; - Start Mixing &#39;stop&#39; - Stop mixing &#39;reset&#39; - Reset mixing 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public privatesendWithHttpInfo(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public privatesend(command: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public privatesend(command: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public privatesend(command: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public privatesend(command: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (command === null || command === undefined) {
             throw new Error('Required parameter command was null or undefined when calling privatesend.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (command !== undefined) {
-            queryParameters.set('command', <any>command);
+            queryParameters = queryParameters.set('command', <any>command);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
@@ -204,7 +146,7 @@ export class MasternodesService {
         ];
         let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
@@ -212,41 +154,42 @@ export class MasternodesService {
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/privatesend`, requestOptions);
+        return this.httpClient.get<string>(`${this.basePath}/privatesend`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Keep-alive message for masternode via TCP ping requests.
      * @param version Sentinel version in the form &#39;x.x.x&#39;
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public sentinelpingWithHttpInfo(version: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public sentinelping(version: string, observe?: 'body', reportProgress?: boolean): Observable<boolean>;
+    public sentinelping(version: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<boolean>>;
+    public sentinelping(version: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<boolean>>;
+    public sentinelping(version: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (version === null || version === undefined) {
             throw new Error('Required parameter version was null or undefined when calling sentinelping.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (version !== undefined) {
-            queryParameters.set('version', <any>version);
+            queryParameters = queryParameters.set('version', <any>version);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
@@ -255,7 +198,7 @@ export class MasternodesService {
         ];
         let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
@@ -263,36 +206,37 @@ export class MasternodesService {
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/sentinelping`, requestOptions);
+        return this.httpClient.get<boolean>(`${this.basePath}/sentinelping`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Compile and relay a governance vote with provided external signature instead of signing vote internally.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public voterawWithHttpInfo(request: VoteRawRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public voteraw(request: VoteRawRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public voteraw(request: VoteRawRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public voteraw(request: VoteRawRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public voteraw(request: VoteRawRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling voteraw.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
@@ -301,7 +245,7 @@ export class MasternodesService {
         ];
         let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
@@ -310,21 +254,18 @@ export class MasternodesService {
         ];
         let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set("Content-Type", httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/voteraw`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/voteraw`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
 }

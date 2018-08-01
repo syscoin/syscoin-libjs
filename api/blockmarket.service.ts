@@ -12,13 +12,11 @@
 /* tslint:disable:no-unused-variable member-ordering */
 
 import { Inject, Injectable, Optional }                      from '@angular/core';
-import { Http, Headers, URLSearchParams }                    from '@angular/http';
-import { RequestMethod, RequestOptions, RequestOptionsArgs } from '@angular/http';
-import { Response, ResponseContentType }                     from '@angular/http';
-import { CustomQueryEncoderHelper }                          from '../encoder';
+import { HttpClient, HttpHeaders, HttpParams,
+         HttpResponse, HttpEvent }                           from '@angular/common/http';
+import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs/Observable';
-import '../rxjs-operators';
 
 import { ErrorResponse } from '../model/errorResponse';
 import { LoginResponse } from '../model/loginResponse';
@@ -31,10 +29,10 @@ import { Configuration }                                     from '../configurat
 export class BlockmarketService {
 
     protected basePath = 'http://localhost:8001';
-    public defaultHeaders = new Headers();
+    public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
 
-    constructor(protected http: Http, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
+    constructor(protected httpClient: HttpClient, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
         if (basePath) {
             this.basePath = basePath;
         }
@@ -58,39 +56,28 @@ export class BlockmarketService {
         return false;
     }
 
-    /**
-     * Returns a session token for use with subsquent protected calls.
-     * @param auth SHA1 hash of the user&#39;s authentication information- usernamepassword.
-     */
-    public login(auth: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<LoginResponse> {
-        return this.loginWithHttpInfo(auth, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
 
     /**
      * 
      * Returns a session token for use with subsquent protected calls.
      * @param auth SHA1 hash of the user&#39;s authentication information- usernamepassword.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public loginWithHttpInfo(auth: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public login(auth: string, observe?: 'body', reportProgress?: boolean): Observable<LoginResponse>;
+    public login(auth: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<LoginResponse>>;
+    public login(auth: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<LoginResponse>>;
+    public login(auth: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (auth === null || auth === undefined) {
             throw new Error('Required parameter auth was null or undefined when calling login.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (auth !== undefined) {
-            queryParameters.set('auth', <any>auth);
+            queryParameters = queryParameters.set('auth', <any>auth);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
@@ -98,7 +85,7 @@ export class BlockmarketService {
         ];
         let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
@@ -106,18 +93,15 @@ export class BlockmarketService {
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/login`, requestOptions);
+        return this.httpClient.get<LoginResponse>(`${this.basePath}/login`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
 }
