@@ -23,7 +23,6 @@
     "@angular/platform-browser": "^6.1.0",
     "@types/rx": "^4.1.1",
     "rxjs": "^6.2.2",
-    "rxjs-compat": "^6.2.2",
     "zone.js": "^0.8.26"
   }
 }
