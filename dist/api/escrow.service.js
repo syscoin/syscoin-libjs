@@ -74,7 +74,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -82,7 +82,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/escrowacknowledge", request, {
             withCredentials: this.configuration.withCredentials,
@@ -108,7 +108,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -116,7 +116,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/escrowbid", request, {
             withCredentials: this.configuration.withCredentials,
@@ -142,7 +142,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -150,7 +150,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/escrowcompleterefund", request, {
             withCredentials: this.configuration.withCredentials,
@@ -176,7 +176,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -184,7 +184,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/escrowcompleterelease", request, {
             withCredentials: this.configuration.withCredentials,
@@ -210,7 +210,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -218,7 +218,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/escrowcreaterawtransaction", request, {
             withCredentials: this.configuration.withCredentials,
@@ -244,7 +244,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -252,7 +252,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/escrowfeedback", request, {
             withCredentials: this.configuration.withCredentials,
@@ -268,7 +268,7 @@ var EscrowService = /** @class */ (function () {
             throw new Error('Required parameter escrowguid was null or undefined when calling escrowinfo.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (escrowguid !== undefined) {
+        if (escrowguid !== undefined && escrowguid !== null) {
             queryParameters = queryParameters.set('escrowguid', escrowguid);
         }
         var headers = this.defaultHeaders;
@@ -282,7 +282,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -313,7 +313,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -321,7 +321,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/escrownew", request, {
             withCredentials: this.configuration.withCredentials,
@@ -347,7 +347,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -355,7 +355,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/escrowrefund", request, {
             withCredentials: this.configuration.withCredentials,
@@ -381,7 +381,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -389,7 +389,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/escrowrelease", request, {
             withCredentials: this.configuration.withCredentials,
@@ -415,7 +415,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -423,7 +423,7 @@ var EscrowService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/generateescrowmultisig", request, {
             withCredentials: this.configuration.withCredentials,

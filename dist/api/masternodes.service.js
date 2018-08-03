@@ -64,10 +64,10 @@ var MasternodesService = /** @class */ (function () {
             throw new Error('Required parameter filename was null or undefined when calling importelectrumwallet.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (filename !== undefined) {
+        if (filename !== undefined && filename !== null) {
             queryParameters = queryParameters.set('filename', filename);
         }
-        if (index !== undefined) {
+        if (index !== undefined && index !== null) {
             queryParameters = queryParameters.set('index', index);
         }
         var headers = this.defaultHeaders;
@@ -81,7 +81,7 @@ var MasternodesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -102,7 +102,7 @@ var MasternodesService = /** @class */ (function () {
             throw new Error('Required parameter command was null or undefined when calling privatesend.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (command !== undefined) {
+        if (command !== undefined && command !== null) {
             queryParameters = queryParameters.set('command', command);
         }
         var headers = this.defaultHeaders;
@@ -116,7 +116,7 @@ var MasternodesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -137,7 +137,7 @@ var MasternodesService = /** @class */ (function () {
             throw new Error('Required parameter version was null or undefined when calling sentinelping.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (version !== undefined) {
+        if (version !== undefined && version !== null) {
             queryParameters = queryParameters.set('version', version);
         }
         var headers = this.defaultHeaders;
@@ -151,7 +151,7 @@ var MasternodesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -182,7 +182,7 @@ var MasternodesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -190,7 +190,7 @@ var MasternodesService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/voteraw", request, {
             withCredentials: this.configuration.withCredentials,

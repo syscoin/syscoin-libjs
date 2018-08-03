@@ -14,8 +14,8 @@ var Configuration = /** @class */ (function () {
      * Select the correct content-type to use for a request.
      * Uses {@link Configuration#isJsonMime} to determine the correct content-type.
      * If no content type is found return the first found type if the contentTypes is not empty
-     * @param {string[]} contentTypes - the array of content types that are available for selection
-     * @returns {string} the selected content-type or <code>undefined</code> if no selection could be made.
+     * @param contentTypes - the array of content types that are available for selection
+     * @returns the selected content-type or <code>undefined</code> if no selection could be made.
      */
     Configuration.prototype.selectHeaderContentType = function (contentTypes) {
         var _this = this;
@@ -32,8 +32,8 @@ var Configuration = /** @class */ (function () {
      * Select the correct accept content-type to use for a request.
      * Uses {@link Configuration#isJsonMime} to determine the correct accept content-type.
      * If no content type is found return the first found type if the contentTypes is not empty
-     * @param {string[]} accepts - the array of content types that are available for selection.
-     * @returns {string} the selected content-type or <code>undefined</code> if no selection could be made.
+     * @param accepts - the array of content types that are available for selection.
+     * @returns the selected content-type or <code>undefined</code> if no selection could be made.
      */
     Configuration.prototype.selectHeaderAccept = function (accepts) {
         var _this = this;
@@ -53,8 +53,8 @@ var Configuration = /** @class */ (function () {
      *   application/json; charset=UTF8
      *   APPLICATION/JSON
      *   application/vnd.company+json
-     * @param {string} mime - MIME (Multipurpose Internet Mail Extensions)
-     * @return {boolean} True if the given MIME is JSON, false otherwise.
+     * @param mime - MIME (Multipurpose Internet Mail Extensions)
+     * @return True if the given MIME is JSON, false otherwise.
      */
     Configuration.prototype.isJsonMime = function (mime) {
         var jsonMime = new RegExp('^(application\/json|[^;/ \t]+\/[^;/ \t]+[+]json)[ \t]*(;.*)?$', 'i');

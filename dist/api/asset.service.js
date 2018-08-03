@@ -74,7 +74,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -82,7 +82,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/assetallocationcollectinterest", request, {
             withCredentials: this.configuration.withCredentials,
@@ -104,13 +104,13 @@ var AssetService = /** @class */ (function () {
             throw new Error('Required parameter getinputs was null or undefined when calling assetallocationinfo.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (asset !== undefined) {
+        if (asset !== undefined && asset !== null) {
             queryParameters = queryParameters.set('asset', asset);
         }
-        if (alias !== undefined) {
+        if (alias !== undefined && alias !== null) {
             queryParameters = queryParameters.set('alias', alias);
         }
-        if (getinputs !== undefined) {
+        if (getinputs !== undefined && getinputs !== null) {
             queryParameters = queryParameters.set('getinputs', getinputs);
         }
         var headers = this.defaultHeaders;
@@ -124,7 +124,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -155,7 +155,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -163,7 +163,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/assetallocationsend", request, {
             withCredentials: this.configuration.withCredentials,
@@ -185,13 +185,13 @@ var AssetService = /** @class */ (function () {
             throw new Error('Required parameter txid was null or undefined when calling assetallocationsenderstatus.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (asset !== undefined) {
+        if (asset !== undefined && asset !== null) {
             queryParameters = queryParameters.set('asset', asset);
         }
-        if (sender !== undefined) {
+        if (sender !== undefined && sender !== null) {
             queryParameters = queryParameters.set('sender', sender);
         }
-        if (txid !== undefined) {
+        if (txid !== undefined && txid !== null) {
             queryParameters = queryParameters.set('txid', txid);
         }
         var headers = this.defaultHeaders;
@@ -205,7 +205,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -229,10 +229,10 @@ var AssetService = /** @class */ (function () {
             throw new Error('Required parameter getinputs was null or undefined when calling assetinfo.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (asset !== undefined) {
+        if (asset !== undefined && asset !== null) {
             queryParameters = queryParameters.set('asset', asset);
         }
-        if (getinputs !== undefined) {
+        if (getinputs !== undefined && getinputs !== null) {
             queryParameters = queryParameters.set('getinputs', getinputs);
         }
         var headers = this.defaultHeaders;
@@ -246,7 +246,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -277,7 +277,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -285,7 +285,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/assetnew", request, {
             withCredentials: this.configuration.withCredentials,
@@ -311,7 +311,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -319,7 +319,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/assetsend", request, {
             withCredentials: this.configuration.withCredentials,
@@ -345,7 +345,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -353,7 +353,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/assettransfer", request, {
             withCredentials: this.configuration.withCredentials,
@@ -379,7 +379,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -387,7 +387,7 @@ var AssetService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/assetupdate", request, {
             withCredentials: this.configuration.withCredentials,

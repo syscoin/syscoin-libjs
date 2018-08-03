@@ -64,7 +64,7 @@ var BlockmarketService = /** @class */ (function () {
             throw new Error('Required parameter auth was null or undefined when calling login.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (auth !== undefined) {
+        if (auth !== undefined && auth !== null) {
             queryParameters = queryParameters.set('auth', auth);
         }
         var headers = this.defaultHeaders;
@@ -74,7 +74,7 @@ var BlockmarketService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [

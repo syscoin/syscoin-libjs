@@ -74,7 +74,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -82,7 +82,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/addmultisigaddress", request, {
             withCredentials: this.configuration.withCredentials,
@@ -98,7 +98,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter command was null or undefined when calling debug.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (command !== undefined) {
+        if (command !== undefined && command !== null) {
             queryParameters = queryParameters.set('command', command);
         }
         var headers = this.defaultHeaders;
@@ -112,7 +112,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -140,7 +140,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -160,7 +160,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter address was null or undefined when calling dumpprivkey.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (address !== undefined) {
+        if (address !== undefined && address !== null) {
             queryParameters = queryParameters.set('address', address);
         }
         var headers = this.defaultHeaders;
@@ -174,7 +174,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -195,7 +195,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter filename was null or undefined when calling dumpwallet.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (filename !== undefined) {
+        if (filename !== undefined && filename !== null) {
             queryParameters = queryParameters.set('filename', filename);
         }
         var headers = this.defaultHeaders;
@@ -209,7 +209,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -240,7 +240,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -248,7 +248,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/encryptwallet", request, {
             withCredentials: this.configuration.withCredentials,
@@ -274,7 +274,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -282,7 +282,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/fundrawtransaction", request, {
             withCredentials: this.configuration.withCredentials,
@@ -298,10 +298,10 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter numBlocks was null or undefined when calling generate.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (numBlocks !== undefined) {
+        if (numBlocks !== undefined && numBlocks !== null) {
             queryParameters = queryParameters.set('numBlocks', numBlocks);
         }
-        if (maxtries !== undefined) {
+        if (maxtries !== undefined && maxtries !== null) {
             queryParameters = queryParameters.set('maxtries', maxtries);
         }
         var headers = this.defaultHeaders;
@@ -315,7 +315,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -343,7 +343,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -363,7 +363,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling getaccount.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (syscoinaddress !== undefined) {
+        if (syscoinaddress !== undefined && syscoinaddress !== null) {
             queryParameters = queryParameters.set('syscoinaddress', syscoinaddress);
         }
         var headers = this.defaultHeaders;
@@ -377,7 +377,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -398,7 +398,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter account was null or undefined when calling getaccountaddress.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (account !== undefined) {
+        if (account !== undefined && account !== null) {
             queryParameters = queryParameters.set('account', account);
         }
         var headers = this.defaultHeaders;
@@ -412,7 +412,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -443,7 +443,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -473,10 +473,10 @@ var GeneralService = /** @class */ (function () {
         if (addresses) {
             queryParameters = queryParameters.set('addresses', addresses.join(variables_1.COLLECTION_FORMATS['csv']));
         }
-        if (start !== undefined) {
+        if (start !== undefined && start !== null) {
             queryParameters = queryParameters.set('start', start);
         }
-        if (end !== undefined) {
+        if (end !== undefined && end !== null) {
             queryParameters = queryParameters.set('end', end);
         }
         var headers = this.defaultHeaders;
@@ -486,7 +486,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -507,7 +507,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter account was null or undefined when calling getaddressesbyaccount.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (account !== undefined) {
+        if (account !== undefined && account !== null) {
             queryParameters = queryParameters.set('account', account);
         }
         var headers = this.defaultHeaders;
@@ -521,7 +521,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -552,7 +552,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -582,10 +582,10 @@ var GeneralService = /** @class */ (function () {
         if (addresses) {
             queryParameters = queryParameters.set('addresses', addresses.join(variables_1.COLLECTION_FORMATS['csv']));
         }
-        if (start !== undefined) {
+        if (start !== undefined && start !== null) {
             queryParameters = queryParameters.set('start', start);
         }
-        if (end !== undefined) {
+        if (end !== undefined && end !== null) {
             queryParameters = queryParameters.set('end', end);
         }
         var headers = this.defaultHeaders;
@@ -599,7 +599,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -630,7 +630,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -638,7 +638,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/getaddressutxos", addresses, {
             withCredentials: this.configuration.withCredentials,
@@ -651,13 +651,13 @@ var GeneralService = /** @class */ (function () {
         if (observe === void 0) { observe = 'body'; }
         if (reportProgress === void 0) { reportProgress = false; }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (account !== undefined) {
+        if (account !== undefined && account !== null) {
             queryParameters = queryParameters.set('account', account);
         }
-        if (minconf !== undefined) {
+        if (minconf !== undefined && minconf !== null) {
             queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (includeWatchonly !== undefined) {
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
             queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
         var headers = this.defaultHeaders;
@@ -671,7 +671,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -692,10 +692,10 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter hash was null or undefined when calling getblock.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (hash !== undefined) {
+        if (hash !== undefined && hash !== null) {
             queryParameters = queryParameters.set('hash', hash);
         }
-        if (verbose !== undefined) {
+        if (verbose !== undefined && verbose !== null) {
             queryParameters = queryParameters.set('verbose', verbose);
         }
         var headers = this.defaultHeaders;
@@ -709,7 +709,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -737,7 +737,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -764,7 +764,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -787,10 +787,10 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter low was null or undefined when calling getblockhashes.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (high !== undefined) {
+        if (high !== undefined && high !== null) {
             queryParameters = queryParameters.set('high', high);
         }
-        if (low !== undefined) {
+        if (low !== undefined && low !== null) {
             queryParameters = queryParameters.set('low', low);
         }
         var headers = this.defaultHeaders;
@@ -804,7 +804,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -828,13 +828,13 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter count was null or undefined when calling getblockheaders.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (hash !== undefined) {
+        if (hash !== undefined && hash !== null) {
             queryParameters = queryParameters.set('hash', hash);
         }
-        if (count !== undefined) {
+        if (count !== undefined && count !== null) {
             queryParameters = queryParameters.set('count', count);
         }
-        if (verbose !== undefined) {
+        if (verbose !== undefined && verbose !== null) {
             queryParameters = queryParameters.set('verbose', verbose);
         }
         var headers = this.defaultHeaders;
@@ -848,7 +848,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -876,7 +876,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -903,7 +903,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -930,7 +930,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -957,7 +957,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -984,7 +984,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1011,7 +1011,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1038,7 +1038,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1065,7 +1065,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1073,7 +1073,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/getnewaddress", request, {
             withCredentials: this.configuration.withCredentials,
@@ -1096,7 +1096,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1123,7 +1123,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1143,13 +1143,13 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter account was null or undefined when calling getreceivedbyaccount.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (account !== undefined) {
+        if (account !== undefined && account !== null) {
             queryParameters = queryParameters.set('account', account);
         }
-        if (minconf !== undefined) {
+        if (minconf !== undefined && minconf !== null) {
             queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (addlockconf !== undefined) {
+        if (addlockconf !== undefined && addlockconf !== null) {
             queryParameters = queryParameters.set('addlockconf', addlockconf);
         }
         var headers = this.defaultHeaders;
@@ -1163,7 +1163,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1184,13 +1184,13 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling getreceivedbyaddress.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (syscoinaddress !== undefined) {
+        if (syscoinaddress !== undefined && syscoinaddress !== null) {
             queryParameters = queryParameters.set('syscoinaddress', syscoinaddress);
         }
-        if (minconf !== undefined) {
+        if (minconf !== undefined && minconf !== null) {
             queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (addlockconf !== undefined) {
+        if (addlockconf !== undefined && addlockconf !== null) {
             queryParameters = queryParameters.set('addlockconf', addlockconf);
         }
         var headers = this.defaultHeaders;
@@ -1204,7 +1204,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1228,10 +1228,10 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter index was null or undefined when calling getspentinfo.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (txid !== undefined) {
+        if (txid !== undefined && txid !== null) {
             queryParameters = queryParameters.set('txid', txid);
         }
-        if (index !== undefined) {
+        if (index !== undefined && index !== null) {
             queryParameters = queryParameters.set('index', index);
         }
         var headers = this.defaultHeaders;
@@ -1245,7 +1245,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1266,7 +1266,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter index was null or undefined when calling getsuperblockbudget.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (index !== undefined) {
+        if (index !== undefined && index !== null) {
             queryParameters = queryParameters.set('index', index);
         }
         var headers = this.defaultHeaders;
@@ -1280,7 +1280,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1301,10 +1301,10 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter txid was null or undefined when calling gettransaction.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (txid !== undefined) {
+        if (txid !== undefined && txid !== null) {
             queryParameters = queryParameters.set('txid', txid);
         }
-        if (includeWatchonly !== undefined) {
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
             queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
         var headers = this.defaultHeaders;
@@ -1318,7 +1318,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1346,7 +1346,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1373,7 +1373,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1393,7 +1393,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter command was null or undefined when calling gobject.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (command !== undefined) {
+        if (command !== undefined && command !== null) {
             queryParameters = queryParameters.set('command', command);
         }
         var headers = this.defaultHeaders;
@@ -1407,7 +1407,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1438,7 +1438,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1446,7 +1446,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/importaddress", request, {
             withCredentials: this.configuration.withCredentials,
@@ -1472,7 +1472,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1480,7 +1480,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/importprivkey", request, {
             withCredentials: this.configuration.withCredentials,
@@ -1506,7 +1506,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1514,7 +1514,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/importpubkey", request, {
             withCredentials: this.configuration.withCredentials,
@@ -1540,7 +1540,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1548,7 +1548,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/importwallet", request, {
             withCredentials: this.configuration.withCredentials,
@@ -1574,7 +1574,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1582,7 +1582,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/instantsendtoaddress", request, {
             withCredentials: this.configuration.withCredentials,
@@ -1595,13 +1595,13 @@ var GeneralService = /** @class */ (function () {
         if (observe === void 0) { observe = 'body'; }
         if (reportProgress === void 0) { reportProgress = false; }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (minconf !== undefined) {
+        if (minconf !== undefined && minconf !== null) {
             queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (addlockconf !== undefined) {
+        if (addlockconf !== undefined && addlockconf !== null) {
             queryParameters = queryParameters.set('addlockconf', addlockconf);
         }
-        if (includeWatchonly !== undefined) {
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
             queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
         var headers = this.defaultHeaders;
@@ -1615,7 +1615,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1643,7 +1643,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1660,16 +1660,16 @@ var GeneralService = /** @class */ (function () {
         if (observe === void 0) { observe = 'body'; }
         if (reportProgress === void 0) { reportProgress = false; }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (minconf !== undefined) {
+        if (minconf !== undefined && minconf !== null) {
             queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (addlockconf !== undefined) {
+        if (addlockconf !== undefined && addlockconf !== null) {
             queryParameters = queryParameters.set('addlockconf', addlockconf);
         }
-        if (includeempty !== undefined) {
+        if (includeempty !== undefined && includeempty !== null) {
             queryParameters = queryParameters.set('includeempty', includeempty);
         }
-        if (includeWatchonly !== undefined) {
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
             queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
         var headers = this.defaultHeaders;
@@ -1683,7 +1683,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1701,16 +1701,16 @@ var GeneralService = /** @class */ (function () {
         if (observe === void 0) { observe = 'body'; }
         if (reportProgress === void 0) { reportProgress = false; }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (minconf !== undefined) {
+        if (minconf !== undefined && minconf !== null) {
             queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (addlockconf !== undefined) {
+        if (addlockconf !== undefined && addlockconf !== null) {
             queryParameters = queryParameters.set('addlockconf', addlockconf);
         }
-        if (includeempty !== undefined) {
+        if (includeempty !== undefined && includeempty !== null) {
             queryParameters = queryParameters.set('includeempty', includeempty);
         }
-        if (includeWatchonly !== undefined) {
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
             queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
         var headers = this.defaultHeaders;
@@ -1724,7 +1724,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1742,13 +1742,13 @@ var GeneralService = /** @class */ (function () {
         if (observe === void 0) { observe = 'body'; }
         if (reportProgress === void 0) { reportProgress = false; }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (blockhash !== undefined) {
+        if (blockhash !== undefined && blockhash !== null) {
             queryParameters = queryParameters.set('blockhash', blockhash);
         }
-        if (includeWatchonly !== undefined) {
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
             queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
-        if (target_confirmations !== undefined) {
+        if (target_confirmations !== undefined && target_confirmations !== null) {
             queryParameters = queryParameters.set('target-confirmations', target_confirmations);
         }
         var headers = this.defaultHeaders;
@@ -1762,7 +1762,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1780,16 +1780,16 @@ var GeneralService = /** @class */ (function () {
         if (observe === void 0) { observe = 'body'; }
         if (reportProgress === void 0) { reportProgress = false; }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (account !== undefined) {
+        if (account !== undefined && account !== null) {
             queryParameters = queryParameters.set('account', account);
         }
-        if (count !== undefined) {
+        if (count !== undefined && count !== null) {
             queryParameters = queryParameters.set('count', count);
         }
-        if (from !== undefined) {
+        if (from !== undefined && from !== null) {
             queryParameters = queryParameters.set('from', from);
         }
-        if (includeWatchonly !== undefined) {
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
             queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
         var headers = this.defaultHeaders;
@@ -1803,7 +1803,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1821,13 +1821,13 @@ var GeneralService = /** @class */ (function () {
         if (observe === void 0) { observe = 'body'; }
         if (reportProgress === void 0) { reportProgress = false; }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (minconf !== undefined) {
+        if (minconf !== undefined && minconf !== null) {
             queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (maxconf !== undefined) {
+        if (maxconf !== undefined && maxconf !== null) {
             queryParameters = queryParameters.set('maxconf', maxconf);
         }
-        if (adresses !== undefined) {
+        if (adresses !== undefined && adresses !== null) {
             queryParameters = queryParameters.set('adresses', adresses);
         }
         var headers = this.defaultHeaders;
@@ -1841,7 +1841,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1872,7 +1872,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1880,7 +1880,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/lockunspent", request, {
             withCredentials: this.configuration.withCredentials,
@@ -1896,7 +1896,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter command was null or undefined when calling masternode.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (command !== undefined) {
+        if (command !== undefined && command !== null) {
             queryParameters = queryParameters.set('command', command);
         }
         var headers = this.defaultHeaders;
@@ -1910,7 +1910,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1931,7 +1931,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter command was null or undefined when calling masternodebroadcast.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (command !== undefined) {
+        if (command !== undefined && command !== null) {
             queryParameters = queryParameters.set('command', command);
         }
         var headers = this.defaultHeaders;
@@ -1945,7 +1945,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1963,7 +1963,7 @@ var GeneralService = /** @class */ (function () {
         if (observe === void 0) { observe = 'body'; }
         if (reportProgress === void 0) { reportProgress = false; }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (mode !== undefined) {
+        if (mode !== undefined && mode !== null) {
             queryParameters = queryParameters.set('mode', mode);
         }
         var headers = this.defaultHeaders;
@@ -1977,7 +1977,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1998,7 +1998,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter command was null or undefined when calling mnsync.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (command !== undefined) {
+        if (command !== undefined && command !== null) {
             queryParameters = queryParameters.set('command', command);
         }
         var headers = this.defaultHeaders;
@@ -2012,7 +2012,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2043,7 +2043,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2051,7 +2051,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/move", request, {
             withCredentials: this.configuration.withCredentials,
@@ -2077,7 +2077,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2085,7 +2085,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/sendfrom", request, {
             withCredentials: this.configuration.withCredentials,
@@ -2111,7 +2111,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2119,7 +2119,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/sendmany", request, {
             withCredentials: this.configuration.withCredentials,
@@ -2145,7 +2145,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2153,7 +2153,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/sendtoaddress", request, {
             withCredentials: this.configuration.withCredentials,
@@ -2179,7 +2179,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2187,7 +2187,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/setaccount", request, {
             withCredentials: this.configuration.withCredentials,
@@ -2203,10 +2203,10 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter generate was null or undefined when calling setgenerate.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (generate !== undefined) {
+        if (generate !== undefined && generate !== null) {
             queryParameters = queryParameters.set('generate', generate);
         }
-        if (genproclimit !== undefined) {
+        if (genproclimit !== undefined && genproclimit !== null) {
             queryParameters = queryParameters.set('genproclimit', genproclimit);
         }
         var headers = this.defaultHeaders;
@@ -2220,7 +2220,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2241,7 +2241,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter state was null or undefined when calling setnetworkactive.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (state !== undefined) {
+        if (state !== undefined && state !== null) {
             queryParameters = queryParameters.set('state', state);
         }
         var headers = this.defaultHeaders;
@@ -2255,7 +2255,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2286,7 +2286,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2294,7 +2294,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/signmessage", request, {
             withCredentials: this.configuration.withCredentials,
@@ -2320,7 +2320,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2328,7 +2328,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/signrawtransaction", request, {
             withCredentials: this.configuration.withCredentials,
@@ -2344,7 +2344,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter hexstring was null or undefined when calling syscoindecoderawtransaction.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (hexstring !== undefined) {
+        if (hexstring !== undefined && hexstring !== null) {
             queryParameters = queryParameters.set('hexstring', hexstring);
         }
         var headers = this.defaultHeaders;
@@ -2358,7 +2358,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2386,7 +2386,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2416,7 +2416,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2424,7 +2424,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/syscoinsendrawtransaction", request, {
             withCredentials: this.configuration.withCredentials,
@@ -2440,7 +2440,7 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling validateaddress.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (syscoinaddress !== undefined) {
+        if (syscoinaddress !== undefined && syscoinaddress !== null) {
             queryParameters = queryParameters.set('syscoinaddress', syscoinaddress);
         }
         var headers = this.defaultHeaders;
@@ -2454,7 +2454,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2481,13 +2481,13 @@ var GeneralService = /** @class */ (function () {
             throw new Error('Required parameter message was null or undefined when calling verifymessage.');
         }
         var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
-        if (syscoinaddress !== undefined) {
+        if (syscoinaddress !== undefined && syscoinaddress !== null) {
             queryParameters = queryParameters.set('syscoinaddress', syscoinaddress);
         }
-        if (signature !== undefined) {
+        if (signature !== undefined && signature !== null) {
             queryParameters = queryParameters.set('signature', signature);
         }
-        if (message !== undefined) {
+        if (message !== undefined && message !== null) {
             queryParameters = queryParameters.set('message', message);
         }
         var headers = this.defaultHeaders;
@@ -2501,7 +2501,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2529,7 +2529,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2560,7 +2560,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2568,7 +2568,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/walletpassphrase", request, {
             withCredentials: this.configuration.withCredentials,
@@ -2594,7 +2594,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2602,7 +2602,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
         return this.httpClient.post(this.basePath + "/walletpassphrasechange", request, {
             withCredentials: this.configuration.withCredentials,
