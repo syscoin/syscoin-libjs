@@ -16,7 +16,7 @@ import { HttpClient, HttpHeaders, HttpParams,
          HttpResponse, HttpEvent }                           from '@angular/common/http';
 import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
-import { Observable }                                        from 'rxjs/Observable';
+import { Observable }                                        from 'rxjs';
 
 import { Alias } from '../model/alias';
 import { AliasAddScriptRequest } from '../model/aliasAddScriptRequest';
@@ -56,7 +56,7 @@ export class AliasesService {
      */
     private canConsumeForm(consumes: string[]): boolean {
         const form = 'multipart/form-data';
-        for (let consume of consumes) {
+        for (const consume of consumes) {
             if (form === consume) {
                 return true;
             }
@@ -91,18 +91,18 @@ export class AliasesService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<string>(`${this.basePath}/aliasaddscript`,
@@ -132,7 +132,7 @@ export class AliasesService {
         }
 
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
-        if (alias !== undefined) {
+        if (alias !== undefined && alias !== null) {
             queryParameters = queryParameters.set('alias', <any>alias);
         }
 
@@ -147,13 +147,13 @@ export class AliasesService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
@@ -194,18 +194,18 @@ export class AliasesService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<any>(`${this.basePath}/aliasclearwhitelist`,
@@ -235,7 +235,7 @@ export class AliasesService {
         }
 
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
-        if (aliasname !== undefined) {
+        if (aliasname !== undefined && aliasname !== null) {
             queryParameters = queryParameters.set('aliasname', <any>aliasname);
         }
 
@@ -250,13 +250,13 @@ export class AliasesService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
@@ -297,18 +297,18 @@ export class AliasesService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<Array<string>>(`${this.basePath}/aliasnew`,
@@ -348,18 +348,18 @@ export class AliasesService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<Array<string>>(`${this.basePath}/aliaspay`,
@@ -399,18 +399,18 @@ export class AliasesService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<Array<string>>(`${this.basePath}/aliasupdate`,
@@ -450,18 +450,18 @@ export class AliasesService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<Array<string>>(`${this.basePath}/aliasupdatewhitelist`,
@@ -491,7 +491,7 @@ export class AliasesService {
         }
 
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
-        if (aliasname !== undefined) {
+        if (aliasname !== undefined && aliasname !== null) {
             queryParameters = queryParameters.set('aliasname', <any>aliasname);
         }
 
@@ -506,13 +506,13 @@ export class AliasesService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
@@ -553,18 +553,18 @@ export class AliasesService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<string>(`${this.basePath}/syscointxfund`,

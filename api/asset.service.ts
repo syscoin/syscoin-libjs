@@ -16,7 +16,7 @@ import { HttpClient, HttpHeaders, HttpParams,
          HttpResponse, HttpEvent }                           from '@angular/common/http';
 import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
-import { Observable }                                        from 'rxjs/Observable';
+import { Observable }                                        from 'rxjs';
 
 import { Asset } from '../model/asset';
 import { AssetAllocation } from '../model/assetAllocation';
@@ -55,7 +55,7 @@ export class AssetService {
      */
     private canConsumeForm(consumes: string[]): boolean {
         const form = 'multipart/form-data';
-        for (let consume of consumes) {
+        for (const consume of consumes) {
             if (form === consume) {
                 return true;
             }
@@ -90,18 +90,18 @@ export class AssetService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<Array<string>>(`${this.basePath}/assetallocationcollectinterest`,
@@ -139,13 +139,13 @@ export class AssetService {
         }
 
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
-        if (asset !== undefined) {
+        if (asset !== undefined && asset !== null) {
             queryParameters = queryParameters.set('asset', <any>asset);
         }
-        if (alias !== undefined) {
+        if (alias !== undefined && alias !== null) {
             queryParameters = queryParameters.set('alias', <any>alias);
         }
-        if (getinputs !== undefined) {
+        if (getinputs !== undefined && getinputs !== null) {
             queryParameters = queryParameters.set('getinputs', <any>getinputs);
         }
 
@@ -160,13 +160,13 @@ export class AssetService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
@@ -207,18 +207,18 @@ export class AssetService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<Array<string>>(`${this.basePath}/assetallocationsend`,
@@ -256,13 +256,13 @@ export class AssetService {
         }
 
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
-        if (asset !== undefined) {
+        if (asset !== undefined && asset !== null) {
             queryParameters = queryParameters.set('asset', <any>asset);
         }
-        if (sender !== undefined) {
+        if (sender !== undefined && sender !== null) {
             queryParameters = queryParameters.set('sender', <any>sender);
         }
-        if (txid !== undefined) {
+        if (txid !== undefined && txid !== null) {
             queryParameters = queryParameters.set('txid', <any>txid);
         }
 
@@ -277,13 +277,13 @@ export class AssetService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
@@ -318,10 +318,10 @@ export class AssetService {
         }
 
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
-        if (asset !== undefined) {
+        if (asset !== undefined && asset !== null) {
             queryParameters = queryParameters.set('asset', <any>asset);
         }
-        if (getinputs !== undefined) {
+        if (getinputs !== undefined && getinputs !== null) {
             queryParameters = queryParameters.set('getinputs', <any>getinputs);
         }
 
@@ -336,13 +336,13 @@ export class AssetService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
@@ -383,18 +383,18 @@ export class AssetService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<Array<string>>(`${this.basePath}/assetnew`,
@@ -434,18 +434,18 @@ export class AssetService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<Array<string>>(`${this.basePath}/assetsend`,
@@ -485,18 +485,18 @@ export class AssetService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<Array<string>>(`${this.basePath}/assettransfer`,
@@ -536,18 +536,18 @@ export class AssetService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers = headers.set("Content-Type", httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
         return this.httpClient.post<Array<string>>(`${this.basePath}/assetupdate`,

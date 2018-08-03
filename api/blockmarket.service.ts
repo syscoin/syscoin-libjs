@@ -16,7 +16,7 @@ import { HttpClient, HttpHeaders, HttpParams,
          HttpResponse, HttpEvent }                           from '@angular/common/http';
 import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
-import { Observable }                                        from 'rxjs/Observable';
+import { Observable }                                        from 'rxjs';
 
 import { ErrorResponse } from '../model/errorResponse';
 import { LoginResponse } from '../model/loginResponse';
@@ -48,7 +48,7 @@ export class BlockmarketService {
      */
     private canConsumeForm(consumes: string[]): boolean {
         const form = 'multipart/form-data';
-        for (let consume of consumes) {
+        for (const consume of consumes) {
             if (form === consume) {
                 return true;
             }
@@ -73,7 +73,7 @@ export class BlockmarketService {
         }
 
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
-        if (auth !== undefined) {
+        if (auth !== undefined && auth !== null) {
             queryParameters = queryParameters.set('auth', <any>auth);
         }
 
@@ -83,13 +83,13 @@ export class BlockmarketService {
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
