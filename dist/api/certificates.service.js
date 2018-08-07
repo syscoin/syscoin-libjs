@@ -25,17 +25,15 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var http_1 = require("@angular/http");
-var http_2 = require("@angular/http");
+var http_1 = require("@angular/common/http");
 var encoder_1 = require("../encoder");
-require("../rxjs-operators");
 var variables_1 = require("../variables");
 var configuration_1 = require("../configuration");
 var CertificatesService = /** @class */ (function () {
-    function CertificatesService(http, basePath, configuration) {
-        this.http = http;
+    function CertificatesService(httpClient, basePath, configuration) {
+        this.httpClient = httpClient;
         this.basePath = 'http://localhost:8001';
-        this.defaultHeaders = new http_1.Headers();
+        this.defaultHeaders = new http_1.HttpHeaders();
         this.configuration = new configuration_1.Configuration();
         if (basePath) {
             this.basePath = basePath;
@@ -59,84 +57,20 @@ var CertificatesService = /** @class */ (function () {
         }
         return false;
     };
-    /**
-     * Show stored values of a single certificate.
-     * @param guid
-     */
-    CertificatesService.prototype.certinfo = function (guid, extraHttpRequestParams) {
-        return this.certinfoWithHttpInfo(guid, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Create a new Syscoin Certificate. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     */
-    CertificatesService.prototype.certnew = function (request, extraHttpRequestParams) {
-        return this.certnewWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Transfer certificate from one user to another. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     */
-    CertificatesService.prototype.certtransfer = function (request, extraHttpRequestParams) {
-        return this.certtransferWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Perform an update on an certificate you control. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     */
-    CertificatesService.prototype.certupdate = function (request, extraHttpRequestParams) {
-        return this.certupdateWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     *
-     * Show stored values of a single certificate.
-     * @param guid
-     
-     */
-    CertificatesService.prototype.certinfoWithHttpInfo = function (guid, extraHttpRequestParams) {
+    CertificatesService.prototype.certinfo = function (guid, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (guid === null || guid === undefined) {
             throw new Error('Required parameter guid was null or undefined when calling certinfo.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (guid !== undefined) {
-            queryParameters.set('guid', guid);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (guid !== undefined && guid !== null) {
+            queryParameters = queryParameters.set('guid', guid);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -144,38 +78,30 @@ var CertificatesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/certinfo", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/certinfo", requestOptions);
     };
-    /**
-     *
-     * Create a new Syscoin Certificate. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     
-     */
-    CertificatesService.prototype.certnewWithHttpInfo = function (request, extraHttpRequestParams) {
+    CertificatesService.prototype.certnew = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling certnew.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -183,7 +109,7 @@ var CertificatesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -191,34 +117,25 @@ var CertificatesService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/certnew", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/certnew", requestOptions);
     };
-    /**
-     *
-     * Transfer certificate from one user to another. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     
-     */
-    CertificatesService.prototype.certtransferWithHttpInfo = function (request, extraHttpRequestParams) {
+    CertificatesService.prototype.certtransfer = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling certtransfer.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -226,7 +143,7 @@ var CertificatesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -234,34 +151,25 @@ var CertificatesService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/certtransfer", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/certtransfer", requestOptions);
     };
-    /**
-     *
-     * Perform an update on an certificate you control. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     
-     */
-    CertificatesService.prototype.certupdateWithHttpInfo = function (request, extraHttpRequestParams) {
+    CertificatesService.prototype.certupdate = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling certupdate.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -269,7 +177,7 @@ var CertificatesService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -277,24 +185,19 @@ var CertificatesService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/certupdate", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/certupdate", requestOptions);
     };
     CertificatesService = __decorate([
         core_1.Injectable(),
         __param(1, core_1.Optional()), __param(1, core_1.Inject(variables_1.BASE_PATH)), __param(2, core_1.Optional()),
-        __metadata("design:paramtypes", [http_1.Http, String, configuration_1.Configuration])
+        __metadata("design:paramtypes", [http_1.HttpClient, String, configuration_1.Configuration])
     ], CertificatesService);
     return CertificatesService;
 }());
