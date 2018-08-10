@@ -1,0 +1,10 @@
+version: '2.1'
+
+services:
+  syscoin-libjs:
+    image: syscoin-libjs
+    build: .
+    environment:
+      NODE_ENV: production
+    ports:
+      - 8881:8881
