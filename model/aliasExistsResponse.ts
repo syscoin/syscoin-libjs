@@ -11,7 +11,7 @@
  */
 
 
-export interface SyscoinTransactionFundRequest { 
-    hexstring?: string;
-    addresses?: Array<string>;
+export interface AliasExistsResponse { 
+    success: boolean;
+    aliasName: string;
 }

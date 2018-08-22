@@ -12,13 +12,11 @@
 /* tslint:disable:no-unused-variable member-ordering */
 
 import { Inject, Injectable, Optional }                      from '@angular/core';
-import { Http, Headers, URLSearchParams }                    from '@angular/http';
-import { RequestMethod, RequestOptions, RequestOptionsArgs } from '@angular/http';
-import { Response, ResponseContentType }                     from '@angular/http';
-import { CustomQueryEncoderHelper }                          from '../encoder';
+import { HttpClient, HttpHeaders, HttpParams,
+         HttpResponse, HttpEvent }                           from '@angular/common/http';
+import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
-import { Observable }                                        from 'rxjs/Observable';
-import '../rxjs-operators';
+import { Observable }                                        from 'rxjs';
 
 import { Asset } from '../model/asset';
 import { AssetAllocation } from '../model/assetAllocation';
@@ -38,10 +36,10 @@ import { Configuration }                                     from '../configurat
 export class AssetService {
 
     protected basePath = 'http://localhost:8001';
-    public defaultHeaders = new Headers();
+    public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
 
-    constructor(protected http: Http, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
+    constructor(protected httpClient: HttpClient, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
         if (basePath) {
             this.basePath = basePath;
         }
@@ -57,7 +55,7 @@ export class AssetService {
      */
     private canConsumeForm(consumes: string[]): boolean {
         const form = 'multipart/form-data';
-        for (let consume of consumes) {
+        for (const consume of consumes) {
             if (form === consume) {
                 return true;
             }
@@ -65,195 +63,56 @@ export class AssetService {
         return false;
     }
 
-    /**
-     * Collect interest on this asset allocation if an interest rate is set on this asset.
-     * @param request 
-     */
-    public assetallocationcollectinterest(request: AssetAllocationCollectInterestRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
-        return this.assetallocationcollectinterestWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Show stored values of a single asset allocation. Set getinputs to true if you want to get the allocation inputs, if applicable.
-     * @param asset 
-     * @param alias 
-     * @param getinputs 
-     */
-    public assetallocationinfo(asset: string, alias: string, getinputs: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<AssetAllocation> {
-        return this.assetallocationinfoWithHttpInfo(asset, alias, getinputs, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Send an asset you own to another alias as an asset allocation.
-     * @param request 
-     */
-    public assetallocationsend(request: AssetSendRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
-        return this.assetallocationsendWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Show status as it pertains to any current Z-DAG conflicts or warnings related to a sender or sender/txid combination of an asset allocation transfer. Leave txid empty if you are not checking for a specific transfer. Return value is in the status field and can represent 4 levels(-1:Not Found, 0:OK, 1:Warning or 2:Critical)
-     * @param asset 
-     * @param sender 
-     * @param txid 
-     */
-    public assetallocationsenderstatus(asset: string, sender: string, txid: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<AssetAllocationSenderStatus> {
-        return this.assetallocationsenderstatusWithHttpInfo(asset, sender, txid, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Show stored values of a single asset and its. Set getinputs to true if you want to get the allocation inputs, if applicable.
-     * @param asset 
-     * @param getinputs 
-     */
-    public assetinfo(asset: string, getinputs: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Asset> {
-        return this.assetinfoWithHttpInfo(asset, getinputs, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Create a new Syscoin Asset.
-     * @param request 
-     */
-    public assetnew(request: AssetNewRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
-        return this.assetnewWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Send an asset allocation you own to another alias.
-     * @param request 
-     */
-    public assetsend(request: AssetSendRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
-        return this.assetsendWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Transfer asset from one user to another.
-     * @param request 
-     */
-    public assettransfer(request: AssetTransferRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
-        return this.assettransferWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Perform an update on an asset you control.
-     * @param request 
-     */
-    public assetupdate(request: AssetUpdateRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
-        return this.assetupdateWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
 
     /**
      * 
      * Collect interest on this asset allocation if an interest rate is set on this asset.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public assetallocationcollectinterestWithHttpInfo(request: AssetAllocationCollectInterestRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public assetallocationcollectinterest(request: AssetAllocationCollectInterestRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public assetallocationcollectinterest(request: AssetAllocationCollectInterestRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public assetallocationcollectinterest(request: AssetAllocationCollectInterestRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public assetallocationcollectinterest(request: AssetAllocationCollectInterestRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling assetallocationcollectinterest.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/assetallocationcollectinterest`, requestOptions);
+        return this.httpClient.post<Array<string>>(`${this.basePath}/assetallocationcollectinterest`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -262,9 +121,13 @@ export class AssetService {
      * @param asset 
      * @param alias 
      * @param getinputs 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public assetallocationinfoWithHttpInfo(asset: string, alias: string, getinputs: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public assetallocationinfo(asset: string, alias: string, getinputs: boolean, observe?: 'body', reportProgress?: boolean): Observable<AssetAllocation>;
+    public assetallocationinfo(asset: string, alias: string, getinputs: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AssetAllocation>>;
+    public assetallocationinfo(asset: string, alias: string, getinputs: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AssetAllocation>>;
+    public assetallocationinfo(asset: string, alias: string, getinputs: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (asset === null || asset === undefined) {
             throw new Error('Required parameter asset was null or undefined when calling assetallocationinfo.');
         }
@@ -275,100 +138,98 @@ export class AssetService {
             throw new Error('Required parameter getinputs was null or undefined when calling assetallocationinfo.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (asset !== undefined) {
-            queryParameters.set('asset', <any>asset);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (asset !== undefined && asset !== null) {
+            queryParameters = queryParameters.set('asset', <any>asset);
         }
-        if (alias !== undefined) {
-            queryParameters.set('alias', <any>alias);
+        if (alias !== undefined && alias !== null) {
+            queryParameters = queryParameters.set('alias', <any>alias);
         }
-        if (getinputs !== undefined) {
-            queryParameters.set('getinputs', <any>getinputs);
+        if (getinputs !== undefined && getinputs !== null) {
+            queryParameters = queryParameters.set('getinputs', <any>getinputs);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/assetallocationinfo`, requestOptions);
+        return this.httpClient.get<AssetAllocation>(`${this.basePath}/assetallocationinfo`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Send an asset you own to another alias as an asset allocation.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public assetallocationsendWithHttpInfo(request: AssetSendRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public assetallocationsend(request: AssetSendRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public assetallocationsend(request: AssetSendRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public assetallocationsend(request: AssetSendRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public assetallocationsend(request: AssetSendRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling assetallocationsend.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/assetallocationsend`, requestOptions);
+        return this.httpClient.post<Array<string>>(`${this.basePath}/assetallocationsend`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -377,9 +238,13 @@ export class AssetService {
      * @param asset 
      * @param sender 
      * @param txid 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public assetallocationsenderstatusWithHttpInfo(asset: string, sender: string, txid: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public assetallocationsenderstatus(asset: string, sender: string, txid: string, observe?: 'body', reportProgress?: boolean): Observable<AssetAllocationSenderStatus>;
+    public assetallocationsenderstatus(asset: string, sender: string, txid: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AssetAllocationSenderStatus>>;
+    public assetallocationsenderstatus(asset: string, sender: string, txid: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AssetAllocationSenderStatus>>;
+    public assetallocationsenderstatus(asset: string, sender: string, txid: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (asset === null || asset === undefined) {
             throw new Error('Required parameter asset was null or undefined when calling assetallocationsenderstatus.');
         }
@@ -390,50 +255,47 @@ export class AssetService {
             throw new Error('Required parameter txid was null or undefined when calling assetallocationsenderstatus.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (asset !== undefined) {
-            queryParameters.set('asset', <any>asset);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (asset !== undefined && asset !== null) {
+            queryParameters = queryParameters.set('asset', <any>asset);
         }
-        if (sender !== undefined) {
-            queryParameters.set('sender', <any>sender);
+        if (sender !== undefined && sender !== null) {
+            queryParameters = queryParameters.set('sender', <any>sender);
         }
-        if (txid !== undefined) {
-            queryParameters.set('txid', <any>txid);
+        if (txid !== undefined && txid !== null) {
+            queryParameters = queryParameters.set('txid', <any>txid);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/assetallocationsenderstatus`, requestOptions);
+        return this.httpClient.get<AssetAllocationSenderStatus>(`${this.basePath}/assetallocationsenderstatus`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -441,9 +303,13 @@ export class AssetService {
      * Show stored values of a single asset and its. Set getinputs to true if you want to get the allocation inputs, if applicable.
      * @param asset 
      * @param getinputs 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public assetinfoWithHttpInfo(asset: string, getinputs: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public assetinfo(asset: string, getinputs: boolean, observe?: 'body', reportProgress?: boolean): Observable<Asset>;
+    public assetinfo(asset: string, getinputs: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Asset>>;
+    public assetinfo(asset: string, getinputs: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Asset>>;
+    public assetinfo(asset: string, getinputs: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (asset === null || asset === undefined) {
             throw new Error('Required parameter asset was null or undefined when calling assetinfo.');
         }
@@ -451,247 +317,248 @@ export class AssetService {
             throw new Error('Required parameter getinputs was null or undefined when calling assetinfo.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (asset !== undefined) {
-            queryParameters.set('asset', <any>asset);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (asset !== undefined && asset !== null) {
+            queryParameters = queryParameters.set('asset', <any>asset);
         }
-        if (getinputs !== undefined) {
-            queryParameters.set('getinputs', <any>getinputs);
+        if (getinputs !== undefined && getinputs !== null) {
+            queryParameters = queryParameters.set('getinputs', <any>getinputs);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/assetinfo`, requestOptions);
+        return this.httpClient.get<Asset>(`${this.basePath}/assetinfo`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Create a new Syscoin Asset.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public assetnewWithHttpInfo(request: AssetNewRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public assetnew(request: AssetNewRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public assetnew(request: AssetNewRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public assetnew(request: AssetNewRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public assetnew(request: AssetNewRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling assetnew.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/assetnew`, requestOptions);
+        return this.httpClient.post<Array<string>>(`${this.basePath}/assetnew`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Send an asset allocation you own to another alias.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public assetsendWithHttpInfo(request: AssetSendRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public assetsend(request: AssetSendRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public assetsend(request: AssetSendRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public assetsend(request: AssetSendRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public assetsend(request: AssetSendRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling assetsend.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/assetsend`, requestOptions);
+        return this.httpClient.post<Array<string>>(`${this.basePath}/assetsend`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Transfer asset from one user to another.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public assettransferWithHttpInfo(request: AssetTransferRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public assettransfer(request: AssetTransferRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public assettransfer(request: AssetTransferRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public assettransfer(request: AssetTransferRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public assettransfer(request: AssetTransferRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling assettransfer.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/assettransfer`, requestOptions);
+        return this.httpClient.post<Array<string>>(`${this.basePath}/assettransfer`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Perform an update on an asset you control.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public assetupdateWithHttpInfo(request: AssetUpdateRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public assetupdate(request: AssetUpdateRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public assetupdate(request: AssetUpdateRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public assetupdate(request: AssetUpdateRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public assetupdate(request: AssetUpdateRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling assetupdate.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/assetupdate`, requestOptions);
+        return this.httpClient.post<Array<string>>(`${this.basePath}/assetupdate`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
 }

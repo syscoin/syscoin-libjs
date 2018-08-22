@@ -12,13 +12,11 @@
 /* tslint:disable:no-unused-variable member-ordering */
 
 import { Inject, Injectable, Optional }                      from '@angular/core';
-import { Http, Headers, URLSearchParams }                    from '@angular/http';
-import { RequestMethod, RequestOptions, RequestOptionsArgs } from '@angular/http';
-import { Response, ResponseContentType }                     from '@angular/http';
-import { CustomQueryEncoderHelper }                          from '../encoder';
+import { HttpClient, HttpHeaders, HttpParams,
+         HttpResponse, HttpEvent }                           from '@angular/common/http';
+import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
-import { Observable }                                        from 'rxjs/Observable';
-import '../rxjs-operators';
+import { Observable }                                        from 'rxjs';
 
 import { Account } from '../model/account';
 import { AddMultisigAddressRequest } from '../model/addMultisigAddressRequest';
@@ -57,6 +55,7 @@ import { SendManyRequest } from '../model/sendManyRequest';
 import { SendRawTransactionRequest } from '../model/sendRawTransactionRequest';
 import { SendRawTransactionResponse } from '../model/sendRawTransactionResponse';
 import { SendToAddressRequest } from '../model/sendToAddressRequest';
+import { SetAccountRequest } from '../model/setAccountRequest';
 import { SignMessageRequest } from '../model/signMessageRequest';
 import { SignRawTransactionRequest } from '../model/signRawTransactionRequest';
 import { SignRawTransactionResponse } from '../model/signRawTransactionResponse';
@@ -77,10 +76,10 @@ import { Configuration }                                     from '../configurat
 export class GeneralService {
 
     protected basePath = 'http://localhost:8001';
-    public defaultHeaders = new Headers();
+    public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
 
-    constructor(protected http: Http, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
+    constructor(protected httpClient: HttpClient, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
         if (basePath) {
             this.basePath = basePath;
         }
@@ -96,7 +95,7 @@ export class GeneralService {
      */
     private canConsumeForm(consumes: string[]): boolean {
         const form = 'multipart/form-data';
-        for (let consume of consumes) {
+        for (const consume of consumes) {
             if (form === consume) {
                 return true;
             }
@@ -104,1476 +103,356 @@ export class GeneralService {
         return false;
     }
 
-    /**
-     * Add a nrequired-to-sign multisignature address to the wallet. Each key is a Syscoin address or hex-encoded public key. If 'account' is specified (DEPRECATED), assign address to that account.
-     * @param request 
-     */
-    public addmultisigaddress(request: AddMultisigAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.addmultisigaddressWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Change debug category on the fly. Specify single category or use comma to specify many.
-     * @param command 0|1|addrman|alert|bench|coindb|db|lock|rand |rpc|selectcoins|mempool|mempoolrej|net|proxy |prune|http|libevent|tor|zmq|syscoin|privatesend|instantsend |masternode|spork|keepass|mnpayments|gobject 
-     */
-    public debug(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
-        return this.debugWithHttpInfo(command, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns an object containing sensitive private info about this HD wallet.
-     */
-    public dumphdinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<DumpHdInfoResponse> {
-        return this.dumphdinfoWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Reveals the private key corresponding to 'syscoinaddress'. Then the importprivkey can be used with this output.
-     * @param address The syscoin address for the private key
-     */
-    public dumpprivkey(address: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.dumpprivkeyWithHttpInfo(address, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Dumps all wallet keys in a human-readable format.
-     * @param filename The filename
-     */
-    public dumpwallet(filename: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.dumpwalletWithHttpInfo(filename, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Encrypts the wallet with 'passphrase'. This is for first time encryption. After this, any calls that interact with private keys such as sending or signing will require the passphrase to be set prior the making these calls. Use the walletpassphrase call for this, and then walletlock call. If the wallet is already encrypted, use the walletpassphrasechange call. Note that this will shutdown the server.
-     * @param request 
-     */
-    public encryptwallet(request: EncryptWalletRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.encryptwalletWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Add inputs to a transaction until it has enough in value to meet its out value.
-     * @param request 
-     */
-    public fundrawtransaction(request: FundRawTransactionRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.fundrawtransactionWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Mine up to numblocks blocks immediately (before the RPC call returns).
-     * @param numBlocks How many blocks are generated immediately.
-     * @param maxtries How many iterations to try (default &#x3D; 1000000).
-     */
-    public generate(numBlocks: number, maxtries?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
-        return this.generateWithHttpInfo(numBlocks, maxtries, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Generates a public key for a wallet.
-     */
-    public generatepublickey(extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
-        return this.generatepublickeyWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * DEPRECATED. Returns the account associated with the given address.
-     * @param syscoinaddress The syscoin address for account lookup.
-     */
-    public getaccount(syscoinaddress: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.getaccountWithHttpInfo(syscoinaddress, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * DEPRECATED. Returns the current Syscoin address for receiving payments to this account.
-     * @param account The account name for the address. It can also be set to the empty string \&quot;\&quot; to represent the default account. The account does not need to exist, it will be created and a new address created  if there is no account by the given name.
-     */
-    public getaccountaddress(account: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.getaccountaddressWithHttpInfo(account, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * get address balance 
-     * @param addresses 
-     */
-    public getaddressbalance(addresses: Array<string>, extraHttpRequestParams?: RequestOptionsArgs): Observable<GetAddressBalanceResponse> {
-        return this.getaddressbalanceWithHttpInfo(addresses, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * getaddressdeltas
-     * @param addresses 
-     * @param start 
-     * @param end 
-     */
-    public getaddressdeltas(addresses: Array<string>, start: number, end: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<GetAddressDeltasResponseObject>> {
-        return this.getaddressdeltasWithHttpInfo(addresses, start, end, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * DEPRECATED. Returns the list of addresses for the given account.
-     * @param account 
-     */
-    public getaddressesbyaccount(account: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
-        return this.getaddressesbyaccountWithHttpInfo(account, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * getaddressdeltas
-     * @param addresses 
-     */
-    public getaddressmempool(addresses: Array<string>, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<GetAddressMemPoolResponseObject>> {
-        return this.getaddressmempoolWithHttpInfo(addresses, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Get address transaction ids
-     * @param addresses 
-     * @param start 
-     * @param end 
-     */
-    public getaddresstxids(addresses: Array<string>, start: number, end: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
-        return this.getaddresstxidsWithHttpInfo(addresses, start, end, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns all unspent outputs for addresses or aliases
-     * @param addresses 
-     */
-    public getaddressutxos(addresses: GetAddressUTXOsRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<GetAddressUTXOsEntry>> {
-        return this.getaddressutxosWithHttpInfo(addresses, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * If account is not specified, returns the server's total available balance. If account is specified (DEPRECATED), returns the balance in the account. Note that the account \"\" is not the same as leaving the parameter out. The server total may be different to the balance in the default \"\" account.
-     * @param account It need \&quot;*\&quot; for entire wallet
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param includeWatchonly Also include balance in watchonly addresses (see &#39;importaddress&#39;)
-     */
-    public getbalance(account?: string, minconf?: number, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<number> {
-        return this.getbalanceWithHttpInfo(account, minconf, includeWatchonly, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * If verbose is false, returns a string that is serialized, hex-encoded data for block 'hash'. If verbose is true, returns an Object with information about block <hash>.
-     * @param hash 
-     * @param verbose 
-     */
-    public getblock(hash: string, verbose?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<GetBlockResponse> {
-        return this.getblockWithHttpInfo(hash, verbose, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns an object containing various state info regarding block chain processing.
-     */
-    public getblockchaininfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<GetBlockchainInfoResponse> {
-        return this.getblockchaininfoWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns the number of blocks in the longest block chain.
-     */
-    public getblockcount(extraHttpRequestParams?: RequestOptionsArgs): Observable<number> {
-        return this.getblockcountWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns array of hashes of blocks within the timestamp range provided.
-     * @param high 
-     * @param low 
-     */
-    public getblockhashes(high: number, low: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<string>> {
-        return this.getblockhashesWithHttpInfo(high, low, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns an array of items with information about <count> blockheaders starting from <hash>. If verbose is false, each item is a string that is serialized, hex-encoded data for a single blockheader. If verbose is true, each item is an Object with information about a single blockheader. 
-     * @param hash 
-     * @param count 
-     * @param verbose 
-     */
-    public getblockheaders(hash: string, count: number, verbose?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
-        return this.getblockheadersWithHttpInfo(hash, count, verbose, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Add inputs to a transaction until it has enough in value to meet its out value.
-     */
-    public getblocktemplate(extraHttpRequestParams?: RequestOptionsArgs): Observable<any> {
-        return this.getblocktemplateWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns chain tips
-     */
-    public getchaintips(extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<GetChainTipsResponse>> {
-        return this.getchaintipsWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns true if generation is ON, otherwise false
-     */
-    public getgenerate(extraHttpRequestParams?: RequestOptionsArgs): Observable<boolean> {
-        return this.getgenerateWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns an object containing governance parameters
-     */
-    public getgovernanceinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<GovernanceInfoResponse> {
-        return this.getgovernanceinfoWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns an object containing various state info.
-     */
-    public getinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Info> {
-        return this.getinfoWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns a json object containing mining-related information.
-     */
-    public getmininginfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<MiningInfo> {
-        return this.getmininginfoWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns a json object containing network-related information.
-     */
-    public getnetworkinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<NetworkInfo> {
-        return this.getnetworkinfoWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns a new Syscoin address for receiving payments. If 'account' is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to 'account'.
-     * @param request 
-     */
-    public getnewaddress(request?: GetNewAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.getnewaddressWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns data about each connected network node as a json array of objects.
-     */
-    public getpeerinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<PeerInfoResponse> {
-        return this.getpeerinfoWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns an object containing mixing pool related information
-     */
-    public getpoolinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<PoolInfoResponse> {
-        return this.getpoolinfoWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns the total amount received by addresses with <account> in transactions with at least [minconf] confirmations.
-     * @param account The selected account, may be the default account using \&quot;\&quot;.
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     */
-    public getreceivedbyaccount(account: string, minconf?: number, addlockconf?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<number> {
-        return this.getreceivedbyaccountWithHttpInfo(account, minconf, addlockconf, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns the total amount received by the given syscoinaddress in transactions with at least minconf confirmations.
-     * @param syscoinaddress The syscoin address for transactions.
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     */
-    public getreceivedbyaddress(syscoinaddress: string, minconf?: number, addlockconf?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<number> {
-        return this.getreceivedbyaddressWithHttpInfo(syscoinaddress, minconf, addlockconf, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns the txid and index where an output is spent
-     * @param txid 
-     * @param index 
-     */
-    public getspentinfo(txid: string, index: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<GetSpentInfoResponse> {
-        return this.getspentinfoWithHttpInfo(txid, index, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns the absolute maximum sum of superblock payments allowed.
-     * @param index The block index
-     */
-    public getsuperblockbudget(index: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<number> {
-        return this.getsuperblockbudgetWithHttpInfo(index, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Get detailed information about in-wallet transaction <txid>
-     * @param txid The transaction id
-     * @param includeWatchonly Whether to include watchonly addresses in balance calculation and details[]
-     */
-    public gettransaction(txid: string, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Transaction> {
-        return this.gettransactionWithHttpInfo(txid, includeWatchonly, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns the server's total unconfirmed balance
-     */
-    public getunconfirmedbalance(extraHttpRequestParams?: RequestOptionsArgs): Observable<number> {
-        return this.getunconfirmedbalanceWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns an object containing various wallet state info.
-     */
-    public getwalletinfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<WalletInfo> {
-        return this.getwalletinfoWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Manage governance objects.
-     * @param command &#39;check&#39; - Validate governance object data (proposal only) &#39;prepare&#39; - Prepare governance object by signing and creating tx &#39;submit&#39; - Submit governance object to network &#39;deserialize&#39; - Deserialize governance object from hex string to JSON &#39;count&#39; - Count governance objects and votes &#39;get&#39; - Get governance object by hash &#39;getvotes&#39; - Get all votes for a governance object hash (including old votes) &#39;getcurrentvotes&#39; - Get only current (tallying) votes for a governance object hash (does not include old votes) &#39;list&#39; - List governance objects (can be filtered by signal and/or object type) &#39;diff&#39; - List differences since last diff &#39;vote-alias&#39; - Vote on a governance object by masternode alias (using masternode.conf setup) &#39;vote-conf&#39; - Vote on a governance object by masternode configured in syscoin.conf &#39;vote-many&#39;- Vote on a governance object by all masternodes (using masternode.conf setup) 
-     */
-    public gobject(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
-        return this.gobjectWithHttpInfo(command, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Adds a script (in hex) or address that can be watched as if it were in your wallet but cannot be used to spend.
-     * @param request 
-     */
-    public importaddress(request: ImportAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.importaddressWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Adds a private key (as returned by dumpprivkey) to your wallet.
-     * @param request 
-     */
-    public importprivkey(request: ImportPrivKeyRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.importprivkeyWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Adds a public key (in hex) that can be watched as if it were in your wallet but cannot be used to spend.
-     * @param request 
-     */
-    public importpubkey(request: ImportPubKeyRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.importpubkeyWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Imports keys from a wallet dump file (see dumpwallet).
-     * @param request 
-     */
-    public importwallet(request: ImportWalletRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.importwalletWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
-     */
-    public instantsendtoaddress(request: InstantSendToAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.instantsendtoaddressWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns Object that has account names as keys, account balances as values.
-     * @param minconf Only include transactions with at least this many confirmations
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     * @param includeWatchonly Include balances in watchonly addresses (see &#39;importaddress&#39;)
-     */
-    public listaccounts(minconf?: number, addlockconf?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<any> {
-        return this.listaccountsWithHttpInfo(minconf, addlockconf, includeWatchonly, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Lists groups of addresses which have had their common ownership made public by common use as inputs or as the resulting change in past transactions
-     */
-    public listaddressgroupings(extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<AddressGrouping>> {
-        return this.listaddressgroupingsWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * List balances by account.
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     * @param includeempty Whether to include accounts that haven&#39;t received any payments.
-     * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     */
-    public listreceivedbyaccount(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<Account>> {
-        return this.listreceivedbyaccountWithHttpInfo(minconf, addlockconf, includeempty, includeWatchonly, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * List balances by receiving address.
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     * @param includeempty Whether to include accounts that haven&#39;t received any payments.
-     * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     */
-    public listreceivedbyaddress(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<ListReceivedByAddress>> {
-        return this.listreceivedbyaddressWithHttpInfo(minconf, addlockconf, includeempty, includeWatchonly, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Get all transactions in blocks since block [blockhash], or all transactions if omitted
-     * @param blockhash The block hash to list transactions since
-     * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     * @param target_confirmations 
-     */
-    public listsinceblock(blockhash?: string, includeWatchonly?: boolean, target_confirmations?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<ListSinceBlockResponse>> {
-        return this.listsinceblockWithHttpInfo(blockhash, includeWatchonly, target_confirmations, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns up to 'count' most recent transactions skipping the first 'from' transactions for account 'account'.
-     * @param account The account name. Should be \&quot;*\&quot;.
-     * @param count The number of transactions to return
-     * @param from The number of transactions to skip
-     * @param includeWatchonly Include transactions to watchonly addresses (see &#39;importaddress&#39;)
-     */
-    public listtransactions(account?: string, count?: number, from?: number, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<TransactionListEntry>> {
-        return this.listtransactionsWithHttpInfo(account, count, from, includeWatchonly, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns array of unspent transaction outputs with between minconf and maxconf (inclusive) confirmations. Optionally filter to only include txouts paid to specified addresses. Results are an array of Objects, each of which has: {txid, vout, scriptPubKey, amount, confirmations}
-     * @param minconf The minimum confirmations to filter.
-     * @param maxconf The maximum confirmations to filter
-     * @param adresses A json array of syscoin addresses to filter
-     */
-    public listunspent(minconf?: number, maxconf?: number, adresses?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<UnspentListEntry>> {
-        return this.listunspentWithHttpInfo(minconf, maxconf, adresses, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Updates list of temporarily unspendable outputs.
-     * @param request 
-     */
-    public lockunspent(request: LockUnspentRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.lockunspentWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Set of commands to execute masternode related actions.
-     * @param command &#39;count&#39; - Print number of all known masternodes (optional &#39;ps&#39;, &#39;enabled&#39;, &#39;all&#39;, &#39;qualify&#39;) &#39;current&#39; - Print info on current masternode winner to be paid the next block (calculated locally) &#39;debug&#39; - Print masternode status &#39;genkey&#39; - Generate new masternodeprivkey &#39;outputs&#39; - Print masternode compatible outputs &#39;start&#39; - Start local Hot masternode configured in syscoin.conf &#39;start-alias&#39; - Start single remote masternode by assigned alias configured in masternode.conf &#39;start-[mode]&#39; - Start remote masternodes configured in masternode.conf ([mode] can be one of &#39;all&#39;, &#39;missing&#39;, or &#39;disabled&#39;) &#39;status&#39; - Print masternode status information &#39;list&#39; - Print list of all known masternodes (see masternodelist for more info) &#39;list-conf&#39; - Print masternode.conf in JSON format &#39;winner&#39; - Print info on next masternode winner to vote for &#39;winners&#39;- Print list of masternode winners 
-     */
-    public masternode(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
-        return this.masternodeWithHttpInfo(command, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Set of commands to create and relay masternode broadcast messages.
-     * @param command &#39;create-alias&#39; - Create single remote masternode broadcast message by assigned alias configured in masternode.conf &#39;create-all&#39; - Create remote masternode broadcast messages for all masternodes configured in masternode.conf &#39;decode&#39; - Decode masternode broadcast message &#39;relay&#39; - Relay masternode broadcast message to the network 
-     */
-    public masternodebroadcast(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
-        return this.masternodebroadcastWithHttpInfo(command, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Get a list of masternodes in different modes.
-     * @param mode (optional/required to use filter, defaults &#x3D; status) The mode to run list in &#39;activeseconds&#39; - Print number of seconds masternode recognized by the network as enabled (since latest issued \\\&quot;masternode start/start-many/start-alias\\\&quot;) &#39;addr&#39; - Print ip address associated with a masternode (can be additionally filtered, partial match) &#39;full&#39; - Print info in format &#39;status protocol payee lastseen activeseconds lastpaidtime lastpaidblock IP&#39; (can be additionally filtered, partial match) &#39;info&#39; - Print info in format &#39;status protocol payee lastseen activeseconds sentinelversion sentinelstate IP&#39; (can be additionally filtered, partial match) &#39;lastpaidblock&#39; - Print the last block height a node was paid on the network &#39;lastpaidtime&#39; - Print the last time a node was paid on the network &#39;lastseen&#39; - Print timestamp of when a masternode was last seen on the network &#39;payee&#39; - Print Syscoin address associated with a masternode (can be additionally filtered,partial match) &#39;protocol&#39; - Print protocol of a masternode (can be additionally filtered, exact match) &#39;pubkey&#39; - Print the masternode (not collateral) public key &#39;rank&#39; - Print rank of a masternode based on current block &#39;status&#39; - Print masternode status PRE_ENABLED / ENABLED / EXPIRED / WATCHDOG_EXPIRED / NEW_START_REQUIRED / UPDATE_REQUIRED / POSE_BAN / OUTPOINT_SPENT (can be additionally filtered, partial match) 
-     */
-    public masternodelist(mode?: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
-        return this.masternodelistWithHttpInfo(mode, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns the sync status, updates to the next step or resets it entirely.
-     * @param command &#39;status&#39; - Sync status &#39;next&#39; - Update to next step &#39;reset&#39; - Reset it entirely 
-     */
-    public mnsync(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<{}> {
-        return this.mnsyncWithHttpInfo(command, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * DEPRECATED. Move a specified amount from one account in your wallet to another.
-     * @param request 
-     */
-    public move(request: MoveRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<boolean> {
-        return this.moveWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * DEPRECATED (use sendtoaddress). Sent an amount from an account to a syscoin address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
-     */
-    public sendfrom(request: SendFromRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.sendfromWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
-     */
-    public sendmany(request: SendManyRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.sendmanyWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Send an amount to a given address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
-     */
-    public sendtoaddress(request: SendToAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.sendtoaddressWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Set 'generate' true or false to turn generation on or off. Generation is limited to 'genproclimit' processors, -1 is unlimited. See the getgenerate call for the current setting 
-     * @param generate 
-     * @param genproclimit 
-     */
-    public setgenerate(generate: boolean, genproclimit?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.setgenerateWithHttpInfo(generate, genproclimit, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Set 'networkactive' true or false 
-     * @param state 
-     */
-    public setnetworkactive(state: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<boolean> {
-        return this.setnetworkactiveWithHttpInfo(state, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Sign a message with the private key of an address. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request 
-     */
-    public signmessage(request: SignMessageRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.signmessageWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Sign inputs for raw transaction (serialized, hex-encoded).
-     * @param request 
-     */
-    public signrawtransaction(request: SignRawTransactionRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<SignRawTransactionResponse> {
-        return this.signrawtransactionWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Decode raw syscoin transaction (serialized, hex-encoded) and display information pertaining to the service that is included in the transactiion data output(OP_RETURN)
-     * @param hexstring The transaction hex string.
-     */
-    public syscoindecoderawtransaction(hexstring: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.syscoindecoderawtransactionWithHttpInfo(hexstring, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Returns all addresses and balances associated with address
-     */
-    public syscoinlistreceivedbyaddress(extraHttpRequestParams?: RequestOptionsArgs): Observable<Array<SyscoinAddressEntry>> {
-        return this.syscoinlistreceivedbyaddressWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Signed raw transaction (serialized, hex-encoded) sent out to the network.
-     * @param request 
-     */
-    public syscoinsendrawtransaction(request: SendRawTransactionRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<SendRawTransactionResponse> {
-        return this.syscoinsendrawtransactionWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Return information about the given syscoin address.
-     * @param syscoinaddress 
-     */
-    public validateaddress(syscoinaddress: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<ValidateAddressResponse> {
-        return this.validateaddressWithHttpInfo(syscoinaddress, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Verify a signed message
-     * @param syscoinaddress The syscoin address to use for the signature.
-     * @param signature The signature provided by the signer in base 64 encoding (see signmessage).
-     * @param message The message that was signed.
-     */
-    public verifymessage(syscoinaddress: string, signature: string, message: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<boolean> {
-        return this.verifymessageWithHttpInfo(syscoinaddress, signature, message, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Removes the wallet encryption key from memory, locking the wallet. After calling this method, you will need to call walletpassphrase again before being able to call any methods which require the wallet to be unlocked.
-     */
-    public walletlock(extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.walletlockWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Stores the wallet decryption key in memory for 'timeout' seconds. This is needed prior to performing transactions related to private keys such as sending syscoins
-     * @param request 
-     */
-    public walletpassphrase(request: WalletPassphraseRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.walletpassphraseWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
-    /**
-     * Changes the wallet passphrase from 'oldpassphrase' to 'newpassphrase'.
-     * @param request 
-     */
-    public walletpassphrasechange(request: WalletPassphraseChangeRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<string> {
-        return this.walletpassphrasechangeWithHttpInfo(request, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json() || {};
-                }
-            });
-    }
-
 
     /**
      * 
      * Add a nrequired-to-sign multisignature address to the wallet. Each key is a Syscoin address or hex-encoded public key. If &#39;account&#39; is specified (DEPRECATED), assign address to that account.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public addmultisigaddressWithHttpInfo(request: AddMultisigAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public addmultisigaddress(request: AddMultisigAddressRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public addmultisigaddress(request: AddMultisigAddressRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public addmultisigaddress(request: AddMultisigAddressRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public addmultisigaddress(request: AddMultisigAddressRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling addmultisigaddress.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/addmultisigaddress`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/addmultisigaddress`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Change debug category on the fly. Specify single category or use comma to specify many.
      * @param command 0|1|addrman|alert|bench|coindb|db|lock|rand |rpc|selectcoins|mempool|mempoolrej|net|proxy |prune|http|libevent|tor|zmq|syscoin|privatesend|instantsend |masternode|spork|keepass|mnpayments|gobject 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public debugWithHttpInfo(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public debug(command: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public debug(command: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public debug(command: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public debug(command: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (command === null || command === undefined) {
             throw new Error('Required parameter command was null or undefined when calling debug.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (command !== undefined) {
-            queryParameters.set('command', <any>command);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (command !== undefined && command !== null) {
+            queryParameters = queryParameters.set('command', <any>command);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/debug`, requestOptions);
+        return this.httpClient.get<any>(`${this.basePath}/debug`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns an object containing sensitive private info about this HD wallet.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public dumphdinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public dumphdinfo(observe?: 'body', reportProgress?: boolean): Observable<DumpHdInfoResponse>;
+    public dumphdinfo(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<DumpHdInfoResponse>>;
+    public dumphdinfo(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<DumpHdInfoResponse>>;
+    public dumphdinfo(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/dumphdinfo`, requestOptions);
+        return this.httpClient.get<DumpHdInfoResponse>(`${this.basePath}/dumphdinfo`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Reveals the private key corresponding to &#39;syscoinaddress&#39;. Then the importprivkey can be used with this output.
      * @param address The syscoin address for the private key
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public dumpprivkeyWithHttpInfo(address: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public dumpprivkey(address: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public dumpprivkey(address: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public dumpprivkey(address: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public dumpprivkey(address: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (address === null || address === undefined) {
             throw new Error('Required parameter address was null or undefined when calling dumpprivkey.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (address !== undefined) {
-            queryParameters.set('address', <any>address);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (address !== undefined && address !== null) {
+            queryParameters = queryParameters.set('address', <any>address);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/dumpprivkey`, requestOptions);
+        return this.httpClient.get<string>(`${this.basePath}/dumpprivkey`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Dumps all wallet keys in a human-readable format.
      * @param filename The filename
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public dumpwalletWithHttpInfo(filename: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public dumpwallet(filename: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public dumpwallet(filename: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public dumpwallet(filename: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public dumpwallet(filename: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (filename === null || filename === undefined) {
             throw new Error('Required parameter filename was null or undefined when calling dumpwallet.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (filename !== undefined) {
-            queryParameters.set('filename', <any>filename);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (filename !== undefined && filename !== null) {
+            queryParameters = queryParameters.set('filename', <any>filename);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/dumpwallet`, requestOptions);
+        return this.httpClient.get<string>(`${this.basePath}/dumpwallet`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Encrypts the wallet with &#39;passphrase&#39;. This is for first time encryption. After this, any calls that interact with private keys such as sending or signing will require the passphrase to be set prior the making these calls. Use the walletpassphrase call for this, and then walletlock call. If the wallet is already encrypted, use the walletpassphrasechange call. Note that this will shutdown the server.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public encryptwalletWithHttpInfo(request: EncryptWalletRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public encryptwallet(request: EncryptWalletRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public encryptwallet(request: EncryptWalletRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public encryptwallet(request: EncryptWalletRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public encryptwallet(request: EncryptWalletRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling encryptwallet.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/encryptwallet`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/encryptwallet`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Add inputs to a transaction until it has enough in value to meet its out value.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public fundrawtransactionWithHttpInfo(request: FundRawTransactionRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public fundrawtransaction(request: FundRawTransactionRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public fundrawtransaction(request: FundRawTransactionRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public fundrawtransaction(request: FundRawTransactionRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public fundrawtransaction(request: FundRawTransactionRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling fundrawtransaction.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/fundrawtransaction`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/fundrawtransaction`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -1581,243 +460,248 @@ export class GeneralService {
      * Mine up to numblocks blocks immediately (before the RPC call returns).
      * @param numBlocks How many blocks are generated immediately.
      * @param maxtries How many iterations to try (default &#x3D; 1000000).
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public generateWithHttpInfo(numBlocks: number, maxtries?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public generate(numBlocks: number, maxtries?: number, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public generate(numBlocks: number, maxtries?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public generate(numBlocks: number, maxtries?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public generate(numBlocks: number, maxtries?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (numBlocks === null || numBlocks === undefined) {
             throw new Error('Required parameter numBlocks was null or undefined when calling generate.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (numBlocks !== undefined) {
-            queryParameters.set('numBlocks', <any>numBlocks);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (numBlocks !== undefined && numBlocks !== null) {
+            queryParameters = queryParameters.set('numBlocks', <any>numBlocks);
         }
-        if (maxtries !== undefined) {
-            queryParameters.set('maxtries', <any>maxtries);
+        if (maxtries !== undefined && maxtries !== null) {
+            queryParameters = queryParameters.set('maxtries', <any>maxtries);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/generate`, requestOptions);
+        return this.httpClient.get<Array<string>>(`${this.basePath}/generate`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Generates a public key for a wallet.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public generatepublickeyWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public generatepublickey(observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public generatepublickey(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public generatepublickey(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public generatepublickey(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/generatepublickey`, requestOptions);
+        return this.httpClient.get<Array<string>>(`${this.basePath}/generatepublickey`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * DEPRECATED. Returns the account associated with the given address.
      * @param syscoinaddress The syscoin address for account lookup.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getaccountWithHttpInfo(syscoinaddress: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getaccount(syscoinaddress: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public getaccount(syscoinaddress: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public getaccount(syscoinaddress: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public getaccount(syscoinaddress: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (syscoinaddress === null || syscoinaddress === undefined) {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling getaccount.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (syscoinaddress !== undefined) {
-            queryParameters.set('syscoinaddress', <any>syscoinaddress);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (syscoinaddress !== undefined && syscoinaddress !== null) {
+            queryParameters = queryParameters.set('syscoinaddress', <any>syscoinaddress);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getaccount`, requestOptions);
+        return this.httpClient.get<string>(`${this.basePath}/getaccount`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * DEPRECATED. Returns the current Syscoin address for receiving payments to this account.
      * @param account The account name for the address. It can also be set to the empty string \&quot;\&quot; to represent the default account. The account does not need to exist, it will be created and a new address created  if there is no account by the given name.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getaccountaddressWithHttpInfo(account: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getaccountaddress(account: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public getaccountaddress(account: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public getaccountaddress(account: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public getaccountaddress(account: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (account === null || account === undefined) {
             throw new Error('Required parameter account was null or undefined when calling getaccountaddress.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (account !== undefined) {
-            queryParameters.set('account', <any>account);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (account !== undefined && account !== null) {
+            queryParameters = queryParameters.set('account', <any>account);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getaccountaddress`, requestOptions);
+        return this.httpClient.get<string>(`${this.basePath}/getaccountaddress`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * get address balance 
      * @param addresses 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getaddressbalanceWithHttpInfo(addresses: Array<string>, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getaddressbalance(addresses: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<GetAddressBalanceResponse>;
+    public getaddressbalance(addresses: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetAddressBalanceResponse>>;
+    public getaddressbalance(addresses: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetAddressBalanceResponse>>;
+    public getaddressbalance(addresses: Array<string>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (addresses === null || addresses === undefined) {
             throw new Error('Required parameter addresses was null or undefined when calling getaddressbalance.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (addresses) {
-            queryParameters.set('addresses', addresses.join(COLLECTION_FORMATS['csv']));
+            queryParameters = queryParameters.set('addresses', addresses.join(COLLECTION_FORMATS['csv']));
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getaddressbalance`, requestOptions);
+        return this.httpClient.get<GetAddressBalanceResponse>(`${this.basePath}/getaddressbalance`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -1826,9 +710,13 @@ export class GeneralService {
      * @param addresses 
      * @param start 
      * @param end 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getaddressdeltasWithHttpInfo(addresses: Array<string>, start: number, end: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getaddressdeltas(addresses: Array<string>, start: number, end: number, observe?: 'body', reportProgress?: boolean): Observable<Array<GetAddressDeltasResponseObject>>;
+    public getaddressdeltas(addresses: Array<string>, start: number, end: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GetAddressDeltasResponseObject>>>;
+    public getaddressdeltas(addresses: Array<string>, start: number, end: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GetAddressDeltasResponseObject>>>;
+    public getaddressdeltas(addresses: Array<string>, start: number, end: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (addresses === null || addresses === undefined) {
             throw new Error('Required parameter addresses was null or undefined when calling getaddressdeltas.');
         }
@@ -1839,142 +727,141 @@ export class GeneralService {
             throw new Error('Required parameter end was null or undefined when calling getaddressdeltas.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (addresses) {
-            queryParameters.set('addresses', addresses.join(COLLECTION_FORMATS['csv']));
+            queryParameters = queryParameters.set('addresses', addresses.join(COLLECTION_FORMATS['csv']));
         }
-        if (start !== undefined) {
-            queryParameters.set('start', <any>start);
+        if (start !== undefined && start !== null) {
+            queryParameters = queryParameters.set('start', <any>start);
         }
-        if (end !== undefined) {
-            queryParameters.set('end', <any>end);
+        if (end !== undefined && end !== null) {
+            queryParameters = queryParameters.set('end', <any>end);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getaddressdeltas`, requestOptions);
+        return this.httpClient.get<Array<GetAddressDeltasResponseObject>>(`${this.basePath}/getaddressdeltas`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * DEPRECATED. Returns the list of addresses for the given account.
      * @param account 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getaddressesbyaccountWithHttpInfo(account: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getaddressesbyaccount(account: string, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public getaddressesbyaccount(account: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public getaddressesbyaccount(account: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public getaddressesbyaccount(account: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (account === null || account === undefined) {
             throw new Error('Required parameter account was null or undefined when calling getaddressesbyaccount.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (account !== undefined) {
-            queryParameters.set('account', <any>account);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (account !== undefined && account !== null) {
+            queryParameters = queryParameters.set('account', <any>account);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getaddressesbyaccount`, requestOptions);
+        return this.httpClient.get<Array<string>>(`${this.basePath}/getaddressesbyaccount`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * getaddressdeltas
      * @param addresses 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getaddressmempoolWithHttpInfo(addresses: Array<string>, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getaddressmempool(addresses: Array<string>, observe?: 'body', reportProgress?: boolean): Observable<Array<GetAddressMemPoolResponseObject>>;
+    public getaddressmempool(addresses: Array<string>, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GetAddressMemPoolResponseObject>>>;
+    public getaddressmempool(addresses: Array<string>, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GetAddressMemPoolResponseObject>>>;
+    public getaddressmempool(addresses: Array<string>, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (addresses === null || addresses === undefined) {
             throw new Error('Required parameter addresses was null or undefined when calling getaddressmempool.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (addresses) {
-            queryParameters.set('addresses', addresses.join(COLLECTION_FORMATS['csv']));
+            queryParameters = queryParameters.set('addresses', addresses.join(COLLECTION_FORMATS['csv']));
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getaddressmempool`, requestOptions);
+        return this.httpClient.get<Array<GetAddressMemPoolResponseObject>>(`${this.basePath}/getaddressmempool`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -1983,9 +870,13 @@ export class GeneralService {
      * @param addresses 
      * @param start 
      * @param end 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getaddresstxidsWithHttpInfo(addresses: Array<string>, start: number, end: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getaddresstxids(addresses: Array<string>, start: number, end: number, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public getaddresstxids(addresses: Array<string>, start: number, end: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public getaddresstxids(addresses: Array<string>, start: number, end: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public getaddresstxids(addresses: Array<string>, start: number, end: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (addresses === null || addresses === undefined) {
             throw new Error('Required parameter addresses was null or undefined when calling getaddresstxids.');
         }
@@ -1996,100 +887,98 @@ export class GeneralService {
             throw new Error('Required parameter end was null or undefined when calling getaddresstxids.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (addresses) {
-            queryParameters.set('addresses', addresses.join(COLLECTION_FORMATS['csv']));
+            queryParameters = queryParameters.set('addresses', addresses.join(COLLECTION_FORMATS['csv']));
         }
-        if (start !== undefined) {
-            queryParameters.set('start', <any>start);
+        if (start !== undefined && start !== null) {
+            queryParameters = queryParameters.set('start', <any>start);
         }
-        if (end !== undefined) {
-            queryParameters.set('end', <any>end);
+        if (end !== undefined && end !== null) {
+            queryParameters = queryParameters.set('end', <any>end);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getaddresstxids`, requestOptions);
+        return this.httpClient.get<Array<string>>(`${this.basePath}/getaddresstxids`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns all unspent outputs for addresses or aliases
      * @param addresses 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getaddressutxosWithHttpInfo(addresses: GetAddressUTXOsRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getaddressutxos(addresses: GetAddressUTXOsRequest, observe?: 'body', reportProgress?: boolean): Observable<Array<GetAddressUTXOsEntry>>;
+    public getaddressutxos(addresses: GetAddressUTXOsRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GetAddressUTXOsEntry>>>;
+    public getaddressutxos(addresses: GetAddressUTXOsRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GetAddressUTXOsEntry>>>;
+    public getaddressutxos(addresses: GetAddressUTXOsRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (addresses === null || addresses === undefined) {
             throw new Error('Required parameter addresses was null or undefined when calling getaddressutxos.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: addresses == null ? '' : JSON.stringify(addresses), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getaddressutxos`, requestOptions);
+        return this.httpClient.post<Array<GetAddressUTXOsEntry>>(`${this.basePath}/getaddressutxos`,
+            addresses,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -2098,54 +987,55 @@ export class GeneralService {
      * @param account It need \&quot;*\&quot; for entire wallet
      * @param minconf Only include transactions confirmed at least this many times.
      * @param includeWatchonly Also include balance in watchonly addresses (see &#39;importaddress&#39;)
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getbalanceWithHttpInfo(account?: string, minconf?: number, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getbalance(account?: string, minconf?: number, includeWatchonly?: boolean, observe?: 'body', reportProgress?: boolean): Observable<number>;
+    public getbalance(account?: string, minconf?: number, includeWatchonly?: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
+    public getbalance(account?: string, minconf?: number, includeWatchonly?: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
+    public getbalance(account?: string, minconf?: number, includeWatchonly?: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (account !== undefined) {
-            queryParameters.set('account', <any>account);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (account !== undefined && account !== null) {
+            queryParameters = queryParameters.set('account', <any>account);
         }
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', <any>minconf);
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', <any>minconf);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', <any>includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', <any>includeWatchonly);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getbalance`, requestOptions);
+        return this.httpClient.get<number>(`${this.basePath}/getbalance`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -2153,136 +1043,139 @@ export class GeneralService {
      * If verbose is false, returns a string that is serialized, hex-encoded data for block &#39;hash&#39;. If verbose is true, returns an Object with information about block &lt;hash&gt;.
      * @param hash 
      * @param verbose 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getblockWithHttpInfo(hash: string, verbose?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getblock(hash: string, verbose?: boolean, observe?: 'body', reportProgress?: boolean): Observable<GetBlockResponse>;
+    public getblock(hash: string, verbose?: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetBlockResponse>>;
+    public getblock(hash: string, verbose?: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetBlockResponse>>;
+    public getblock(hash: string, verbose?: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (hash === null || hash === undefined) {
             throw new Error('Required parameter hash was null or undefined when calling getblock.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (hash !== undefined) {
-            queryParameters.set('hash', <any>hash);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (hash !== undefined && hash !== null) {
+            queryParameters = queryParameters.set('hash', <any>hash);
         }
-        if (verbose !== undefined) {
-            queryParameters.set('verbose', <any>verbose);
+        if (verbose !== undefined && verbose !== null) {
+            queryParameters = queryParameters.set('verbose', <any>verbose);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getblock`, requestOptions);
+        return this.httpClient.get<GetBlockResponse>(`${this.basePath}/getblock`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns an object containing various state info regarding block chain processing.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getblockchaininfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getblockchaininfo(observe?: 'body', reportProgress?: boolean): Observable<GetBlockchainInfoResponse>;
+    public getblockchaininfo(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetBlockchainInfoResponse>>;
+    public getblockchaininfo(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetBlockchainInfoResponse>>;
+    public getblockchaininfo(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getblockchaininfo`, requestOptions);
+        return this.httpClient.get<GetBlockchainInfoResponse>(`${this.basePath}/getblockchaininfo`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns the number of blocks in the longest block chain.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getblockcountWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getblockcount(observe?: 'body', reportProgress?: boolean): Observable<number>;
+    public getblockcount(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
+    public getblockcount(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
+    public getblockcount(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getblockcount`, requestOptions);
+        return this.httpClient.get<number>(`${this.basePath}/getblockcount`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -2290,9 +1183,13 @@ export class GeneralService {
      * Returns array of hashes of blocks within the timestamp range provided.
      * @param high 
      * @param low 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getblockhashesWithHttpInfo(high: number, low: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getblockhashes(high: number, low: number, observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public getblockhashes(high: number, low: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public getblockhashes(high: number, low: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public getblockhashes(high: number, low: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (high === null || high === undefined) {
             throw new Error('Required parameter high was null or undefined when calling getblockhashes.');
         }
@@ -2300,47 +1197,44 @@ export class GeneralService {
             throw new Error('Required parameter low was null or undefined when calling getblockhashes.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (high !== undefined) {
-            queryParameters.set('high', <any>high);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (high !== undefined && high !== null) {
+            queryParameters = queryParameters.set('high', <any>high);
         }
-        if (low !== undefined) {
-            queryParameters.set('low', <any>low);
+        if (low !== undefined && low !== null) {
+            queryParameters = queryParameters.set('low', <any>low);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getblockhashes`, requestOptions);
+        return this.httpClient.get<Array<string>>(`${this.basePath}/getblockhashes`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -2349,9 +1243,13 @@ export class GeneralService {
      * @param hash 
      * @param count 
      * @param verbose 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getblockheadersWithHttpInfo(hash: string, count: number, verbose?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getblockheaders(hash: string, count: number, verbose?: boolean, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public getblockheaders(hash: string, count: number, verbose?: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public getblockheaders(hash: string, count: number, verbose?: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public getblockheaders(hash: string, count: number, verbose?: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (hash === null || hash === undefined) {
             throw new Error('Required parameter hash was null or undefined when calling getblockheaders.');
         }
@@ -2359,466 +1257,473 @@ export class GeneralService {
             throw new Error('Required parameter count was null or undefined when calling getblockheaders.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (hash !== undefined) {
-            queryParameters.set('hash', <any>hash);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (hash !== undefined && hash !== null) {
+            queryParameters = queryParameters.set('hash', <any>hash);
         }
-        if (count !== undefined) {
-            queryParameters.set('count', <any>count);
+        if (count !== undefined && count !== null) {
+            queryParameters = queryParameters.set('count', <any>count);
         }
-        if (verbose !== undefined) {
-            queryParameters.set('verbose', <any>verbose);
+        if (verbose !== undefined && verbose !== null) {
+            queryParameters = queryParameters.set('verbose', <any>verbose);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getblockheaders`, requestOptions);
+        return this.httpClient.get<any>(`${this.basePath}/getblockheaders`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Add inputs to a transaction until it has enough in value to meet its out value.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getblocktemplateWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getblocktemplate(observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public getblocktemplate(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public getblocktemplate(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public getblocktemplate(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getblocktemplate`, requestOptions);
+        return this.httpClient.get<any>(`${this.basePath}/getblocktemplate`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns chain tips
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getchaintipsWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getchaintips(observe?: 'body', reportProgress?: boolean): Observable<Array<GetChainTipsResponse>>;
+    public getchaintips(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<GetChainTipsResponse>>>;
+    public getchaintips(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<GetChainTipsResponse>>>;
+    public getchaintips(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getchaintips`, requestOptions);
+        return this.httpClient.get<Array<GetChainTipsResponse>>(`${this.basePath}/getchaintips`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns true if generation is ON, otherwise false
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getgenerateWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getgenerate(observe?: 'body', reportProgress?: boolean): Observable<boolean>;
+    public getgenerate(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<boolean>>;
+    public getgenerate(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<boolean>>;
+    public getgenerate(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getgenerate`, requestOptions);
+        return this.httpClient.get<boolean>(`${this.basePath}/getgenerate`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns an object containing governance parameters
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getgovernanceinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getgovernanceinfo(observe?: 'body', reportProgress?: boolean): Observable<GovernanceInfoResponse>;
+    public getgovernanceinfo(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GovernanceInfoResponse>>;
+    public getgovernanceinfo(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GovernanceInfoResponse>>;
+    public getgovernanceinfo(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getgovernanceinfo`, requestOptions);
+        return this.httpClient.get<GovernanceInfoResponse>(`${this.basePath}/getgovernanceinfo`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns an object containing various state info.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getinfo(observe?: 'body', reportProgress?: boolean): Observable<Info>;
+    public getinfo(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Info>>;
+    public getinfo(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Info>>;
+    public getinfo(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getinfo`, requestOptions);
+        return this.httpClient.get<Info>(`${this.basePath}/getinfo`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns a json object containing mining-related information.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getmininginfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getmininginfo(observe?: 'body', reportProgress?: boolean): Observable<MiningInfo>;
+    public getmininginfo(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<MiningInfo>>;
+    public getmininginfo(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<MiningInfo>>;
+    public getmininginfo(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getmininginfo`, requestOptions);
+        return this.httpClient.get<MiningInfo>(`${this.basePath}/getmininginfo`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns a json object containing network-related information.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getnetworkinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getnetworkinfo(observe?: 'body', reportProgress?: boolean): Observable<NetworkInfo>;
+    public getnetworkinfo(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<NetworkInfo>>;
+    public getnetworkinfo(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<NetworkInfo>>;
+    public getnetworkinfo(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getnetworkinfo`, requestOptions);
+        return this.httpClient.get<NetworkInfo>(`${this.basePath}/getnetworkinfo`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns a new Syscoin address for receiving payments. If &#39;account&#39; is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to &#39;account&#39;.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getnewaddressWithHttpInfo(request?: GetNewAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getnewaddress(request?: GetNewAddressRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public getnewaddress(request?: GetNewAddressRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public getnewaddress(request?: GetNewAddressRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public getnewaddress(request?: GetNewAddressRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getnewaddress`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/getnewaddress`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns data about each connected network node as a json array of objects.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getpeerinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getpeerinfo(observe?: 'body', reportProgress?: boolean): Observable<PeerInfoResponse>;
+    public getpeerinfo(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PeerInfoResponse>>;
+    public getpeerinfo(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PeerInfoResponse>>;
+    public getpeerinfo(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getpeerinfo`, requestOptions);
+        return this.httpClient.get<PeerInfoResponse>(`${this.basePath}/getpeerinfo`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns an object containing mixing pool related information
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getpoolinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getpoolinfo(observe?: 'body', reportProgress?: boolean): Observable<PoolInfoResponse>;
+    public getpoolinfo(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PoolInfoResponse>>;
+    public getpoolinfo(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PoolInfoResponse>>;
+    public getpoolinfo(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getpoolinfo`, requestOptions);
+        return this.httpClient.get<PoolInfoResponse>(`${this.basePath}/getpoolinfo`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -2827,57 +1732,58 @@ export class GeneralService {
      * @param account The selected account, may be the default account using \&quot;\&quot;.
      * @param minconf Only include transactions confirmed at least this many times.
      * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getreceivedbyaccountWithHttpInfo(account: string, minconf?: number, addlockconf?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getreceivedbyaccount(account: string, minconf?: number, addlockconf?: boolean, observe?: 'body', reportProgress?: boolean): Observable<number>;
+    public getreceivedbyaccount(account: string, minconf?: number, addlockconf?: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
+    public getreceivedbyaccount(account: string, minconf?: number, addlockconf?: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
+    public getreceivedbyaccount(account: string, minconf?: number, addlockconf?: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (account === null || account === undefined) {
             throw new Error('Required parameter account was null or undefined when calling getreceivedbyaccount.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (account !== undefined) {
-            queryParameters.set('account', <any>account);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (account !== undefined && account !== null) {
+            queryParameters = queryParameters.set('account', <any>account);
         }
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', <any>minconf);
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', <any>minconf);
         }
-        if (addlockconf !== undefined) {
-            queryParameters.set('addlockconf', <any>addlockconf);
+        if (addlockconf !== undefined && addlockconf !== null) {
+            queryParameters = queryParameters.set('addlockconf', <any>addlockconf);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getreceivedbyaccount`, requestOptions);
+        return this.httpClient.get<number>(`${this.basePath}/getreceivedbyaccount`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -2886,57 +1792,58 @@ export class GeneralService {
      * @param syscoinaddress The syscoin address for transactions.
      * @param minconf Only include transactions confirmed at least this many times.
      * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getreceivedbyaddressWithHttpInfo(syscoinaddress: string, minconf?: number, addlockconf?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getreceivedbyaddress(syscoinaddress: string, minconf?: number, addlockconf?: boolean, observe?: 'body', reportProgress?: boolean): Observable<number>;
+    public getreceivedbyaddress(syscoinaddress: string, minconf?: number, addlockconf?: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
+    public getreceivedbyaddress(syscoinaddress: string, minconf?: number, addlockconf?: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
+    public getreceivedbyaddress(syscoinaddress: string, minconf?: number, addlockconf?: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (syscoinaddress === null || syscoinaddress === undefined) {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling getreceivedbyaddress.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (syscoinaddress !== undefined) {
-            queryParameters.set('syscoinaddress', <any>syscoinaddress);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (syscoinaddress !== undefined && syscoinaddress !== null) {
+            queryParameters = queryParameters.set('syscoinaddress', <any>syscoinaddress);
         }
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', <any>minconf);
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', <any>minconf);
         }
-        if (addlockconf !== undefined) {
-            queryParameters.set('addlockconf', <any>addlockconf);
+        if (addlockconf !== undefined && addlockconf !== null) {
+            queryParameters = queryParameters.set('addlockconf', <any>addlockconf);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getreceivedbyaddress`, requestOptions);
+        return this.httpClient.get<number>(`${this.basePath}/getreceivedbyaddress`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -2944,9 +1851,13 @@ export class GeneralService {
      * Returns the txid and index where an output is spent
      * @param txid 
      * @param index 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getspentinfoWithHttpInfo(txid: string, index: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getspentinfo(txid: string, index: number, observe?: 'body', reportProgress?: boolean): Observable<GetSpentInfoResponse>;
+    public getspentinfo(txid: string, index: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetSpentInfoResponse>>;
+    public getspentinfo(txid: string, index: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetSpentInfoResponse>>;
+    public getspentinfo(txid: string, index: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (txid === null || txid === undefined) {
             throw new Error('Required parameter txid was null or undefined when calling getspentinfo.');
         }
@@ -2954,98 +1865,96 @@ export class GeneralService {
             throw new Error('Required parameter index was null or undefined when calling getspentinfo.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (txid !== undefined) {
-            queryParameters.set('txid', <any>txid);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (txid !== undefined && txid !== null) {
+            queryParameters = queryParameters.set('txid', <any>txid);
         }
-        if (index !== undefined) {
-            queryParameters.set('index', <any>index);
+        if (index !== undefined && index !== null) {
+            queryParameters = queryParameters.set('index', <any>index);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getspentinfo`, requestOptions);
+        return this.httpClient.get<GetSpentInfoResponse>(`${this.basePath}/getspentinfo`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns the absolute maximum sum of superblock payments allowed.
      * @param index The block index
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getsuperblockbudgetWithHttpInfo(index: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getsuperblockbudget(index: number, observe?: 'body', reportProgress?: boolean): Observable<number>;
+    public getsuperblockbudget(index: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
+    public getsuperblockbudget(index: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
+    public getsuperblockbudget(index: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (index === null || index === undefined) {
             throw new Error('Required parameter index was null or undefined when calling getsuperblockbudget.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (index !== undefined) {
-            queryParameters.set('index', <any>index);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (index !== undefined && index !== null) {
+            queryParameters = queryParameters.set('index', <any>index);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getsuperblockbudget`, requestOptions);
+        return this.httpClient.get<number>(`${this.basePath}/getsuperblockbudget`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -3053,437 +1962,446 @@ export class GeneralService {
      * Get detailed information about in-wallet transaction &lt;txid&gt;
      * @param txid The transaction id
      * @param includeWatchonly Whether to include watchonly addresses in balance calculation and details[]
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public gettransactionWithHttpInfo(txid: string, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public gettransaction(txid: string, includeWatchonly?: boolean, observe?: 'body', reportProgress?: boolean): Observable<Transaction>;
+    public gettransaction(txid: string, includeWatchonly?: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Transaction>>;
+    public gettransaction(txid: string, includeWatchonly?: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Transaction>>;
+    public gettransaction(txid: string, includeWatchonly?: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (txid === null || txid === undefined) {
             throw new Error('Required parameter txid was null or undefined when calling gettransaction.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (txid !== undefined) {
-            queryParameters.set('txid', <any>txid);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (txid !== undefined && txid !== null) {
+            queryParameters = queryParameters.set('txid', <any>txid);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', <any>includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', <any>includeWatchonly);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/gettransaction`, requestOptions);
+        return this.httpClient.get<Transaction>(`${this.basePath}/gettransaction`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns the server&#39;s total unconfirmed balance
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getunconfirmedbalanceWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getunconfirmedbalance(observe?: 'body', reportProgress?: boolean): Observable<number>;
+    public getunconfirmedbalance(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
+    public getunconfirmedbalance(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
+    public getunconfirmedbalance(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getunconfirmedbalance`, requestOptions);
+        return this.httpClient.get<number>(`${this.basePath}/getunconfirmedbalance`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns an object containing various wallet state info.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public getwalletinfoWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public getwalletinfo(observe?: 'body', reportProgress?: boolean): Observable<WalletInfo>;
+    public getwalletinfo(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<WalletInfo>>;
+    public getwalletinfo(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<WalletInfo>>;
+    public getwalletinfo(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/getwalletinfo`, requestOptions);
+        return this.httpClient.get<WalletInfo>(`${this.basePath}/getwalletinfo`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Manage governance objects.
      * @param command &#39;check&#39; - Validate governance object data (proposal only) &#39;prepare&#39; - Prepare governance object by signing and creating tx &#39;submit&#39; - Submit governance object to network &#39;deserialize&#39; - Deserialize governance object from hex string to JSON &#39;count&#39; - Count governance objects and votes &#39;get&#39; - Get governance object by hash &#39;getvotes&#39; - Get all votes for a governance object hash (including old votes) &#39;getcurrentvotes&#39; - Get only current (tallying) votes for a governance object hash (does not include old votes) &#39;list&#39; - List governance objects (can be filtered by signal and/or object type) &#39;diff&#39; - List differences since last diff &#39;vote-alias&#39; - Vote on a governance object by masternode alias (using masternode.conf setup) &#39;vote-conf&#39; - Vote on a governance object by masternode configured in syscoin.conf &#39;vote-many&#39;- Vote on a governance object by all masternodes (using masternode.conf setup) 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public gobjectWithHttpInfo(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public gobject(command: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public gobject(command: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public gobject(command: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public gobject(command: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (command === null || command === undefined) {
             throw new Error('Required parameter command was null or undefined when calling gobject.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (command !== undefined) {
-            queryParameters.set('command', <any>command);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (command !== undefined && command !== null) {
+            queryParameters = queryParameters.set('command', <any>command);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/gobject`, requestOptions);
+        return this.httpClient.get<any>(`${this.basePath}/gobject`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Adds a script (in hex) or address that can be watched as if it were in your wallet but cannot be used to spend.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public importaddressWithHttpInfo(request: ImportAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public importaddress(request: ImportAddressRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public importaddress(request: ImportAddressRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public importaddress(request: ImportAddressRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public importaddress(request: ImportAddressRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling importaddress.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/importaddress`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/importaddress`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Adds a private key (as returned by dumpprivkey) to your wallet.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public importprivkeyWithHttpInfo(request: ImportPrivKeyRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public importprivkey(request: ImportPrivKeyRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public importprivkey(request: ImportPrivKeyRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public importprivkey(request: ImportPrivKeyRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public importprivkey(request: ImportPrivKeyRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling importprivkey.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/importprivkey`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/importprivkey`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Adds a public key (in hex) that can be watched as if it were in your wallet but cannot be used to spend.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public importpubkeyWithHttpInfo(request: ImportPubKeyRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public importpubkey(request: ImportPubKeyRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public importpubkey(request: ImportPubKeyRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public importpubkey(request: ImportPubKeyRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public importpubkey(request: ImportPubKeyRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling importpubkey.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/importpubkey`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/importpubkey`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Imports keys from a wallet dump file (see dumpwallet).
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public importwalletWithHttpInfo(request: ImportWalletRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public importwallet(request: ImportWalletRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public importwallet(request: ImportWalletRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public importwallet(request: ImportWalletRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public importwallet(request: ImportWalletRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling importwallet.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/importwallet`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/importwallet`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public instantsendtoaddressWithHttpInfo(request: InstantSendToAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public instantsendtoaddress(request: InstantSendToAddressRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public instantsendtoaddress(request: InstantSendToAddressRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public instantsendtoaddress(request: InstantSendToAddressRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public instantsendtoaddress(request: InstantSendToAddressRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling instantsendtoaddress.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/instantsendtoaddress`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/instantsendtoaddress`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -3492,95 +2410,97 @@ export class GeneralService {
      * @param minconf Only include transactions with at least this many confirmations
      * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
      * @param includeWatchonly Include balances in watchonly addresses (see &#39;importaddress&#39;)
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public listaccountsWithHttpInfo(minconf?: number, addlockconf?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public listaccounts(minconf?: number, addlockconf?: boolean, includeWatchonly?: boolean, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public listaccounts(minconf?: number, addlockconf?: boolean, includeWatchonly?: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public listaccounts(minconf?: number, addlockconf?: boolean, includeWatchonly?: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public listaccounts(minconf?: number, addlockconf?: boolean, includeWatchonly?: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', <any>minconf);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', <any>minconf);
         }
-        if (addlockconf !== undefined) {
-            queryParameters.set('addlockconf', <any>addlockconf);
+        if (addlockconf !== undefined && addlockconf !== null) {
+            queryParameters = queryParameters.set('addlockconf', <any>addlockconf);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', <any>includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', <any>includeWatchonly);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/listaccounts`, requestOptions);
+        return this.httpClient.get<any>(`${this.basePath}/listaccounts`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Lists groups of addresses which have had their common ownership made public by common use as inputs or as the resulting change in past transactions
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public listaddressgroupingsWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public listaddressgroupings(observe?: 'body', reportProgress?: boolean): Observable<Array<AddressGrouping>>;
+    public listaddressgroupings(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<AddressGrouping>>>;
+    public listaddressgroupings(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<AddressGrouping>>>;
+    public listaddressgroupings(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/listaddressgroupings`, requestOptions);
+        return this.httpClient.get<Array<AddressGrouping>>(`${this.basePath}/listaddressgroupings`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -3590,57 +2510,58 @@ export class GeneralService {
      * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
      * @param includeempty Whether to include accounts that haven&#39;t received any payments.
      * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public listreceivedbyaccountWithHttpInfo(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public listreceivedbyaccount(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, observe?: 'body', reportProgress?: boolean): Observable<Array<Account>>;
+    public listreceivedbyaccount(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Account>>>;
+    public listreceivedbyaccount(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Account>>>;
+    public listreceivedbyaccount(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', <any>minconf);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', <any>minconf);
         }
-        if (addlockconf !== undefined) {
-            queryParameters.set('addlockconf', <any>addlockconf);
+        if (addlockconf !== undefined && addlockconf !== null) {
+            queryParameters = queryParameters.set('addlockconf', <any>addlockconf);
         }
-        if (includeempty !== undefined) {
-            queryParameters.set('includeempty', <any>includeempty);
+        if (includeempty !== undefined && includeempty !== null) {
+            queryParameters = queryParameters.set('includeempty', <any>includeempty);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', <any>includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', <any>includeWatchonly);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/listreceivedbyaccount`, requestOptions);
+        return this.httpClient.get<Array<Account>>(`${this.basePath}/listreceivedbyaccount`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -3650,57 +2571,58 @@ export class GeneralService {
      * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
      * @param includeempty Whether to include accounts that haven&#39;t received any payments.
      * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public listreceivedbyaddressWithHttpInfo(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public listreceivedbyaddress(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, observe?: 'body', reportProgress?: boolean): Observable<Array<ListReceivedByAddress>>;
+    public listreceivedbyaddress(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<ListReceivedByAddress>>>;
+    public listreceivedbyaddress(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<ListReceivedByAddress>>>;
+    public listreceivedbyaddress(minconf?: number, addlockconf?: boolean, includeempty?: boolean, includeWatchonly?: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', <any>minconf);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', <any>minconf);
         }
-        if (addlockconf !== undefined) {
-            queryParameters.set('addlockconf', <any>addlockconf);
+        if (addlockconf !== undefined && addlockconf !== null) {
+            queryParameters = queryParameters.set('addlockconf', <any>addlockconf);
         }
-        if (includeempty !== undefined) {
-            queryParameters.set('includeempty', <any>includeempty);
+        if (includeempty !== undefined && includeempty !== null) {
+            queryParameters = queryParameters.set('includeempty', <any>includeempty);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', <any>includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', <any>includeWatchonly);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/listreceivedbyaddress`, requestOptions);
+        return this.httpClient.get<Array<ListReceivedByAddress>>(`${this.basePath}/listreceivedbyaddress`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -3709,54 +2631,55 @@ export class GeneralService {
      * @param blockhash The block hash to list transactions since
      * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
      * @param target_confirmations 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public listsinceblockWithHttpInfo(blockhash?: string, includeWatchonly?: boolean, target_confirmations?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public listsinceblock(blockhash?: string, includeWatchonly?: boolean, target_confirmations?: number, observe?: 'body', reportProgress?: boolean): Observable<Array<ListSinceBlockResponse>>;
+    public listsinceblock(blockhash?: string, includeWatchonly?: boolean, target_confirmations?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<ListSinceBlockResponse>>>;
+    public listsinceblock(blockhash?: string, includeWatchonly?: boolean, target_confirmations?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<ListSinceBlockResponse>>>;
+    public listsinceblock(blockhash?: string, includeWatchonly?: boolean, target_confirmations?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (blockhash !== undefined) {
-            queryParameters.set('blockhash', <any>blockhash);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (blockhash !== undefined && blockhash !== null) {
+            queryParameters = queryParameters.set('blockhash', <any>blockhash);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', <any>includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', <any>includeWatchonly);
         }
-        if (target_confirmations !== undefined) {
-            queryParameters.set('target-confirmations', <any>target_confirmations);
+        if (target_confirmations !== undefined && target_confirmations !== null) {
+            queryParameters = queryParameters.set('target-confirmations', <any>target_confirmations);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/listsinceblock`, requestOptions);
+        return this.httpClient.get<Array<ListSinceBlockResponse>>(`${this.basePath}/listsinceblock`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -3766,57 +2689,58 @@ export class GeneralService {
      * @param count The number of transactions to return
      * @param from The number of transactions to skip
      * @param includeWatchonly Include transactions to watchonly addresses (see &#39;importaddress&#39;)
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public listtransactionsWithHttpInfo(account?: string, count?: number, from?: number, includeWatchonly?: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public listtransactions(account?: string, count?: number, from?: number, includeWatchonly?: boolean, observe?: 'body', reportProgress?: boolean): Observable<Array<TransactionListEntry>>;
+    public listtransactions(account?: string, count?: number, from?: number, includeWatchonly?: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<TransactionListEntry>>>;
+    public listtransactions(account?: string, count?: number, from?: number, includeWatchonly?: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<TransactionListEntry>>>;
+    public listtransactions(account?: string, count?: number, from?: number, includeWatchonly?: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (account !== undefined) {
-            queryParameters.set('account', <any>account);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (account !== undefined && account !== null) {
+            queryParameters = queryParameters.set('account', <any>account);
         }
-        if (count !== undefined) {
-            queryParameters.set('count', <any>count);
+        if (count !== undefined && count !== null) {
+            queryParameters = queryParameters.set('count', <any>count);
         }
-        if (from !== undefined) {
-            queryParameters.set('from', <any>from);
+        if (from !== undefined && from !== null) {
+            queryParameters = queryParameters.set('from', <any>from);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', <any>includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', <any>includeWatchonly);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/listtransactions`, requestOptions);
+        return this.httpClient.get<Array<TransactionListEntry>>(`${this.basePath}/listtransactions`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -3825,505 +2749,608 @@ export class GeneralService {
      * @param minconf The minimum confirmations to filter.
      * @param maxconf The maximum confirmations to filter
      * @param adresses A json array of syscoin addresses to filter
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public listunspentWithHttpInfo(minconf?: number, maxconf?: number, adresses?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public listunspent(minconf?: number, maxconf?: number, adresses?: number, observe?: 'body', reportProgress?: boolean): Observable<Array<UnspentListEntry>>;
+    public listunspent(minconf?: number, maxconf?: number, adresses?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<UnspentListEntry>>>;
+    public listunspent(minconf?: number, maxconf?: number, adresses?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<UnspentListEntry>>>;
+    public listunspent(minconf?: number, maxconf?: number, adresses?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', <any>minconf);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', <any>minconf);
         }
-        if (maxconf !== undefined) {
-            queryParameters.set('maxconf', <any>maxconf);
+        if (maxconf !== undefined && maxconf !== null) {
+            queryParameters = queryParameters.set('maxconf', <any>maxconf);
         }
-        if (adresses !== undefined) {
-            queryParameters.set('adresses', <any>adresses);
+        if (adresses !== undefined && adresses !== null) {
+            queryParameters = queryParameters.set('adresses', <any>adresses);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/listunspent`, requestOptions);
+        return this.httpClient.get<Array<UnspentListEntry>>(`${this.basePath}/listunspent`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Updates list of temporarily unspendable outputs.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public lockunspentWithHttpInfo(request: LockUnspentRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public lockunspent(request: LockUnspentRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public lockunspent(request: LockUnspentRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public lockunspent(request: LockUnspentRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public lockunspent(request: LockUnspentRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling lockunspent.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/lockunspent`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/lockunspent`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Set of commands to execute masternode related actions.
      * @param command &#39;count&#39; - Print number of all known masternodes (optional &#39;ps&#39;, &#39;enabled&#39;, &#39;all&#39;, &#39;qualify&#39;) &#39;current&#39; - Print info on current masternode winner to be paid the next block (calculated locally) &#39;debug&#39; - Print masternode status &#39;genkey&#39; - Generate new masternodeprivkey &#39;outputs&#39; - Print masternode compatible outputs &#39;start&#39; - Start local Hot masternode configured in syscoin.conf &#39;start-alias&#39; - Start single remote masternode by assigned alias configured in masternode.conf &#39;start-[mode]&#39; - Start remote masternodes configured in masternode.conf ([mode] can be one of &#39;all&#39;, &#39;missing&#39;, or &#39;disabled&#39;) &#39;status&#39; - Print masternode status information &#39;list&#39; - Print list of all known masternodes (see masternodelist for more info) &#39;list-conf&#39; - Print masternode.conf in JSON format &#39;winner&#39; - Print info on next masternode winner to vote for &#39;winners&#39;- Print list of masternode winners 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public masternodeWithHttpInfo(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public masternode(command: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public masternode(command: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public masternode(command: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public masternode(command: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (command === null || command === undefined) {
             throw new Error('Required parameter command was null or undefined when calling masternode.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (command !== undefined) {
-            queryParameters.set('command', <any>command);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (command !== undefined && command !== null) {
+            queryParameters = queryParameters.set('command', <any>command);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/masternode`, requestOptions);
+        return this.httpClient.get<any>(`${this.basePath}/masternode`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Set of commands to create and relay masternode broadcast messages.
      * @param command &#39;create-alias&#39; - Create single remote masternode broadcast message by assigned alias configured in masternode.conf &#39;create-all&#39; - Create remote masternode broadcast messages for all masternodes configured in masternode.conf &#39;decode&#39; - Decode masternode broadcast message &#39;relay&#39; - Relay masternode broadcast message to the network 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public masternodebroadcastWithHttpInfo(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public masternodebroadcast(command: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public masternodebroadcast(command: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public masternodebroadcast(command: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public masternodebroadcast(command: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (command === null || command === undefined) {
             throw new Error('Required parameter command was null or undefined when calling masternodebroadcast.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (command !== undefined) {
-            queryParameters.set('command', <any>command);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (command !== undefined && command !== null) {
+            queryParameters = queryParameters.set('command', <any>command);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/masternodebroadcast`, requestOptions);
+        return this.httpClient.get<any>(`${this.basePath}/masternodebroadcast`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Get a list of masternodes in different modes.
      * @param mode (optional/required to use filter, defaults &#x3D; status) The mode to run list in &#39;activeseconds&#39; - Print number of seconds masternode recognized by the network as enabled (since latest issued \\\&quot;masternode start/start-many/start-alias\\\&quot;) &#39;addr&#39; - Print ip address associated with a masternode (can be additionally filtered, partial match) &#39;full&#39; - Print info in format &#39;status protocol payee lastseen activeseconds lastpaidtime lastpaidblock IP&#39; (can be additionally filtered, partial match) &#39;info&#39; - Print info in format &#39;status protocol payee lastseen activeseconds sentinelversion sentinelstate IP&#39; (can be additionally filtered, partial match) &#39;lastpaidblock&#39; - Print the last block height a node was paid on the network &#39;lastpaidtime&#39; - Print the last time a node was paid on the network &#39;lastseen&#39; - Print timestamp of when a masternode was last seen on the network &#39;payee&#39; - Print Syscoin address associated with a masternode (can be additionally filtered,partial match) &#39;protocol&#39; - Print protocol of a masternode (can be additionally filtered, exact match) &#39;pubkey&#39; - Print the masternode (not collateral) public key &#39;rank&#39; - Print rank of a masternode based on current block &#39;status&#39; - Print masternode status PRE_ENABLED / ENABLED / EXPIRED / WATCHDOG_EXPIRED / NEW_START_REQUIRED / UPDATE_REQUIRED / POSE_BAN / OUTPOINT_SPENT (can be additionally filtered, partial match) 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public masternodelistWithHttpInfo(mode?: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public masternodelist(mode?: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public masternodelist(mode?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public masternodelist(mode?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public masternodelist(mode?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (mode !== undefined) {
-            queryParameters.set('mode', <any>mode);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (mode !== undefined && mode !== null) {
+            queryParameters = queryParameters.set('mode', <any>mode);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/masternodelist`, requestOptions);
+        return this.httpClient.get<any>(`${this.basePath}/masternodelist`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns the sync status, updates to the next step or resets it entirely.
      * @param command &#39;status&#39; - Sync status &#39;next&#39; - Update to next step &#39;reset&#39; - Reset it entirely 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public mnsyncWithHttpInfo(command: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public mnsync(command: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public mnsync(command: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public mnsync(command: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public mnsync(command: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (command === null || command === undefined) {
             throw new Error('Required parameter command was null or undefined when calling mnsync.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (command !== undefined) {
-            queryParameters.set('command', <any>command);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (command !== undefined && command !== null) {
+            queryParameters = queryParameters.set('command', <any>command);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/mnsync`, requestOptions);
+        return this.httpClient.get<any>(`${this.basePath}/mnsync`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * DEPRECATED. Move a specified amount from one account in your wallet to another.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public moveWithHttpInfo(request: MoveRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public move(request: MoveRequest, observe?: 'body', reportProgress?: boolean): Observable<boolean>;
+    public move(request: MoveRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<boolean>>;
+    public move(request: MoveRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<boolean>>;
+    public move(request: MoveRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling move.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+        return this.httpClient.post<boolean>(`${this.basePath}/move`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * Immediately re-broadcast unconfirmed wallet transactions to all peers.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public resendwallettransactions(observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public resendwallettransactions(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public resendwallettransactions(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public resendwallettransactions(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
-        return this.http.request(`${this.basePath}/move`, requestOptions);
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+
+        return this.httpClient.get<Array<string>>(`${this.basePath}/resendwallettransactions`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * DEPRECATED (use sendtoaddress). Sent an amount from an account to a syscoin address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public sendfromWithHttpInfo(request: SendFromRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public sendfrom(request: SendFromRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public sendfrom(request: SendFromRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public sendfrom(request: SendFromRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public sendfrom(request: SendFromRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling sendfrom.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/sendfrom`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/sendfrom`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public sendmanyWithHttpInfo(request: SendManyRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public sendmany(request: SendManyRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public sendmany(request: SendManyRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public sendmany(request: SendManyRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public sendmany(request: SendManyRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling sendmany.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/sendmany`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/sendmany`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Send an amount to a given address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public sendtoaddressWithHttpInfo(request: SendToAddressRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public sendtoaddress(request: SendToAddressRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public sendtoaddress(request: SendToAddressRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public sendtoaddress(request: SendToAddressRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public sendtoaddress(request: SendToAddressRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling sendtoaddress.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
+        return this.httpClient.post<string>(`${this.basePath}/sendtoaddress`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * Sets a label to an account that is stored off-chain in wallet.dat.
+     * @param request 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public setaccount(request: SetAccountRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public setaccount(request: SetAccountRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public setaccount(request: SetAccountRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public setaccount(request: SetAccountRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (request === null || request === undefined) {
+            throw new Error('Required parameter request was null or undefined when calling setaccount.');
         }
 
-        return this.http.request(`${this.basePath}/sendtoaddress`, requestOptions);
+        let headers = this.defaultHeaders;
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.post<string>(`${this.basePath}/setaccount`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -4331,398 +3358,406 @@ export class GeneralService {
      * Set &#39;generate&#39; true or false to turn generation on or off. Generation is limited to &#39;genproclimit&#39; processors, -1 is unlimited. See the getgenerate call for the current setting 
      * @param generate 
      * @param genproclimit 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public setgenerateWithHttpInfo(generate: boolean, genproclimit?: number, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public setgenerate(generate: boolean, genproclimit?: number, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public setgenerate(generate: boolean, genproclimit?: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public setgenerate(generate: boolean, genproclimit?: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public setgenerate(generate: boolean, genproclimit?: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (generate === null || generate === undefined) {
             throw new Error('Required parameter generate was null or undefined when calling setgenerate.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (generate !== undefined) {
-            queryParameters.set('generate', <any>generate);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (generate !== undefined && generate !== null) {
+            queryParameters = queryParameters.set('generate', <any>generate);
         }
-        if (genproclimit !== undefined) {
-            queryParameters.set('genproclimit', <any>genproclimit);
+        if (genproclimit !== undefined && genproclimit !== null) {
+            queryParameters = queryParameters.set('genproclimit', <any>genproclimit);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/setgenerate`, requestOptions);
+        return this.httpClient.get<string>(`${this.basePath}/setgenerate`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Set &#39;networkactive&#39; true or false 
      * @param state 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public setnetworkactiveWithHttpInfo(state: boolean, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public setnetworkactive(state: boolean, observe?: 'body', reportProgress?: boolean): Observable<boolean>;
+    public setnetworkactive(state: boolean, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<boolean>>;
+    public setnetworkactive(state: boolean, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<boolean>>;
+    public setnetworkactive(state: boolean, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (state === null || state === undefined) {
             throw new Error('Required parameter state was null or undefined when calling setnetworkactive.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (state !== undefined) {
-            queryParameters.set('state', <any>state);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (state !== undefined && state !== null) {
+            queryParameters = queryParameters.set('state', <any>state);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/setnetworkactive`, requestOptions);
+        return this.httpClient.get<boolean>(`${this.basePath}/setnetworkactive`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Sign a message with the private key of an address. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public signmessageWithHttpInfo(request: SignMessageRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public signmessage(request: SignMessageRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public signmessage(request: SignMessageRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public signmessage(request: SignMessageRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public signmessage(request: SignMessageRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling signmessage.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/signmessage`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/signmessage`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Sign inputs for raw transaction (serialized, hex-encoded).
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public signrawtransactionWithHttpInfo(request: SignRawTransactionRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public signrawtransaction(request: SignRawTransactionRequest, observe?: 'body', reportProgress?: boolean): Observable<SignRawTransactionResponse>;
+    public signrawtransaction(request: SignRawTransactionRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<SignRawTransactionResponse>>;
+    public signrawtransaction(request: SignRawTransactionRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<SignRawTransactionResponse>>;
+    public signrawtransaction(request: SignRawTransactionRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling signrawtransaction.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/signrawtransaction`, requestOptions);
+        return this.httpClient.post<SignRawTransactionResponse>(`${this.basePath}/signrawtransaction`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Decode raw syscoin transaction (serialized, hex-encoded) and display information pertaining to the service that is included in the transactiion data output(OP_RETURN)
      * @param hexstring The transaction hex string.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public syscoindecoderawtransactionWithHttpInfo(hexstring: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public syscoindecoderawtransaction(hexstring: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public syscoindecoderawtransaction(hexstring: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public syscoindecoderawtransaction(hexstring: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public syscoindecoderawtransaction(hexstring: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (hexstring === null || hexstring === undefined) {
             throw new Error('Required parameter hexstring was null or undefined when calling syscoindecoderawtransaction.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (hexstring !== undefined) {
-            queryParameters.set('hexstring', <any>hexstring);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (hexstring !== undefined && hexstring !== null) {
+            queryParameters = queryParameters.set('hexstring', <any>hexstring);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/syscoindecoderawtransaction`, requestOptions);
+        return this.httpClient.get<string>(`${this.basePath}/syscoindecoderawtransaction`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Returns all addresses and balances associated with address
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public syscoinlistreceivedbyaddressWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public syscoinlistreceivedbyaddress(observe?: 'body', reportProgress?: boolean): Observable<Array<SyscoinAddressEntry>>;
+    public syscoinlistreceivedbyaddress(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<SyscoinAddressEntry>>>;
+    public syscoinlistreceivedbyaddress(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<SyscoinAddressEntry>>>;
+    public syscoinlistreceivedbyaddress(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/syscoinlistreceivedbyaddress`, requestOptions);
+        return this.httpClient.get<Array<SyscoinAddressEntry>>(`${this.basePath}/syscoinlistreceivedbyaddress`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Signed raw transaction (serialized, hex-encoded) sent out to the network.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public syscoinsendrawtransactionWithHttpInfo(request: SendRawTransactionRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public syscoinsendrawtransaction(request: SendRawTransactionRequest, observe?: 'body', reportProgress?: boolean): Observable<SendRawTransactionResponse>;
+    public syscoinsendrawtransaction(request: SendRawTransactionRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<SendRawTransactionResponse>>;
+    public syscoinsendrawtransaction(request: SendRawTransactionRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<SendRawTransactionResponse>>;
+    public syscoinsendrawtransaction(request: SendRawTransactionRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling syscoinsendrawtransaction.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/syscoinsendrawtransaction`, requestOptions);
+        return this.httpClient.post<SendRawTransactionResponse>(`${this.basePath}/syscoinsendrawtransaction`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Return information about the given syscoin address.
      * @param syscoinaddress 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public validateaddressWithHttpInfo(syscoinaddress: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public validateaddress(syscoinaddress: string, observe?: 'body', reportProgress?: boolean): Observable<ValidateAddressResponse>;
+    public validateaddress(syscoinaddress: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ValidateAddressResponse>>;
+    public validateaddress(syscoinaddress: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ValidateAddressResponse>>;
+    public validateaddress(syscoinaddress: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (syscoinaddress === null || syscoinaddress === undefined) {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling validateaddress.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (syscoinaddress !== undefined) {
-            queryParameters.set('syscoinaddress', <any>syscoinaddress);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (syscoinaddress !== undefined && syscoinaddress !== null) {
+            queryParameters = queryParameters.set('syscoinaddress', <any>syscoinaddress);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/validateaddress`, requestOptions);
+        return this.httpClient.get<ValidateAddressResponse>(`${this.basePath}/validateaddress`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
@@ -4731,9 +3766,13 @@ export class GeneralService {
      * @param syscoinaddress The syscoin address to use for the signature.
      * @param signature The signature provided by the signer in base 64 encoding (see signmessage).
      * @param message The message that was signed.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public verifymessageWithHttpInfo(syscoinaddress: string, signature: string, message: string, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public verifymessage(syscoinaddress: string, signature: string, message: string, observe?: 'body', reportProgress?: boolean): Observable<boolean>;
+    public verifymessage(syscoinaddress: string, signature: string, message: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<boolean>>;
+    public verifymessage(syscoinaddress: string, signature: string, message: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<boolean>>;
+    public verifymessage(syscoinaddress: string, signature: string, message: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (syscoinaddress === null || syscoinaddress === undefined) {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling verifymessage.');
         }
@@ -4744,192 +3783,193 @@ export class GeneralService {
             throw new Error('Required parameter message was null or undefined when calling verifymessage.');
         }
 
-        let queryParameters = new URLSearchParams('', new CustomQueryEncoderHelper());
-        if (syscoinaddress !== undefined) {
-            queryParameters.set('syscoinaddress', <any>syscoinaddress);
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (syscoinaddress !== undefined && syscoinaddress !== null) {
+            queryParameters = queryParameters.set('syscoinaddress', <any>syscoinaddress);
         }
-        if (signature !== undefined) {
-            queryParameters.set('signature', <any>signature);
+        if (signature !== undefined && signature !== null) {
+            queryParameters = queryParameters.set('signature', <any>signature);
         }
-        if (message !== undefined) {
-            queryParameters.set('message', <any>message);
+        if (message !== undefined && message !== null) {
+            queryParameters = queryParameters.set('message', <any>message);
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Get,
-            headers: headers,
-            search: queryParameters,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/verifymessage`, requestOptions);
+        return this.httpClient.get<boolean>(`${this.basePath}/verifymessage`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Removes the wallet encryption key from memory, locking the wallet. After calling this method, you will need to call walletpassphrase again before being able to call any methods which require the wallet to be unlocked.
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public walletlockWithHttpInfo(extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public walletlock(observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public walletlock(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public walletlock(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public walletlock(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json',
             'application/octet-stream'
         ];
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/walletlock`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/walletlock`,
+            null,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Stores the wallet decryption key in memory for &#39;timeout&#39; seconds. This is needed prior to performing transactions related to private keys such as sending syscoins
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public walletpassphraseWithHttpInfo(request: WalletPassphraseRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public walletpassphrase(request: WalletPassphraseRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public walletpassphrase(request: WalletPassphraseRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public walletpassphrase(request: WalletPassphraseRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public walletpassphrase(request: WalletPassphraseRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling walletpassphrase.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/walletpassphrase`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/walletpassphrase`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
     /**
      * 
      * Changes the wallet passphrase from &#39;oldpassphrase&#39; to &#39;newpassphrase&#39;.
      * @param request 
-     
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
      */
-    public walletpassphrasechangeWithHttpInfo(request: WalletPassphraseChangeRequest, extraHttpRequestParams?: RequestOptionsArgs): Observable<Response> {
+    public walletpassphrasechange(request: WalletPassphraseChangeRequest, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public walletpassphrasechange(request: WalletPassphraseChangeRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public walletpassphrasechange(request: WalletPassphraseChangeRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public walletpassphrasechange(request: WalletPassphraseChangeRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling walletpassphrasechange.');
         }
 
-        let headers = new Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        let headers = this.defaultHeaders;
 
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
             'application/json'
         ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
 
         // to determine the Content-Type header
-        let consumes: string[] = [
+        const consumes: string[] = [
             'application/json'
         ];
-        let httpContentTypeSelected:string | undefined = this.configuration.selectHeaderContentType(consumes);
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        let requestOptions: RequestOptionsArgs = new RequestOptions({
-            method: RequestMethod.Post,
-            headers: headers,
-            body: request == null ? '' : JSON.stringify(request), // https://github.com/angular/angular/issues/10612
-            withCredentials:this.configuration.withCredentials
-        });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
-        }
-
-        return this.http.request(`${this.basePath}/walletpassphrasechange`, requestOptions);
+        return this.httpClient.post<string>(`${this.basePath}/walletpassphrasechange`,
+            request,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
 
 }
