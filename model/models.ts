@@ -91,6 +91,7 @@ export * from './sendManyRequest';
 export * from './sendRawTransactionRequest';
 export * from './sendRawTransactionResponse';
 export * from './sendToAddressRequest';
+export * from './setAccountRequest';
 export * from './signMessageRequest';
 export * from './signRawTransactionError';
 export * from './signRawTransactionRequest';
