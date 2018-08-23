@@ -4,6 +4,7 @@ export * from './addressGrouping';
 export * from './alias';
 export * from './aliasAddScriptRequest';
 export * from './aliasClearWhiteListRequest';
+export * from './aliasExistsResponse';
 export * from './aliasNewRequest';
 export * from './aliasPayRequest';
 export * from './aliasPayRequestAmounts';
