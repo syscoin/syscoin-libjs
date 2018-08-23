@@ -21,6 +21,7 @@ import { Observable }                                        from 'rxjs';
 import { Alias } from '../model/alias';
 import { AliasAddScriptRequest } from '../model/aliasAddScriptRequest';
 import { AliasClearWhiteListRequest } from '../model/aliasClearWhiteListRequest';
+import { AliasExistsResponse } from '../model/aliasExistsResponse';
 import { AliasNewRequest } from '../model/aliasNewRequest';
 import { AliasPayRequest } from '../model/aliasPayRequest';
 import { AliasUpdateRequest } from '../model/aliasUpdateRequest';
@@ -211,6 +212,58 @@ export class AliasesService {
         return this.httpClient.post<any>(`${this.basePath}/aliasclearwhitelist`,
             request,
             {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param aliasname 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public aliasexists(aliasname: string, observe?: 'body', reportProgress?: boolean): Observable<AliasExistsResponse>;
+    public aliasexists(aliasname: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AliasExistsResponse>>;
+    public aliasexists(aliasname: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AliasExistsResponse>>;
+    public aliasexists(aliasname: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (aliasname === null || aliasname === undefined) {
+            throw new Error('Required parameter aliasname was null or undefined when calling aliasexists.');
+        }
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (aliasname !== undefined && aliasname !== null) {
+            queryParameters = queryParameters.set('aliasname', <any>aliasname);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+
+        return this.httpClient.get<AliasExistsResponse>(`${this.basePath}/aliasexists`,
+            {
+                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

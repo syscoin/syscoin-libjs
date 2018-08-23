@@ -3109,6 +3109,48 @@ export class GeneralService {
 
     /**
      * 
+     * Immediately re-broadcast unconfirmed wallet transactions to all peers.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public resendwallettransactions(observe?: 'body', reportProgress?: boolean): Observable<Array<string>>;
+    public resendwallettransactions(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<string>>>;
+    public resendwallettransactions(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<string>>>;
+    public resendwallettransactions(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+
+        return this.httpClient.get<Array<string>>(`${this.basePath}/resendwallettransactions`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
      * DEPRECATED (use sendtoaddress). Sent an amount from an account to a syscoin address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
      * @param request 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
