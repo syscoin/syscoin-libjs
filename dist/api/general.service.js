@@ -25,17 +25,15 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var http_1 = require("@angular/http");
-var http_2 = require("@angular/http");
+var http_1 = require("@angular/common/http");
 var encoder_1 = require("../encoder");
-require("../rxjs-operators");
 var variables_1 = require("../variables");
 var configuration_1 = require("../configuration");
 var GeneralService = /** @class */ (function () {
-    function GeneralService(http, basePath, configuration) {
-        this.http = http;
+    function GeneralService(httpClient, basePath, configuration) {
+        this.httpClient = httpClient;
         this.basePath = 'http://localhost:8001';
-        this.defaultHeaders = new http_1.Headers();
+        this.defaultHeaders = new http_1.HttpHeaders();
         this.configuration = new configuration_1.Configuration();
         if (basePath) {
             this.basePath = basePath;
@@ -59,1147 +57,16 @@ var GeneralService = /** @class */ (function () {
         }
         return false;
     };
-    /**
-     * Add a nrequired-to-sign multisignature address to the wallet. Each key is a Syscoin address or hex-encoded public key. If 'account' is specified (DEPRECATED), assign address to that account.
-     * @param request
-     */
-    GeneralService.prototype.addmultisigaddress = function (request, extraHttpRequestParams) {
-        return this.addmultisigaddressWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Change debug category on the fly. Specify single category or use comma to specify many.
-     * @param command 0|1|addrman|alert|bench|coindb|db|lock|rand |rpc|selectcoins|mempool|mempoolrej|net|proxy |prune|http|libevent|tor|zmq|syscoin|privatesend|instantsend |masternode|spork|keepass|mnpayments|gobject
-     */
-    GeneralService.prototype.debug = function (command, extraHttpRequestParams) {
-        return this.debugWithHttpInfo(command, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns an object containing sensitive private info about this HD wallet.
-     */
-    GeneralService.prototype.dumphdinfo = function (extraHttpRequestParams) {
-        return this.dumphdinfoWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Reveals the private key corresponding to 'syscoinaddress'. Then the importprivkey can be used with this output.
-     * @param address The syscoin address for the private key
-     */
-    GeneralService.prototype.dumpprivkey = function (address, extraHttpRequestParams) {
-        return this.dumpprivkeyWithHttpInfo(address, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Dumps all wallet keys in a human-readable format.
-     * @param filename The filename
-     */
-    GeneralService.prototype.dumpwallet = function (filename, extraHttpRequestParams) {
-        return this.dumpwalletWithHttpInfo(filename, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Encrypts the wallet with 'passphrase'. This is for first time encryption. After this, any calls that interact with private keys such as sending or signing will require the passphrase to be set prior the making these calls. Use the walletpassphrase call for this, and then walletlock call. If the wallet is already encrypted, use the walletpassphrasechange call. Note that this will shutdown the server.
-     * @param request
-     */
-    GeneralService.prototype.encryptwallet = function (request, extraHttpRequestParams) {
-        return this.encryptwalletWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Add inputs to a transaction until it has enough in value to meet its out value.
-     * @param request
-     */
-    GeneralService.prototype.fundrawtransaction = function (request, extraHttpRequestParams) {
-        return this.fundrawtransactionWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Mine up to numblocks blocks immediately (before the RPC call returns).
-     * @param numBlocks How many blocks are generated immediately.
-     * @param maxtries How many iterations to try (default &#x3D; 1000000).
-     */
-    GeneralService.prototype.generate = function (numBlocks, maxtries, extraHttpRequestParams) {
-        return this.generateWithHttpInfo(numBlocks, maxtries, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Generates a public key for a wallet.
-     */
-    GeneralService.prototype.generatepublickey = function (extraHttpRequestParams) {
-        return this.generatepublickeyWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * DEPRECATED. Returns the account associated with the given address.
-     * @param syscoinaddress The syscoin address for account lookup.
-     */
-    GeneralService.prototype.getaccount = function (syscoinaddress, extraHttpRequestParams) {
-        return this.getaccountWithHttpInfo(syscoinaddress, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * DEPRECATED. Returns the current Syscoin address for receiving payments to this account.
-     * @param account The account name for the address. It can also be set to the empty string \&quot;\&quot; to represent the default account. The account does not need to exist, it will be created and a new address created  if there is no account by the given name.
-     */
-    GeneralService.prototype.getaccountaddress = function (account, extraHttpRequestParams) {
-        return this.getaccountaddressWithHttpInfo(account, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * get address balance
-     * @param addresses
-     */
-    GeneralService.prototype.getaddressbalance = function (addresses, extraHttpRequestParams) {
-        return this.getaddressbalanceWithHttpInfo(addresses, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * getaddressdeltas
-     * @param addresses
-     * @param start
-     * @param end
-     */
-    GeneralService.prototype.getaddressdeltas = function (addresses, start, end, extraHttpRequestParams) {
-        return this.getaddressdeltasWithHttpInfo(addresses, start, end, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * DEPRECATED. Returns the list of addresses for the given account.
-     * @param account
-     */
-    GeneralService.prototype.getaddressesbyaccount = function (account, extraHttpRequestParams) {
-        return this.getaddressesbyaccountWithHttpInfo(account, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * getaddressdeltas
-     * @param addresses
-     */
-    GeneralService.prototype.getaddressmempool = function (addresses, extraHttpRequestParams) {
-        return this.getaddressmempoolWithHttpInfo(addresses, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Get address transaction ids
-     * @param addresses
-     * @param start
-     * @param end
-     */
-    GeneralService.prototype.getaddresstxids = function (addresses, start, end, extraHttpRequestParams) {
-        return this.getaddresstxidsWithHttpInfo(addresses, start, end, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns all unspent outputs for addresses or aliases
-     * @param addresses
-     */
-    GeneralService.prototype.getaddressutxos = function (addresses, extraHttpRequestParams) {
-        return this.getaddressutxosWithHttpInfo(addresses, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * If account is not specified, returns the server's total available balance. If account is specified (DEPRECATED), returns the balance in the account. Note that the account \"\" is not the same as leaving the parameter out. The server total may be different to the balance in the default \"\" account.
-     * @param account It need \&quot;*\&quot; for entire wallet
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param includeWatchonly Also include balance in watchonly addresses (see &#39;importaddress&#39;)
-     */
-    GeneralService.prototype.getbalance = function (account, minconf, includeWatchonly, extraHttpRequestParams) {
-        return this.getbalanceWithHttpInfo(account, minconf, includeWatchonly, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * If verbose is false, returns a string that is serialized, hex-encoded data for block 'hash'. If verbose is true, returns an Object with information about block <hash>.
-     * @param hash
-     * @param verbose
-     */
-    GeneralService.prototype.getblock = function (hash, verbose, extraHttpRequestParams) {
-        return this.getblockWithHttpInfo(hash, verbose, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns an object containing various state info regarding block chain processing.
-     */
-    GeneralService.prototype.getblockchaininfo = function (extraHttpRequestParams) {
-        return this.getblockchaininfoWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns the number of blocks in the longest block chain.
-     */
-    GeneralService.prototype.getblockcount = function (extraHttpRequestParams) {
-        return this.getblockcountWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns array of hashes of blocks within the timestamp range provided.
-     * @param high
-     * @param low
-     */
-    GeneralService.prototype.getblockhashes = function (high, low, extraHttpRequestParams) {
-        return this.getblockhashesWithHttpInfo(high, low, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns an array of items with information about <count> blockheaders starting from <hash>. If verbose is false, each item is a string that is serialized, hex-encoded data for a single blockheader. If verbose is true, each item is an Object with information about a single blockheader.
-     * @param hash
-     * @param count
-     * @param verbose
-     */
-    GeneralService.prototype.getblockheaders = function (hash, count, verbose, extraHttpRequestParams) {
-        return this.getblockheadersWithHttpInfo(hash, count, verbose, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Add inputs to a transaction until it has enough in value to meet its out value.
-     */
-    GeneralService.prototype.getblocktemplate = function (extraHttpRequestParams) {
-        return this.getblocktemplateWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns chain tips
-     */
-    GeneralService.prototype.getchaintips = function (extraHttpRequestParams) {
-        return this.getchaintipsWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns true if generation is ON, otherwise false
-     */
-    GeneralService.prototype.getgenerate = function (extraHttpRequestParams) {
-        return this.getgenerateWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns an object containing governance parameters
-     */
-    GeneralService.prototype.getgovernanceinfo = function (extraHttpRequestParams) {
-        return this.getgovernanceinfoWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns an object containing various state info.
-     */
-    GeneralService.prototype.getinfo = function (extraHttpRequestParams) {
-        return this.getinfoWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns a json object containing mining-related information.
-     */
-    GeneralService.prototype.getmininginfo = function (extraHttpRequestParams) {
-        return this.getmininginfoWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns a json object containing network-related information.
-     */
-    GeneralService.prototype.getnetworkinfo = function (extraHttpRequestParams) {
-        return this.getnetworkinfoWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns a new Syscoin address for receiving payments. If 'account' is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to 'account'.
-     * @param request
-     */
-    GeneralService.prototype.getnewaddress = function (request, extraHttpRequestParams) {
-        return this.getnewaddressWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns data about each connected network node as a json array of objects.
-     */
-    GeneralService.prototype.getpeerinfo = function (extraHttpRequestParams) {
-        return this.getpeerinfoWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns an object containing mixing pool related information
-     */
-    GeneralService.prototype.getpoolinfo = function (extraHttpRequestParams) {
-        return this.getpoolinfoWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns the total amount received by addresses with <account> in transactions with at least [minconf] confirmations.
-     * @param account The selected account, may be the default account using \&quot;\&quot;.
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     */
-    GeneralService.prototype.getreceivedbyaccount = function (account, minconf, addlockconf, extraHttpRequestParams) {
-        return this.getreceivedbyaccountWithHttpInfo(account, minconf, addlockconf, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns the total amount received by the given syscoinaddress in transactions with at least minconf confirmations.
-     * @param syscoinaddress The syscoin address for transactions.
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     */
-    GeneralService.prototype.getreceivedbyaddress = function (syscoinaddress, minconf, addlockconf, extraHttpRequestParams) {
-        return this.getreceivedbyaddressWithHttpInfo(syscoinaddress, minconf, addlockconf, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns the txid and index where an output is spent
-     * @param txid
-     * @param index
-     */
-    GeneralService.prototype.getspentinfo = function (txid, index, extraHttpRequestParams) {
-        return this.getspentinfoWithHttpInfo(txid, index, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns the absolute maximum sum of superblock payments allowed.
-     * @param index The block index
-     */
-    GeneralService.prototype.getsuperblockbudget = function (index, extraHttpRequestParams) {
-        return this.getsuperblockbudgetWithHttpInfo(index, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Get detailed information about in-wallet transaction <txid>
-     * @param txid The transaction id
-     * @param includeWatchonly Whether to include watchonly addresses in balance calculation and details[]
-     */
-    GeneralService.prototype.gettransaction = function (txid, includeWatchonly, extraHttpRequestParams) {
-        return this.gettransactionWithHttpInfo(txid, includeWatchonly, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns the server's total unconfirmed balance
-     */
-    GeneralService.prototype.getunconfirmedbalance = function (extraHttpRequestParams) {
-        return this.getunconfirmedbalanceWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns an object containing various wallet state info.
-     */
-    GeneralService.prototype.getwalletinfo = function (extraHttpRequestParams) {
-        return this.getwalletinfoWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Manage governance objects.
-     * @param command &#39;check&#39; - Validate governance object data (proposal only) &#39;prepare&#39; - Prepare governance object by signing and creating tx &#39;submit&#39; - Submit governance object to network &#39;deserialize&#39; - Deserialize governance object from hex string to JSON &#39;count&#39; - Count governance objects and votes &#39;get&#39; - Get governance object by hash &#39;getvotes&#39; - Get all votes for a governance object hash (including old votes) &#39;getcurrentvotes&#39; - Get only current (tallying) votes for a governance object hash (does not include old votes) &#39;list&#39; - List governance objects (can be filtered by signal and/or object type) &#39;diff&#39; - List differences since last diff &#39;vote-alias&#39; - Vote on a governance object by masternode alias (using masternode.conf setup) &#39;vote-conf&#39; - Vote on a governance object by masternode configured in syscoin.conf &#39;vote-many&#39;- Vote on a governance object by all masternodes (using masternode.conf setup)
-     */
-    GeneralService.prototype.gobject = function (command, extraHttpRequestParams) {
-        return this.gobjectWithHttpInfo(command, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Adds a script (in hex) or address that can be watched as if it were in your wallet but cannot be used to spend.
-     * @param request
-     */
-    GeneralService.prototype.importaddress = function (request, extraHttpRequestParams) {
-        return this.importaddressWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Adds a private key (as returned by dumpprivkey) to your wallet.
-     * @param request
-     */
-    GeneralService.prototype.importprivkey = function (request, extraHttpRequestParams) {
-        return this.importprivkeyWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Adds a public key (in hex) that can be watched as if it were in your wallet but cannot be used to spend.
-     * @param request
-     */
-    GeneralService.prototype.importpubkey = function (request, extraHttpRequestParams) {
-        return this.importpubkeyWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Imports keys from a wallet dump file (see dumpwallet).
-     * @param request
-     */
-    GeneralService.prototype.importwallet = function (request, extraHttpRequestParams) {
-        return this.importwalletWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     */
-    GeneralService.prototype.instantsendtoaddress = function (request, extraHttpRequestParams) {
-        return this.instantsendtoaddressWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns Object that has account names as keys, account balances as values.
-     * @param minconf Only include transactions with at least this many confirmations
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     * @param includeWatchonly Include balances in watchonly addresses (see &#39;importaddress&#39;)
-     */
-    GeneralService.prototype.listaccounts = function (minconf, addlockconf, includeWatchonly, extraHttpRequestParams) {
-        return this.listaccountsWithHttpInfo(minconf, addlockconf, includeWatchonly, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Lists groups of addresses which have had their common ownership made public by common use as inputs or as the resulting change in past transactions
-     */
-    GeneralService.prototype.listaddressgroupings = function (extraHttpRequestParams) {
-        return this.listaddressgroupingsWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * List balances by account.
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     * @param includeempty Whether to include accounts that haven&#39;t received any payments.
-     * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     */
-    GeneralService.prototype.listreceivedbyaccount = function (minconf, addlockconf, includeempty, includeWatchonly, extraHttpRequestParams) {
-        return this.listreceivedbyaccountWithHttpInfo(minconf, addlockconf, includeempty, includeWatchonly, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * List balances by receiving address.
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     * @param includeempty Whether to include accounts that haven&#39;t received any payments.
-     * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     */
-    GeneralService.prototype.listreceivedbyaddress = function (minconf, addlockconf, includeempty, includeWatchonly, extraHttpRequestParams) {
-        return this.listreceivedbyaddressWithHttpInfo(minconf, addlockconf, includeempty, includeWatchonly, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Get all transactions in blocks since block [blockhash], or all transactions if omitted
-     * @param blockhash The block hash to list transactions since
-     * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     * @param target_confirmations
-     */
-    GeneralService.prototype.listsinceblock = function (blockhash, includeWatchonly, target_confirmations, extraHttpRequestParams) {
-        return this.listsinceblockWithHttpInfo(blockhash, includeWatchonly, target_confirmations, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns up to 'count' most recent transactions skipping the first 'from' transactions for account 'account'.
-     * @param account The account name. Should be \&quot;*\&quot;.
-     * @param count The number of transactions to return
-     * @param from The number of transactions to skip
-     * @param includeWatchonly Include transactions to watchonly addresses (see &#39;importaddress&#39;)
-     */
-    GeneralService.prototype.listtransactions = function (account, count, from, includeWatchonly, extraHttpRequestParams) {
-        return this.listtransactionsWithHttpInfo(account, count, from, includeWatchonly, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns array of unspent transaction outputs with between minconf and maxconf (inclusive) confirmations. Optionally filter to only include txouts paid to specified addresses. Results are an array of Objects, each of which has: {txid, vout, scriptPubKey, amount, confirmations}
-     * @param minconf The minimum confirmations to filter.
-     * @param maxconf The maximum confirmations to filter
-     * @param adresses A json array of syscoin addresses to filter
-     */
-    GeneralService.prototype.listunspent = function (minconf, maxconf, adresses, extraHttpRequestParams) {
-        return this.listunspentWithHttpInfo(minconf, maxconf, adresses, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Updates list of temporarily unspendable outputs.
-     * @param request
-     */
-    GeneralService.prototype.lockunspent = function (request, extraHttpRequestParams) {
-        return this.lockunspentWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Set of commands to execute masternode related actions.
-     * @param command &#39;count&#39; - Print number of all known masternodes (optional &#39;ps&#39;, &#39;enabled&#39;, &#39;all&#39;, &#39;qualify&#39;) &#39;current&#39; - Print info on current masternode winner to be paid the next block (calculated locally) &#39;debug&#39; - Print masternode status &#39;genkey&#39; - Generate new masternodeprivkey &#39;outputs&#39; - Print masternode compatible outputs &#39;start&#39; - Start local Hot masternode configured in syscoin.conf &#39;start-alias&#39; - Start single remote masternode by assigned alias configured in masternode.conf &#39;start-[mode]&#39; - Start remote masternodes configured in masternode.conf ([mode] can be one of &#39;all&#39;, &#39;missing&#39;, or &#39;disabled&#39;) &#39;status&#39; - Print masternode status information &#39;list&#39; - Print list of all known masternodes (see masternodelist for more info) &#39;list-conf&#39; - Print masternode.conf in JSON format &#39;winner&#39; - Print info on next masternode winner to vote for &#39;winners&#39;- Print list of masternode winners
-     */
-    GeneralService.prototype.masternode = function (command, extraHttpRequestParams) {
-        return this.masternodeWithHttpInfo(command, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Set of commands to create and relay masternode broadcast messages.
-     * @param command &#39;create-alias&#39; - Create single remote masternode broadcast message by assigned alias configured in masternode.conf &#39;create-all&#39; - Create remote masternode broadcast messages for all masternodes configured in masternode.conf &#39;decode&#39; - Decode masternode broadcast message &#39;relay&#39; - Relay masternode broadcast message to the network
-     */
-    GeneralService.prototype.masternodebroadcast = function (command, extraHttpRequestParams) {
-        return this.masternodebroadcastWithHttpInfo(command, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Get a list of masternodes in different modes.
-     * @param mode (optional/required to use filter, defaults &#x3D; status) The mode to run list in &#39;activeseconds&#39; - Print number of seconds masternode recognized by the network as enabled (since latest issued \\\&quot;masternode start/start-many/start-alias\\\&quot;) &#39;addr&#39; - Print ip address associated with a masternode (can be additionally filtered, partial match) &#39;full&#39; - Print info in format &#39;status protocol payee lastseen activeseconds lastpaidtime lastpaidblock IP&#39; (can be additionally filtered, partial match) &#39;info&#39; - Print info in format &#39;status protocol payee lastseen activeseconds sentinelversion sentinelstate IP&#39; (can be additionally filtered, partial match) &#39;lastpaidblock&#39; - Print the last block height a node was paid on the network &#39;lastpaidtime&#39; - Print the last time a node was paid on the network &#39;lastseen&#39; - Print timestamp of when a masternode was last seen on the network &#39;payee&#39; - Print Syscoin address associated with a masternode (can be additionally filtered,partial match) &#39;protocol&#39; - Print protocol of a masternode (can be additionally filtered, exact match) &#39;pubkey&#39; - Print the masternode (not collateral) public key &#39;rank&#39; - Print rank of a masternode based on current block &#39;status&#39; - Print masternode status PRE_ENABLED / ENABLED / EXPIRED / WATCHDOG_EXPIRED / NEW_START_REQUIRED / UPDATE_REQUIRED / POSE_BAN / OUTPOINT_SPENT (can be additionally filtered, partial match)
-     */
-    GeneralService.prototype.masternodelist = function (mode, extraHttpRequestParams) {
-        return this.masternodelistWithHttpInfo(mode, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns the sync status, updates to the next step or resets it entirely.
-     * @param command &#39;status&#39; - Sync status &#39;next&#39; - Update to next step &#39;reset&#39; - Reset it entirely
-     */
-    GeneralService.prototype.mnsync = function (command, extraHttpRequestParams) {
-        return this.mnsyncWithHttpInfo(command, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * DEPRECATED. Move a specified amount from one account in your wallet to another.
-     * @param request
-     */
-    GeneralService.prototype.move = function (request, extraHttpRequestParams) {
-        return this.moveWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * DEPRECATED (use sendtoaddress). Sent an amount from an account to a syscoin address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     */
-    GeneralService.prototype.sendfrom = function (request, extraHttpRequestParams) {
-        return this.sendfromWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     */
-    GeneralService.prototype.sendmany = function (request, extraHttpRequestParams) {
-        return this.sendmanyWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Send an amount to a given address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     */
-    GeneralService.prototype.sendtoaddress = function (request, extraHttpRequestParams) {
-        return this.sendtoaddressWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Set 'generate' true or false to turn generation on or off. Generation is limited to 'genproclimit' processors, -1 is unlimited. See the getgenerate call for the current setting
-     * @param generate
-     * @param genproclimit
-     */
-    GeneralService.prototype.setgenerate = function (generate, genproclimit, extraHttpRequestParams) {
-        return this.setgenerateWithHttpInfo(generate, genproclimit, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Set 'networkactive' true or false
-     * @param state
-     */
-    GeneralService.prototype.setnetworkactive = function (state, extraHttpRequestParams) {
-        return this.setnetworkactiveWithHttpInfo(state, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Sign a message with the private key of an address. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     */
-    GeneralService.prototype.signmessage = function (request, extraHttpRequestParams) {
-        return this.signmessageWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Sign inputs for raw transaction (serialized, hex-encoded).
-     * @param request
-     */
-    GeneralService.prototype.signrawtransaction = function (request, extraHttpRequestParams) {
-        return this.signrawtransactionWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Decode raw syscoin transaction (serialized, hex-encoded) and display information pertaining to the service that is included in the transactiion data output(OP_RETURN)
-     * @param hexstring The transaction hex string.
-     */
-    GeneralService.prototype.syscoindecoderawtransaction = function (hexstring, extraHttpRequestParams) {
-        return this.syscoindecoderawtransactionWithHttpInfo(hexstring, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Returns all addresses and balances associated with address
-     */
-    GeneralService.prototype.syscoinlistreceivedbyaddress = function (extraHttpRequestParams) {
-        return this.syscoinlistreceivedbyaddressWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Signed raw transaction (serialized, hex-encoded) sent out to the network.
-     * @param request
-     */
-    GeneralService.prototype.syscoinsendrawtransaction = function (request, extraHttpRequestParams) {
-        return this.syscoinsendrawtransactionWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Return information about the given syscoin address.
-     * @param syscoinaddress
-     */
-    GeneralService.prototype.validateaddress = function (syscoinaddress, extraHttpRequestParams) {
-        return this.validateaddressWithHttpInfo(syscoinaddress, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Verify a signed message
-     * @param syscoinaddress The syscoin address to use for the signature.
-     * @param signature The signature provided by the signer in base 64 encoding (see signmessage).
-     * @param message The message that was signed.
-     */
-    GeneralService.prototype.verifymessage = function (syscoinaddress, signature, message, extraHttpRequestParams) {
-        return this.verifymessageWithHttpInfo(syscoinaddress, signature, message, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Removes the wallet encryption key from memory, locking the wallet. After calling this method, you will need to call walletpassphrase again before being able to call any methods which require the wallet to be unlocked.
-     */
-    GeneralService.prototype.walletlock = function (extraHttpRequestParams) {
-        return this.walletlockWithHttpInfo(extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Stores the wallet decryption key in memory for 'timeout' seconds. This is needed prior to performing transactions related to private keys such as sending syscoins
-     * @param request
-     */
-    GeneralService.prototype.walletpassphrase = function (request, extraHttpRequestParams) {
-        return this.walletpassphraseWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     * Changes the wallet passphrase from 'oldpassphrase' to 'newpassphrase'.
-     * @param request
-     */
-    GeneralService.prototype.walletpassphrasechange = function (request, extraHttpRequestParams) {
-        return this.walletpassphrasechangeWithHttpInfo(request, extraHttpRequestParams)
-            .map(function (response) {
-            if (response.status === 204) {
-                return undefined;
-            }
-            else {
-                return response.json() || {};
-            }
-        });
-    };
-    /**
-     *
-     * Add a nrequired-to-sign multisignature address to the wallet. Each key is a Syscoin address or hex-encoded public key. If &#39;account&#39; is specified (DEPRECATED), assign address to that account.
-     * @param request
-     
-     */
-    GeneralService.prototype.addmultisigaddressWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.addmultisigaddress = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling addmultisigaddress.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1207,7 +74,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1215,38 +82,29 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/addmultisigaddress", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/addmultisigaddress", requestOptions);
     };
-    /**
-     *
-     * Change debug category on the fly. Specify single category or use comma to specify many.
-     * @param command 0|1|addrman|alert|bench|coindb|db|lock|rand |rpc|selectcoins|mempool|mempoolrej|net|proxy |prune|http|libevent|tor|zmq|syscoin|privatesend|instantsend |masternode|spork|keepass|mnpayments|gobject
-     
-     */
-    GeneralService.prototype.debugWithHttpInfo = function (command, extraHttpRequestParams) {
+    GeneralService.prototype.debug = function (command, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (command === null || command === undefined) {
             throw new Error('Required parameter command was null or undefined when calling debug.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (command !== undefined) {
-            queryParameters.set('command', command);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (command !== undefined && command !== null) {
+            queryParameters = queryParameters.set('command', command);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1254,34 +112,27 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/debug", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/debug", requestOptions);
     };
-    /**
-     *
-     * Returns an object containing sensitive private info about this HD wallet.
-     
-     */
-    GeneralService.prototype.dumphdinfoWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.dumphdinfo = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1289,41 +140,33 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/dumphdinfo", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/dumphdinfo", requestOptions);
     };
-    /**
-     *
-     * Reveals the private key corresponding to &#39;syscoinaddress&#39;. Then the importprivkey can be used with this output.
-     * @param address The syscoin address for the private key
-     
-     */
-    GeneralService.prototype.dumpprivkeyWithHttpInfo = function (address, extraHttpRequestParams) {
+    GeneralService.prototype.dumpprivkey = function (address, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (address === null || address === undefined) {
             throw new Error('Required parameter address was null or undefined when calling dumpprivkey.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (address !== undefined) {
-            queryParameters.set('address', address);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (address !== undefined && address !== null) {
+            queryParameters = queryParameters.set('address', address);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1331,42 +174,34 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/dumpprivkey", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/dumpprivkey", requestOptions);
     };
-    /**
-     *
-     * Dumps all wallet keys in a human-readable format.
-     * @param filename The filename
-     
-     */
-    GeneralService.prototype.dumpwalletWithHttpInfo = function (filename, extraHttpRequestParams) {
+    GeneralService.prototype.dumpwallet = function (filename, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (filename === null || filename === undefined) {
             throw new Error('Required parameter filename was null or undefined when calling dumpwallet.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (filename !== undefined) {
-            queryParameters.set('filename', filename);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (filename !== undefined && filename !== null) {
+            queryParameters = queryParameters.set('filename', filename);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1374,38 +209,30 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/dumpwallet", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/dumpwallet", requestOptions);
     };
-    /**
-     *
-     * Encrypts the wallet with &#39;passphrase&#39;. This is for first time encryption. After this, any calls that interact with private keys such as sending or signing will require the passphrase to be set prior the making these calls. Use the walletpassphrase call for this, and then walletlock call. If the wallet is already encrypted, use the walletpassphrasechange call. Note that this will shutdown the server.
-     * @param request
-     
-     */
-    GeneralService.prototype.encryptwalletWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.encryptwallet = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling encryptwallet.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1413,7 +240,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1421,34 +248,25 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/encryptwallet", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/encryptwallet", requestOptions);
     };
-    /**
-     *
-     * Add inputs to a transaction until it has enough in value to meet its out value.
-     * @param request
-     
-     */
-    GeneralService.prototype.fundrawtransactionWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.fundrawtransaction = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling fundrawtransaction.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1456,7 +274,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1464,42 +282,32 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/fundrawtransaction", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/fundrawtransaction", requestOptions);
     };
-    /**
-     *
-     * Mine up to numblocks blocks immediately (before the RPC call returns).
-     * @param numBlocks How many blocks are generated immediately.
-     * @param maxtries How many iterations to try (default &#x3D; 1000000).
-     
-     */
-    GeneralService.prototype.generateWithHttpInfo = function (numBlocks, maxtries, extraHttpRequestParams) {
+    GeneralService.prototype.generate = function (numBlocks, maxtries, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (numBlocks === null || numBlocks === undefined) {
             throw new Error('Required parameter numBlocks was null or undefined when calling generate.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (numBlocks !== undefined) {
-            queryParameters.set('numBlocks', numBlocks);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (numBlocks !== undefined && numBlocks !== null) {
+            queryParameters = queryParameters.set('numBlocks', numBlocks);
         }
-        if (maxtries !== undefined) {
-            queryParameters.set('maxtries', maxtries);
+        if (maxtries !== undefined && maxtries !== null) {
+            queryParameters = queryParameters.set('maxtries', maxtries);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1507,34 +315,27 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/generate", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/generate", requestOptions);
     };
-    /**
-     *
-     * Generates a public key for a wallet.
-     
-     */
-    GeneralService.prototype.generatepublickeyWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.generatepublickey = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1542,41 +343,33 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/generatepublickey", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/generatepublickey", requestOptions);
     };
-    /**
-     *
-     * DEPRECATED. Returns the account associated with the given address.
-     * @param syscoinaddress The syscoin address for account lookup.
-     
-     */
-    GeneralService.prototype.getaccountWithHttpInfo = function (syscoinaddress, extraHttpRequestParams) {
+    GeneralService.prototype.getaccount = function (syscoinaddress, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (syscoinaddress === null || syscoinaddress === undefined) {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling getaccount.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (syscoinaddress !== undefined) {
-            queryParameters.set('syscoinaddress', syscoinaddress);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (syscoinaddress !== undefined && syscoinaddress !== null) {
+            queryParameters = queryParameters.set('syscoinaddress', syscoinaddress);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1584,42 +377,34 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getaccount", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getaccount", requestOptions);
     };
-    /**
-     *
-     * DEPRECATED. Returns the current Syscoin address for receiving payments to this account.
-     * @param account The account name for the address. It can also be set to the empty string \&quot;\&quot; to represent the default account. The account does not need to exist, it will be created and a new address created  if there is no account by the given name.
-     
-     */
-    GeneralService.prototype.getaccountaddressWithHttpInfo = function (account, extraHttpRequestParams) {
+    GeneralService.prototype.getaccountaddress = function (account, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (account === null || account === undefined) {
             throw new Error('Required parameter account was null or undefined when calling getaccountaddress.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (account !== undefined) {
-            queryParameters.set('account', account);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (account !== undefined && account !== null) {
+            queryParameters = queryParameters.set('account', account);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1627,72 +412,54 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getaccountaddress", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getaccountaddress", requestOptions);
     };
-    /**
-     *
-     * get address balance
-     * @param addresses
-     
-     */
-    GeneralService.prototype.getaddressbalanceWithHttpInfo = function (addresses, extraHttpRequestParams) {
+    GeneralService.prototype.getaddressbalance = function (addresses, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (addresses === null || addresses === undefined) {
             throw new Error('Required parameter addresses was null or undefined when calling getaddressbalance.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
         if (addresses) {
-            queryParameters.set('addresses', addresses.join(variables_1.COLLECTION_FORMATS['csv']));
+            queryParameters = queryParameters.set('addresses', addresses.join(variables_1.COLLECTION_FORMATS['csv']));
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // to determine the Accept header
         var httpHeaderAccepts = [
             'application/json'
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getaddressbalance", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getaddressbalance", requestOptions);
     };
-    /**
-     *
-     * getaddressdeltas
-     * @param addresses
-     * @param start
-     * @param end
-     
-     */
-    GeneralService.prototype.getaddressdeltasWithHttpInfo = function (addresses, start, end, extraHttpRequestParams) {
+    GeneralService.prototype.getaddressdeltas = function (addresses, start, end, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (addresses === null || addresses === undefined) {
             throw new Error('Required parameter addresses was null or undefined when calling getaddressdeltas.');
         }
@@ -1702,59 +469,51 @@ var GeneralService = /** @class */ (function () {
         if (end === null || end === undefined) {
             throw new Error('Required parameter end was null or undefined when calling getaddressdeltas.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
         if (addresses) {
-            queryParameters.set('addresses', addresses.join(variables_1.COLLECTION_FORMATS['csv']));
+            queryParameters = queryParameters.set('addresses', addresses.join(variables_1.COLLECTION_FORMATS['csv']));
         }
-        if (start !== undefined) {
-            queryParameters.set('start', start);
+        if (start !== undefined && start !== null) {
+            queryParameters = queryParameters.set('start', start);
         }
-        if (end !== undefined) {
-            queryParameters.set('end', end);
+        if (end !== undefined && end !== null) {
+            queryParameters = queryParameters.set('end', end);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // to determine the Accept header
         var httpHeaderAccepts = [
             'application/json'
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getaddressdeltas", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getaddressdeltas", requestOptions);
     };
-    /**
-     *
-     * DEPRECATED. Returns the list of addresses for the given account.
-     * @param account
-     
-     */
-    GeneralService.prototype.getaddressesbyaccountWithHttpInfo = function (account, extraHttpRequestParams) {
+    GeneralService.prototype.getaddressesbyaccount = function (account, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (account === null || account === undefined) {
             throw new Error('Required parameter account was null or undefined when calling getaddressesbyaccount.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (account !== undefined) {
-            queryParameters.set('account', account);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (account !== undefined && account !== null) {
+            queryParameters = queryParameters.set('account', account);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1762,72 +521,54 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getaddressesbyaccount", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getaddressesbyaccount", requestOptions);
     };
-    /**
-     *
-     * getaddressdeltas
-     * @param addresses
-     
-     */
-    GeneralService.prototype.getaddressmempoolWithHttpInfo = function (addresses, extraHttpRequestParams) {
+    GeneralService.prototype.getaddressmempool = function (addresses, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (addresses === null || addresses === undefined) {
             throw new Error('Required parameter addresses was null or undefined when calling getaddressmempool.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
         if (addresses) {
-            queryParameters.set('addresses', addresses.join(variables_1.COLLECTION_FORMATS['csv']));
+            queryParameters = queryParameters.set('addresses', addresses.join(variables_1.COLLECTION_FORMATS['csv']));
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // to determine the Accept header
         var httpHeaderAccepts = [
             'application/json'
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getaddressmempool", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getaddressmempool", requestOptions);
     };
-    /**
-     *
-     * Get address transaction ids
-     * @param addresses
-     * @param start
-     * @param end
-     
-     */
-    GeneralService.prototype.getaddresstxidsWithHttpInfo = function (addresses, start, end, extraHttpRequestParams) {
+    GeneralService.prototype.getaddresstxids = function (addresses, start, end, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (addresses === null || addresses === undefined) {
             throw new Error('Required parameter addresses was null or undefined when calling getaddresstxids.');
         }
@@ -1837,20 +578,20 @@ var GeneralService = /** @class */ (function () {
         if (end === null || end === undefined) {
             throw new Error('Required parameter end was null or undefined when calling getaddresstxids.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
         if (addresses) {
-            queryParameters.set('addresses', addresses.join(variables_1.COLLECTION_FORMATS['csv']));
+            queryParameters = queryParameters.set('addresses', addresses.join(variables_1.COLLECTION_FORMATS['csv']));
         }
-        if (start !== undefined) {
-            queryParameters.set('start', start);
+        if (start !== undefined && start !== null) {
+            queryParameters = queryParameters.set('start', start);
         }
-        if (end !== undefined) {
-            queryParameters.set('end', end);
+        if (end !== undefined && end !== null) {
+            queryParameters = queryParameters.set('end', end);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1858,38 +599,30 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getaddresstxids", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getaddresstxids", requestOptions);
     };
-    /**
-     *
-     * Returns all unspent outputs for addresses or aliases
-     * @param addresses
-     
-     */
-    GeneralService.prototype.getaddressutxosWithHttpInfo = function (addresses, extraHttpRequestParams) {
+    GeneralService.prototype.getaddressutxos = function (addresses, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (addresses === null || addresses === undefined) {
             throw new Error('Required parameter addresses was null or undefined when calling getaddressutxos.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1897,7 +630,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -1905,43 +638,32 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/getaddressutxos", addresses, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: addresses == null ? '' : JSON.stringify(addresses),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getaddressutxos", requestOptions);
     };
-    /**
-     *
-     * If account is not specified, returns the server&#39;s total available balance. If account is specified (DEPRECATED), returns the balance in the account. Note that the account \&quot;\&quot; is not the same as leaving the parameter out. The server total may be different to the balance in the default \&quot;\&quot; account.
-     * @param account It need \&quot;*\&quot; for entire wallet
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param includeWatchonly Also include balance in watchonly addresses (see &#39;importaddress&#39;)
-     
-     */
-    GeneralService.prototype.getbalanceWithHttpInfo = function (account, minconf, includeWatchonly, extraHttpRequestParams) {
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (account !== undefined) {
-            queryParameters.set('account', account);
+    GeneralService.prototype.getbalance = function (account, minconf, includeWatchonly, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (account !== undefined && account !== null) {
+            queryParameters = queryParameters.set('account', account);
         }
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1949,46 +671,37 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getbalance", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getbalance", requestOptions);
     };
-    /**
-     *
-     * If verbose is false, returns a string that is serialized, hex-encoded data for block &#39;hash&#39;. If verbose is true, returns an Object with information about block &lt;hash&gt;.
-     * @param hash
-     * @param verbose
-     
-     */
-    GeneralService.prototype.getblockWithHttpInfo = function (hash, verbose, extraHttpRequestParams) {
+    GeneralService.prototype.getblock = function (hash, verbose, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (hash === null || hash === undefined) {
             throw new Error('Required parameter hash was null or undefined when calling getblock.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (hash !== undefined) {
-            queryParameters.set('hash', hash);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (hash !== undefined && hash !== null) {
+            queryParameters = queryParameters.set('hash', hash);
         }
-        if (verbose !== undefined) {
-            queryParameters.set('verbose', verbose);
+        if (verbose !== undefined && verbose !== null) {
+            queryParameters = queryParameters.set('verbose', verbose);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -1996,34 +709,27 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getblock", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getblock", requestOptions);
     };
-    /**
-     *
-     * Returns an object containing various state info regarding block chain processing.
-     
-     */
-    GeneralService.prototype.getblockchaininfoWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getblockchaininfo = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2031,33 +737,26 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getblockchaininfo", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getblockchaininfo", requestOptions);
     };
-    /**
-     *
-     * Returns the number of blocks in the longest block chain.
-     
-     */
-    GeneralService.prototype.getblockcountWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getblockcount = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2065,48 +764,39 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getblockcount", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getblockcount", requestOptions);
     };
-    /**
-     *
-     * Returns array of hashes of blocks within the timestamp range provided.
-     * @param high
-     * @param low
-     
-     */
-    GeneralService.prototype.getblockhashesWithHttpInfo = function (high, low, extraHttpRequestParams) {
+    GeneralService.prototype.getblockhashes = function (high, low, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (high === null || high === undefined) {
             throw new Error('Required parameter high was null or undefined when calling getblockhashes.');
         }
         if (low === null || low === undefined) {
             throw new Error('Required parameter low was null or undefined when calling getblockhashes.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (high !== undefined) {
-            queryParameters.set('high', high);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (high !== undefined && high !== null) {
+            queryParameters = queryParameters.set('high', high);
         }
-        if (low !== undefined) {
-            queryParameters.set('low', low);
+        if (low !== undefined && low !== null) {
+            queryParameters = queryParameters.set('low', low);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2114,53 +804,43 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getblockhashes", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getblockhashes", requestOptions);
     };
-    /**
-     *
-     * Returns an array of items with information about &lt;count&gt; blockheaders starting from &lt;hash&gt;. If verbose is false, each item is a string that is serialized, hex-encoded data for a single blockheader. If verbose is true, each item is an Object with information about a single blockheader.
-     * @param hash
-     * @param count
-     * @param verbose
-     
-     */
-    GeneralService.prototype.getblockheadersWithHttpInfo = function (hash, count, verbose, extraHttpRequestParams) {
+    GeneralService.prototype.getblockheaders = function (hash, count, verbose, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (hash === null || hash === undefined) {
             throw new Error('Required parameter hash was null or undefined when calling getblockheaders.');
         }
         if (count === null || count === undefined) {
             throw new Error('Required parameter count was null or undefined when calling getblockheaders.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (hash !== undefined) {
-            queryParameters.set('hash', hash);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (hash !== undefined && hash !== null) {
+            queryParameters = queryParameters.set('hash', hash);
         }
-        if (count !== undefined) {
-            queryParameters.set('count', count);
+        if (count !== undefined && count !== null) {
+            queryParameters = queryParameters.set('count', count);
         }
-        if (verbose !== undefined) {
-            queryParameters.set('verbose', verbose);
+        if (verbose !== undefined && verbose !== null) {
+            queryParameters = queryParameters.set('verbose', verbose);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2168,34 +848,27 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getblockheaders", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getblockheaders", requestOptions);
     };
-    /**
-     *
-     * Add inputs to a transaction until it has enough in value to meet its out value.
-     
-     */
-    GeneralService.prototype.getblocktemplateWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getblocktemplate = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2203,33 +876,26 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getblocktemplate", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getblocktemplate", requestOptions);
     };
-    /**
-     *
-     * Returns chain tips
-     
-     */
-    GeneralService.prototype.getchaintipsWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getchaintips = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2237,33 +903,26 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getchaintips", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getchaintips", requestOptions);
     };
-    /**
-     *
-     * Returns true if generation is ON, otherwise false
-     
-     */
-    GeneralService.prototype.getgenerateWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getgenerate = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2271,33 +930,26 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getgenerate", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getgenerate", requestOptions);
     };
-    /**
-     *
-     * Returns an object containing governance parameters
-     
-     */
-    GeneralService.prototype.getgovernanceinfoWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getgovernanceinfo = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2305,33 +957,26 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getgovernanceinfo", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getgovernanceinfo", requestOptions);
     };
-    /**
-     *
-     * Returns an object containing various state info.
-     
-     */
-    GeneralService.prototype.getinfoWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getinfo = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2339,33 +984,26 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getinfo", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getinfo", requestOptions);
     };
-    /**
-     *
-     * Returns a json object containing mining-related information.
-     
-     */
-    GeneralService.prototype.getmininginfoWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getmininginfo = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2373,33 +1011,26 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getmininginfo", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getmininginfo", requestOptions);
     };
-    /**
-     *
-     * Returns a json object containing network-related information.
-     
-     */
-    GeneralService.prototype.getnetworkinfoWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getnetworkinfo = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2407,34 +1038,26 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getnetworkinfo", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getnetworkinfo", requestOptions);
     };
-    /**
-     *
-     * Returns a new Syscoin address for receiving payments. If &#39;account&#39; is specified (DEPRECATED), it is added to the address book so payments received with the address will be credited to &#39;account&#39;.
-     * @param request
-     
-     */
-    GeneralService.prototype.getnewaddressWithHttpInfo = function (request, extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getnewaddress = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2442,7 +1065,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2450,30 +1073,22 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/getnewaddress", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getnewaddress", requestOptions);
     };
-    /**
-     *
-     * Returns data about each connected network node as a json array of objects.
-     
-     */
-    GeneralService.prototype.getpeerinfoWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getpeerinfo = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2481,33 +1096,26 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getpeerinfo", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getpeerinfo", requestOptions);
     };
-    /**
-     *
-     * Returns an object containing mixing pool related information
-     
-     */
-    GeneralService.prototype.getpoolinfoWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getpoolinfo = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2515,49 +1123,39 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getpoolinfo", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getpoolinfo", requestOptions);
     };
-    /**
-     *
-     * Returns the total amount received by addresses with &lt;account&gt; in transactions with at least [minconf] confirmations.
-     * @param account The selected account, may be the default account using \&quot;\&quot;.
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     
-     */
-    GeneralService.prototype.getreceivedbyaccountWithHttpInfo = function (account, minconf, addlockconf, extraHttpRequestParams) {
+    GeneralService.prototype.getreceivedbyaccount = function (account, minconf, addlockconf, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (account === null || account === undefined) {
             throw new Error('Required parameter account was null or undefined when calling getreceivedbyaccount.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (account !== undefined) {
-            queryParameters.set('account', account);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (account !== undefined && account !== null) {
+            queryParameters = queryParameters.set('account', account);
         }
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (addlockconf !== undefined) {
-            queryParameters.set('addlockconf', addlockconf);
+        if (addlockconf !== undefined && addlockconf !== null) {
+            queryParameters = queryParameters.set('addlockconf', addlockconf);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2565,50 +1163,40 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getreceivedbyaccount", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getreceivedbyaccount", requestOptions);
     };
-    /**
-     *
-     * Returns the total amount received by the given syscoinaddress in transactions with at least minconf confirmations.
-     * @param syscoinaddress The syscoin address for transactions.
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     
-     */
-    GeneralService.prototype.getreceivedbyaddressWithHttpInfo = function (syscoinaddress, minconf, addlockconf, extraHttpRequestParams) {
+    GeneralService.prototype.getreceivedbyaddress = function (syscoinaddress, minconf, addlockconf, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (syscoinaddress === null || syscoinaddress === undefined) {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling getreceivedbyaddress.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (syscoinaddress !== undefined) {
-            queryParameters.set('syscoinaddress', syscoinaddress);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (syscoinaddress !== undefined && syscoinaddress !== null) {
+            queryParameters = queryParameters.set('syscoinaddress', syscoinaddress);
         }
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (addlockconf !== undefined) {
-            queryParameters.set('addlockconf', addlockconf);
+        if (addlockconf !== undefined && addlockconf !== null) {
+            queryParameters = queryParameters.set('addlockconf', addlockconf);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2616,49 +1204,40 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getreceivedbyaddress", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getreceivedbyaddress", requestOptions);
     };
-    /**
-     *
-     * Returns the txid and index where an output is spent
-     * @param txid
-     * @param index
-     
-     */
-    GeneralService.prototype.getspentinfoWithHttpInfo = function (txid, index, extraHttpRequestParams) {
+    GeneralService.prototype.getspentinfo = function (txid, index, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (txid === null || txid === undefined) {
             throw new Error('Required parameter txid was null or undefined when calling getspentinfo.');
         }
         if (index === null || index === undefined) {
             throw new Error('Required parameter index was null or undefined when calling getspentinfo.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (txid !== undefined) {
-            queryParameters.set('txid', txid);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (txid !== undefined && txid !== null) {
+            queryParameters = queryParameters.set('txid', txid);
         }
-        if (index !== undefined) {
-            queryParameters.set('index', index);
+        if (index !== undefined && index !== null) {
+            queryParameters = queryParameters.set('index', index);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2666,42 +1245,34 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getspentinfo", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getspentinfo", requestOptions);
     };
-    /**
-     *
-     * Returns the absolute maximum sum of superblock payments allowed.
-     * @param index The block index
-     
-     */
-    GeneralService.prototype.getsuperblockbudgetWithHttpInfo = function (index, extraHttpRequestParams) {
+    GeneralService.prototype.getsuperblockbudget = function (index, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (index === null || index === undefined) {
             throw new Error('Required parameter index was null or undefined when calling getsuperblockbudget.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (index !== undefined) {
-            queryParameters.set('index', index);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (index !== undefined && index !== null) {
+            queryParameters = queryParameters.set('index', index);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2709,46 +1280,37 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getsuperblockbudget", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getsuperblockbudget", requestOptions);
     };
-    /**
-     *
-     * Get detailed information about in-wallet transaction &lt;txid&gt;
-     * @param txid The transaction id
-     * @param includeWatchonly Whether to include watchonly addresses in balance calculation and details[]
-     
-     */
-    GeneralService.prototype.gettransactionWithHttpInfo = function (txid, includeWatchonly, extraHttpRequestParams) {
+    GeneralService.prototype.gettransaction = function (txid, includeWatchonly, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (txid === null || txid === undefined) {
             throw new Error('Required parameter txid was null or undefined when calling gettransaction.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (txid !== undefined) {
-            queryParameters.set('txid', txid);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (txid !== undefined && txid !== null) {
+            queryParameters = queryParameters.set('txid', txid);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2756,34 +1318,27 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/gettransaction", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/gettransaction", requestOptions);
     };
-    /**
-     *
-     * Returns the server&#39;s total unconfirmed balance
-     
-     */
-    GeneralService.prototype.getunconfirmedbalanceWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getunconfirmedbalance = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2791,33 +1346,26 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getunconfirmedbalance", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getunconfirmedbalance", requestOptions);
     };
-    /**
-     *
-     * Returns an object containing various wallet state info.
-     
-     */
-    GeneralService.prototype.getwalletinfoWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.getwalletinfo = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2825,41 +1373,33 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/getwalletinfo", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/getwalletinfo", requestOptions);
     };
-    /**
-     *
-     * Manage governance objects.
-     * @param command &#39;check&#39; - Validate governance object data (proposal only) &#39;prepare&#39; - Prepare governance object by signing and creating tx &#39;submit&#39; - Submit governance object to network &#39;deserialize&#39; - Deserialize governance object from hex string to JSON &#39;count&#39; - Count governance objects and votes &#39;get&#39; - Get governance object by hash &#39;getvotes&#39; - Get all votes for a governance object hash (including old votes) &#39;getcurrentvotes&#39; - Get only current (tallying) votes for a governance object hash (does not include old votes) &#39;list&#39; - List governance objects (can be filtered by signal and/or object type) &#39;diff&#39; - List differences since last diff &#39;vote-alias&#39; - Vote on a governance object by masternode alias (using masternode.conf setup) &#39;vote-conf&#39; - Vote on a governance object by masternode configured in syscoin.conf &#39;vote-many&#39;- Vote on a governance object by all masternodes (using masternode.conf setup)
-     
-     */
-    GeneralService.prototype.gobjectWithHttpInfo = function (command, extraHttpRequestParams) {
+    GeneralService.prototype.gobject = function (command, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (command === null || command === undefined) {
             throw new Error('Required parameter command was null or undefined when calling gobject.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (command !== undefined) {
-            queryParameters.set('command', command);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (command !== undefined && command !== null) {
+            queryParameters = queryParameters.set('command', command);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2867,38 +1407,30 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/gobject", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/gobject", requestOptions);
     };
-    /**
-     *
-     * Adds a script (in hex) or address that can be watched as if it were in your wallet but cannot be used to spend.
-     * @param request
-     
-     */
-    GeneralService.prototype.importaddressWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.importaddress = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling importaddress.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2906,7 +1438,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2914,34 +1446,25 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/importaddress", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/importaddress", requestOptions);
     };
-    /**
-     *
-     * Adds a private key (as returned by dumpprivkey) to your wallet.
-     * @param request
-     
-     */
-    GeneralService.prototype.importprivkeyWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.importprivkey = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling importprivkey.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2949,7 +1472,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -2957,34 +1480,25 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/importprivkey", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/importprivkey", requestOptions);
     };
-    /**
-     *
-     * Adds a public key (in hex) that can be watched as if it were in your wallet but cannot be used to spend.
-     * @param request
-     
-     */
-    GeneralService.prototype.importpubkeyWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.importpubkey = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling importpubkey.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -2992,7 +1506,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -3000,34 +1514,25 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/importpubkey", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/importpubkey", requestOptions);
     };
-    /**
-     *
-     * Imports keys from a wallet dump file (see dumpwallet).
-     * @param request
-     
-     */
-    GeneralService.prototype.importwalletWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.importwallet = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling importwallet.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3035,7 +1540,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -3043,34 +1548,25 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/importwallet", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/importwallet", requestOptions);
     };
-    /**
-     *
-     * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     
-     */
-    GeneralService.prototype.instantsendtoaddressWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.instantsendtoaddress = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling instantsendtoaddress.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3078,7 +1574,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -3086,43 +1582,32 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/instantsendtoaddress", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/instantsendtoaddress", requestOptions);
     };
-    /**
-     *
-     * Returns Object that has account names as keys, account balances as values.
-     * @param minconf Only include transactions with at least this many confirmations
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     * @param includeWatchonly Include balances in watchonly addresses (see &#39;importaddress&#39;)
-     
-     */
-    GeneralService.prototype.listaccountsWithHttpInfo = function (minconf, addlockconf, includeWatchonly, extraHttpRequestParams) {
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+    GeneralService.prototype.listaccounts = function (minconf, addlockconf, includeWatchonly, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (addlockconf !== undefined) {
-            queryParameters.set('addlockconf', addlockconf);
+        if (addlockconf !== undefined && addlockconf !== null) {
+            queryParameters = queryParameters.set('addlockconf', addlockconf);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3130,34 +1615,27 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/listaccounts", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/listaccounts", requestOptions);
     };
-    /**
-     *
-     * Lists groups of addresses which have had their common ownership made public by common use as inputs or as the resulting change in past transactions
-     
-     */
-    GeneralService.prototype.listaddressgroupingsWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.listaddressgroupings = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3165,50 +1643,39 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/listaddressgroupings", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/listaddressgroupings", requestOptions);
     };
-    /**
-     *
-     * List balances by account.
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     * @param includeempty Whether to include accounts that haven&#39;t received any payments.
-     * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     
-     */
-    GeneralService.prototype.listreceivedbyaccountWithHttpInfo = function (minconf, addlockconf, includeempty, includeWatchonly, extraHttpRequestParams) {
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+    GeneralService.prototype.listreceivedbyaccount = function (minconf, addlockconf, includeempty, includeWatchonly, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (addlockconf !== undefined) {
-            queryParameters.set('addlockconf', addlockconf);
+        if (addlockconf !== undefined && addlockconf !== null) {
+            queryParameters = queryParameters.set('addlockconf', addlockconf);
         }
-        if (includeempty !== undefined) {
-            queryParameters.set('includeempty', includeempty);
+        if (includeempty !== undefined && includeempty !== null) {
+            queryParameters = queryParameters.set('includeempty', includeempty);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3216,51 +1683,40 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/listreceivedbyaccount", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/listreceivedbyaccount", requestOptions);
     };
-    /**
-     *
-     * List balances by receiving address.
-     * @param minconf Only include transactions confirmed at least this many times.
-     * @param addlockconf Whether to add 5 confirmations to transactions locked via InstantSend.
-     * @param includeempty Whether to include accounts that haven&#39;t received any payments.
-     * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     
-     */
-    GeneralService.prototype.listreceivedbyaddressWithHttpInfo = function (minconf, addlockconf, includeempty, includeWatchonly, extraHttpRequestParams) {
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+    GeneralService.prototype.listreceivedbyaddress = function (minconf, addlockconf, includeempty, includeWatchonly, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (addlockconf !== undefined) {
-            queryParameters.set('addlockconf', addlockconf);
+        if (addlockconf !== undefined && addlockconf !== null) {
+            queryParameters = queryParameters.set('addlockconf', addlockconf);
         }
-        if (includeempty !== undefined) {
-            queryParameters.set('includeempty', includeempty);
+        if (includeempty !== undefined && includeempty !== null) {
+            queryParameters = queryParameters.set('includeempty', includeempty);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3268,47 +1724,37 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/listreceivedbyaddress", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/listreceivedbyaddress", requestOptions);
     };
-    /**
-     *
-     * Get all transactions in blocks since block [blockhash], or all transactions if omitted
-     * @param blockhash The block hash to list transactions since
-     * @param includeWatchonly Whether to include watchonly addresses (see &#39;importaddress&#39;).
-     * @param target_confirmations
-     
-     */
-    GeneralService.prototype.listsinceblockWithHttpInfo = function (blockhash, includeWatchonly, target_confirmations, extraHttpRequestParams) {
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (blockhash !== undefined) {
-            queryParameters.set('blockhash', blockhash);
+    GeneralService.prototype.listsinceblock = function (blockhash, includeWatchonly, target_confirmations, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (blockhash !== undefined && blockhash !== null) {
+            queryParameters = queryParameters.set('blockhash', blockhash);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
-        if (target_confirmations !== undefined) {
-            queryParameters.set('target-confirmations', target_confirmations);
+        if (target_confirmations !== undefined && target_confirmations !== null) {
+            queryParameters = queryParameters.set('target-confirmations', target_confirmations);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3316,51 +1762,40 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/listsinceblock", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/listsinceblock", requestOptions);
     };
-    /**
-     *
-     * Returns up to &#39;count&#39; most recent transactions skipping the first &#39;from&#39; transactions for account &#39;account&#39;.
-     * @param account The account name. Should be \&quot;*\&quot;.
-     * @param count The number of transactions to return
-     * @param from The number of transactions to skip
-     * @param includeWatchonly Include transactions to watchonly addresses (see &#39;importaddress&#39;)
-     
-     */
-    GeneralService.prototype.listtransactionsWithHttpInfo = function (account, count, from, includeWatchonly, extraHttpRequestParams) {
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (account !== undefined) {
-            queryParameters.set('account', account);
+    GeneralService.prototype.listtransactions = function (account, count, from, includeWatchonly, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (account !== undefined && account !== null) {
+            queryParameters = queryParameters.set('account', account);
         }
-        if (count !== undefined) {
-            queryParameters.set('count', count);
+        if (count !== undefined && count !== null) {
+            queryParameters = queryParameters.set('count', count);
         }
-        if (from !== undefined) {
-            queryParameters.set('from', from);
+        if (from !== undefined && from !== null) {
+            queryParameters = queryParameters.set('from', from);
         }
-        if (includeWatchonly !== undefined) {
-            queryParameters.set('includeWatchonly', includeWatchonly);
+        if (includeWatchonly !== undefined && includeWatchonly !== null) {
+            queryParameters = queryParameters.set('includeWatchonly', includeWatchonly);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3368,47 +1803,37 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/listtransactions", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/listtransactions", requestOptions);
     };
-    /**
-     *
-     * Returns array of unspent transaction outputs with between minconf and maxconf (inclusive) confirmations. Optionally filter to only include txouts paid to specified addresses. Results are an array of Objects, each of which has: {txid, vout, scriptPubKey, amount, confirmations}
-     * @param minconf The minimum confirmations to filter.
-     * @param maxconf The maximum confirmations to filter
-     * @param adresses A json array of syscoin addresses to filter
-     
-     */
-    GeneralService.prototype.listunspentWithHttpInfo = function (minconf, maxconf, adresses, extraHttpRequestParams) {
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (minconf !== undefined) {
-            queryParameters.set('minconf', minconf);
+    GeneralService.prototype.listunspent = function (minconf, maxconf, adresses, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (minconf !== undefined && minconf !== null) {
+            queryParameters = queryParameters.set('minconf', minconf);
         }
-        if (maxconf !== undefined) {
-            queryParameters.set('maxconf', maxconf);
+        if (maxconf !== undefined && maxconf !== null) {
+            queryParameters = queryParameters.set('maxconf', maxconf);
         }
-        if (adresses !== undefined) {
-            queryParameters.set('adresses', adresses);
+        if (adresses !== undefined && adresses !== null) {
+            queryParameters = queryParameters.set('adresses', adresses);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3416,38 +1841,30 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/listunspent", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/listunspent", requestOptions);
     };
-    /**
-     *
-     * Updates list of temporarily unspendable outputs.
-     * @param request
-     
-     */
-    GeneralService.prototype.lockunspentWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.lockunspent = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling lockunspent.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3455,7 +1872,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -3463,38 +1880,29 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/lockunspent", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/lockunspent", requestOptions);
     };
-    /**
-     *
-     * Set of commands to execute masternode related actions.
-     * @param command &#39;count&#39; - Print number of all known masternodes (optional &#39;ps&#39;, &#39;enabled&#39;, &#39;all&#39;, &#39;qualify&#39;) &#39;current&#39; - Print info on current masternode winner to be paid the next block (calculated locally) &#39;debug&#39; - Print masternode status &#39;genkey&#39; - Generate new masternodeprivkey &#39;outputs&#39; - Print masternode compatible outputs &#39;start&#39; - Start local Hot masternode configured in syscoin.conf &#39;start-alias&#39; - Start single remote masternode by assigned alias configured in masternode.conf &#39;start-[mode]&#39; - Start remote masternodes configured in masternode.conf ([mode] can be one of &#39;all&#39;, &#39;missing&#39;, or &#39;disabled&#39;) &#39;status&#39; - Print masternode status information &#39;list&#39; - Print list of all known masternodes (see masternodelist for more info) &#39;list-conf&#39; - Print masternode.conf in JSON format &#39;winner&#39; - Print info on next masternode winner to vote for &#39;winners&#39;- Print list of masternode winners
-     
-     */
-    GeneralService.prototype.masternodeWithHttpInfo = function (command, extraHttpRequestParams) {
+    GeneralService.prototype.masternode = function (command, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (command === null || command === undefined) {
             throw new Error('Required parameter command was null or undefined when calling masternode.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (command !== undefined) {
-            queryParameters.set('command', command);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (command !== undefined && command !== null) {
+            queryParameters = queryParameters.set('command', command);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3502,42 +1910,34 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/masternode", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/masternode", requestOptions);
     };
-    /**
-     *
-     * Set of commands to create and relay masternode broadcast messages.
-     * @param command &#39;create-alias&#39; - Create single remote masternode broadcast message by assigned alias configured in masternode.conf &#39;create-all&#39; - Create remote masternode broadcast messages for all masternodes configured in masternode.conf &#39;decode&#39; - Decode masternode broadcast message &#39;relay&#39; - Relay masternode broadcast message to the network
-     
-     */
-    GeneralService.prototype.masternodebroadcastWithHttpInfo = function (command, extraHttpRequestParams) {
+    GeneralService.prototype.masternodebroadcast = function (command, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (command === null || command === undefined) {
             throw new Error('Required parameter command was null or undefined when calling masternodebroadcast.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (command !== undefined) {
-            queryParameters.set('command', command);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (command !== undefined && command !== null) {
+            queryParameters = queryParameters.set('command', command);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3545,39 +1945,31 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/masternodebroadcast", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/masternodebroadcast", requestOptions);
     };
-    /**
-     *
-     * Get a list of masternodes in different modes.
-     * @param mode (optional/required to use filter, defaults &#x3D; status) The mode to run list in &#39;activeseconds&#39; - Print number of seconds masternode recognized by the network as enabled (since latest issued \\\&quot;masternode start/start-many/start-alias\\\&quot;) &#39;addr&#39; - Print ip address associated with a masternode (can be additionally filtered, partial match) &#39;full&#39; - Print info in format &#39;status protocol payee lastseen activeseconds lastpaidtime lastpaidblock IP&#39; (can be additionally filtered, partial match) &#39;info&#39; - Print info in format &#39;status protocol payee lastseen activeseconds sentinelversion sentinelstate IP&#39; (can be additionally filtered, partial match) &#39;lastpaidblock&#39; - Print the last block height a node was paid on the network &#39;lastpaidtime&#39; - Print the last time a node was paid on the network &#39;lastseen&#39; - Print timestamp of when a masternode was last seen on the network &#39;payee&#39; - Print Syscoin address associated with a masternode (can be additionally filtered,partial match) &#39;protocol&#39; - Print protocol of a masternode (can be additionally filtered, exact match) &#39;pubkey&#39; - Print the masternode (not collateral) public key &#39;rank&#39; - Print rank of a masternode based on current block &#39;status&#39; - Print masternode status PRE_ENABLED / ENABLED / EXPIRED / WATCHDOG_EXPIRED / NEW_START_REQUIRED / UPDATE_REQUIRED / POSE_BAN / OUTPOINT_SPENT (can be additionally filtered, partial match)
-     
-     */
-    GeneralService.prototype.masternodelistWithHttpInfo = function (mode, extraHttpRequestParams) {
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (mode !== undefined) {
-            queryParameters.set('mode', mode);
+    GeneralService.prototype.masternodelist = function (mode, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (mode !== undefined && mode !== null) {
+            queryParameters = queryParameters.set('mode', mode);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3585,42 +1977,34 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/masternodelist", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/masternodelist", requestOptions);
     };
-    /**
-     *
-     * Returns the sync status, updates to the next step or resets it entirely.
-     * @param command &#39;status&#39; - Sync status &#39;next&#39; - Update to next step &#39;reset&#39; - Reset it entirely
-     
-     */
-    GeneralService.prototype.mnsyncWithHttpInfo = function (command, extraHttpRequestParams) {
+    GeneralService.prototype.mnsync = function (command, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (command === null || command === undefined) {
             throw new Error('Required parameter command was null or undefined when calling mnsync.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (command !== undefined) {
-            queryParameters.set('command', command);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (command !== undefined && command !== null) {
+            queryParameters = queryParameters.set('command', command);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3628,38 +2012,30 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/mnsync", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/mnsync", requestOptions);
     };
-    /**
-     *
-     * DEPRECATED. Move a specified amount from one account in your wallet to another.
-     * @param request
-     
-     */
-    GeneralService.prototype.moveWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.move = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling move.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3667,7 +2043,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -3675,34 +2051,25 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/move", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/move", requestOptions);
     };
-    /**
-     *
-     * DEPRECATED (use sendtoaddress). Sent an amount from an account to a syscoin address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     
-     */
-    GeneralService.prototype.sendfromWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.sendfrom = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling sendfrom.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3710,7 +2077,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -3718,34 +2085,25 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/sendfrom", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/sendfrom", requestOptions);
     };
-    /**
-     *
-     * Send multiple times. Amounts are double-precision floating point numbers. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     
-     */
-    GeneralService.prototype.sendmanyWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.sendmany = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling sendmany.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3753,7 +2111,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -3761,34 +2119,25 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/sendmany", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/sendmany", requestOptions);
     };
-    /**
-     *
-     * Send an amount to a given address. The amount is a real and is rounded to the nearest 0.00000001. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     
-     */
-    GeneralService.prototype.sendtoaddressWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.sendtoaddress = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling sendtoaddress.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3796,7 +2145,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -3804,42 +2153,66 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/sendtoaddress", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/sendtoaddress", requestOptions);
     };
-    /**
-     *
-     * Set &#39;generate&#39; true or false to turn generation on or off. Generation is limited to &#39;genproclimit&#39; processors, -1 is unlimited. See the getgenerate call for the current setting
-     * @param generate
-     * @param genproclimit
-     
-     */
-    GeneralService.prototype.setgenerateWithHttpInfo = function (generate, genproclimit, extraHttpRequestParams) {
+    GeneralService.prototype.setaccount = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        if (request === null || request === undefined) {
+            throw new Error('Required parameter request was null or undefined when calling setaccount.');
+        }
+        var headers = this.defaultHeaders;
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
+        }
+        // to determine the Accept header
+        var httpHeaderAccepts = [
+            'application/json'
+        ];
+        var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+        // to determine the Content-Type header
+        var consumes = [
+            'application/json'
+        ];
+        var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+        return this.httpClient.post(this.basePath + "/setaccount", request, {
+            withCredentials: this.configuration.withCredentials,
+            headers: headers,
+            observe: observe,
+            reportProgress: reportProgress
+        });
+    };
+    GeneralService.prototype.setgenerate = function (generate, genproclimit, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (generate === null || generate === undefined) {
             throw new Error('Required parameter generate was null or undefined when calling setgenerate.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (generate !== undefined) {
-            queryParameters.set('generate', generate);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (generate !== undefined && generate !== null) {
+            queryParameters = queryParameters.set('generate', generate);
         }
-        if (genproclimit !== undefined) {
-            queryParameters.set('genproclimit', genproclimit);
+        if (genproclimit !== undefined && genproclimit !== null) {
+            queryParameters = queryParameters.set('genproclimit', genproclimit);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3847,42 +2220,34 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/setgenerate", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/setgenerate", requestOptions);
     };
-    /**
-     *
-     * Set &#39;networkactive&#39; true or false
-     * @param state
-     
-     */
-    GeneralService.prototype.setnetworkactiveWithHttpInfo = function (state, extraHttpRequestParams) {
+    GeneralService.prototype.setnetworkactive = function (state, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (state === null || state === undefined) {
             throw new Error('Required parameter state was null or undefined when calling setnetworkactive.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (state !== undefined) {
-            queryParameters.set('state', state);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (state !== undefined && state !== null) {
+            queryParameters = queryParameters.set('state', state);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3890,38 +2255,30 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/setnetworkactive", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/setnetworkactive", requestOptions);
     };
-    /**
-     *
-     * Sign a message with the private key of an address. Requires wallet passphrase to be set with walletpassphrase call.
-     * @param request
-     
-     */
-    GeneralService.prototype.signmessageWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.signmessage = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling signmessage.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3929,7 +2286,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -3937,34 +2294,25 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/signmessage", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/signmessage", requestOptions);
     };
-    /**
-     *
-     * Sign inputs for raw transaction (serialized, hex-encoded).
-     * @param request
-     
-     */
-    GeneralService.prototype.signrawtransactionWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.signrawtransaction = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling signrawtransaction.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -3972,7 +2320,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -3980,38 +2328,29 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/signrawtransaction", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/signrawtransaction", requestOptions);
     };
-    /**
-     *
-     * Decode raw syscoin transaction (serialized, hex-encoded) and display information pertaining to the service that is included in the transactiion data output(OP_RETURN)
-     * @param hexstring The transaction hex string.
-     
-     */
-    GeneralService.prototype.syscoindecoderawtransactionWithHttpInfo = function (hexstring, extraHttpRequestParams) {
+    GeneralService.prototype.syscoindecoderawtransaction = function (hexstring, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (hexstring === null || hexstring === undefined) {
             throw new Error('Required parameter hexstring was null or undefined when calling syscoindecoderawtransaction.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (hexstring !== undefined) {
-            queryParameters.set('hexstring', hexstring);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (hexstring !== undefined && hexstring !== null) {
+            queryParameters = queryParameters.set('hexstring', hexstring);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -4019,34 +2358,27 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/syscoindecoderawtransaction", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/syscoindecoderawtransaction", requestOptions);
     };
-    /**
-     *
-     * Returns all addresses and balances associated with address
-     
-     */
-    GeneralService.prototype.syscoinlistreceivedbyaddressWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.syscoinlistreceivedbyaddress = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -4054,37 +2386,29 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/syscoinlistreceivedbyaddress", {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/syscoinlistreceivedbyaddress", requestOptions);
     };
-    /**
-     *
-     * Signed raw transaction (serialized, hex-encoded) sent out to the network.
-     * @param request
-     
-     */
-    GeneralService.prototype.syscoinsendrawtransactionWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.syscoinsendrawtransaction = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling syscoinsendrawtransaction.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -4092,7 +2416,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -4100,38 +2424,29 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/syscoinsendrawtransaction", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/syscoinsendrawtransaction", requestOptions);
     };
-    /**
-     *
-     * Return information about the given syscoin address.
-     * @param syscoinaddress
-     
-     */
-    GeneralService.prototype.validateaddressWithHttpInfo = function (syscoinaddress, extraHttpRequestParams) {
+    GeneralService.prototype.validateaddress = function (syscoinaddress, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (syscoinaddress === null || syscoinaddress === undefined) {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling validateaddress.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (syscoinaddress !== undefined) {
-            queryParameters.set('syscoinaddress', syscoinaddress);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (syscoinaddress !== undefined && syscoinaddress !== null) {
+            queryParameters = queryParameters.set('syscoinaddress', syscoinaddress);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -4139,33 +2454,23 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/validateaddress", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/validateaddress", requestOptions);
     };
-    /**
-     *
-     * Verify a signed message
-     * @param syscoinaddress The syscoin address to use for the signature.
-     * @param signature The signature provided by the signer in base 64 encoding (see signmessage).
-     * @param message The message that was signed.
-     
-     */
-    GeneralService.prototype.verifymessageWithHttpInfo = function (syscoinaddress, signature, message, extraHttpRequestParams) {
+    GeneralService.prototype.verifymessage = function (syscoinaddress, signature, message, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (syscoinaddress === null || syscoinaddress === undefined) {
             throw new Error('Required parameter syscoinaddress was null or undefined when calling verifymessage.');
         }
@@ -4175,20 +2480,20 @@ var GeneralService = /** @class */ (function () {
         if (message === null || message === undefined) {
             throw new Error('Required parameter message was null or undefined when calling verifymessage.');
         }
-        var queryParameters = new http_1.URLSearchParams('', new encoder_1.CustomQueryEncoderHelper());
-        if (syscoinaddress !== undefined) {
-            queryParameters.set('syscoinaddress', syscoinaddress);
+        var queryParameters = new http_1.HttpParams({ encoder: new encoder_1.CustomHttpUrlEncodingCodec() });
+        if (syscoinaddress !== undefined && syscoinaddress !== null) {
+            queryParameters = queryParameters.set('syscoinaddress', syscoinaddress);
         }
-        if (signature !== undefined) {
-            queryParameters.set('signature', signature);
+        if (signature !== undefined && signature !== null) {
+            queryParameters = queryParameters.set('signature', signature);
         }
-        if (message !== undefined) {
-            queryParameters.set('message', message);
+        if (message !== undefined && message !== null) {
+            queryParameters = queryParameters.set('message', message);
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -4196,34 +2501,27 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Get,
+        return this.httpClient.get(this.basePath + "/verifymessage", {
+            params: queryParameters,
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            search: queryParameters,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/verifymessage", requestOptions);
     };
-    /**
-     *
-     * Removes the wallet encryption key from memory, locking the wallet. After calling this method, you will need to call walletpassphrase again before being able to call any methods which require the wallet to be unlocked.
-     
-     */
-    GeneralService.prototype.walletlockWithHttpInfo = function (extraHttpRequestParams) {
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+    GeneralService.prototype.walletlock = function (observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -4231,38 +2529,30 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
             'application/json',
             'application/octet-stream'
         ];
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/walletlock", null, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/walletlock", requestOptions);
     };
-    /**
-     *
-     * Stores the wallet decryption key in memory for &#39;timeout&#39; seconds. This is needed prior to performing transactions related to private keys such as sending syscoins
-     * @param request
-     
-     */
-    GeneralService.prototype.walletpassphraseWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.walletpassphrase = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling walletpassphrase.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -4270,7 +2560,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -4278,34 +2568,25 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/walletpassphrase", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/walletpassphrase", requestOptions);
     };
-    /**
-     *
-     * Changes the wallet passphrase from &#39;oldpassphrase&#39; to &#39;newpassphrase&#39;.
-     * @param request
-     
-     */
-    GeneralService.prototype.walletpassphrasechangeWithHttpInfo = function (request, extraHttpRequestParams) {
+    GeneralService.prototype.walletpassphrasechange = function (request, observe, reportProgress) {
+        if (observe === void 0) { observe = 'body'; }
+        if (reportProgress === void 0) { reportProgress = false; }
         if (request === null || request === undefined) {
             throw new Error('Required parameter request was null or undefined when calling walletpassphrasechange.');
         }
-        var headers = new http_1.Headers(this.defaultHeaders.toJSON()); // https://github.com/angular/angular/issues/6845
+        var headers = this.defaultHeaders;
         // authentication (token) required
         if (this.configuration.apiKeys["token"]) {
-            headers.set('token', this.configuration.apiKeys["token"]);
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
         }
         // to determine the Accept header
         var httpHeaderAccepts = [
@@ -4313,7 +2594,7 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
-            headers.set("Accept", httpHeaderAcceptSelected);
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
         }
         // to determine the Content-Type header
         var consumes = [
@@ -4321,24 +2602,19 @@ var GeneralService = /** @class */ (function () {
         ];
         var httpContentTypeSelected = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected != undefined) {
-            headers.set('Content-Type', httpContentTypeSelected);
+            headers = headers.set('Content-Type', httpContentTypeSelected);
         }
-        var requestOptions = new http_2.RequestOptions({
-            method: http_2.RequestMethod.Post,
+        return this.httpClient.post(this.basePath + "/walletpassphrasechange", request, {
+            withCredentials: this.configuration.withCredentials,
             headers: headers,
-            body: request == null ? '' : JSON.stringify(request),
-            withCredentials: this.configuration.withCredentials
+            observe: observe,
+            reportProgress: reportProgress
         });
-        // https://github.com/swagger-api/swagger-codegen/issues/4037
-        if (extraHttpRequestParams) {
-            requestOptions = Object.assign(requestOptions, extraHttpRequestParams);
-        }
-        return this.http.request(this.basePath + "/walletpassphrasechange", requestOptions);
     };
     GeneralService = __decorate([
         core_1.Injectable(),
         __param(1, core_1.Optional()), __param(1, core_1.Inject(variables_1.BASE_PATH)), __param(2, core_1.Optional()),
-        __metadata("design:paramtypes", [http_1.Http, String, configuration_1.Configuration])
+        __metadata("design:paramtypes", [http_1.HttpClient, String, configuration_1.Configuration])
     ], GeneralService);
     return GeneralService;
 }());

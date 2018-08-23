@@ -15,7 +15,7 @@ export interface VoteRawRequest {
     masternode_tx_hash: string;
     masternode_tx_index: number;
     governance_hash: string;
-    vote_signal: number;
+    vote_signal: string;
     vote_outcome: string;
     time: number;
     vote_sig: string;
