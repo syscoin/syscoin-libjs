@@ -1438,6 +1438,48 @@ export class GeneralService {
 
     /**
      * 
+     * Returns the proof-of-work difficulty as a multiple of the minimum difficulty.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getdifficulty(observe?: 'body', reportProgress?: boolean): Observable<number>;
+    public getdifficulty(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<number>>;
+    public getdifficulty(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<number>>;
+    public getdifficulty(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+
+        return this.httpClient.get<number>(`${this.basePath}/getdifficulty`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
      * Returns true if generation is ON, otherwise false
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
