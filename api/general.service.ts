@@ -1180,6 +1180,58 @@ export class GeneralService {
 
     /**
      * 
+     * Returns hash of block in best-block-chain at height provided.
+     * @param height 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getblockhash(height: number, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public getblockhash(height: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public getblockhash(height: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public getblockhash(height: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (height === null || height === undefined) {
+            throw new Error('Required parameter height was null or undefined when calling getblockhash.');
+        }
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (height !== undefined && height !== null) {
+            queryParameters = queryParameters.set('height', <any>height);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (token) required
+        if (this.configuration.apiKeys["token"]) {
+            headers = headers.set('token', this.configuration.apiKeys["token"]);
+        }
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+
+        return this.httpClient.get<string>(`${this.basePath}/getblockhash`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
      * Returns array of hashes of blocks within the timestamp range provided.
      * @param high 
      * @param low 
