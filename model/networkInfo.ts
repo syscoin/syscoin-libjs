@@ -24,4 +24,6 @@ export interface NetworkInfo {
     relayfee?: number;
     localaddresses?: Array<string>;
     warnings?: string;
+    networkactive?: boolean;
+    incrementalfee?: number;
 }
